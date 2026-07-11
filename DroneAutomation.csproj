@@ -17,12 +17,12 @@
     <ModDeploy>$(GameDir)/Mods/DroneAutomation</ModDeploy>
   </PropertyGroup>
 
-  <!-- Harmony patches EntityDrone.OnUpdateEntity to drive every module. -->
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <!-- Harmony patches EntityDrone.OnUpdateEntity to drive every module. We compile against the
+         game's own Harmony (TFP ships it in Mods/0_TFP_Harmony, loaded before every other mod), so
+         we neither bundle nor ship 0Harmony.dll — matching the exact runtime version. Private=false
+         keeps it out of our output. -->
+    <Reference Include="0Harmony">                 <HintPath>$(GameDir)/Mods/0_TFP_Harmony/0Harmony.dll</HintPath>    <Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp">          <HintPath>$(GameManaged)/Assembly-CSharp.dll</HintPath>          <Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp-firstpass"><HintPath>$(GameManaged)/Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="LogLibrary">               <HintPath>$(GameManaged)/LogLibrary.dll</HintPath>               <Private>false</Private></Reference>
@@ -37,9 +37,8 @@
 
   <Target Name="DeployMod" AfterTargets="Build">
     <Copy SourceFiles="$(OutputPath)DroneAutomation.dll" DestinationFolder="mod" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)0Harmony.dll" DestinationFolder="mod" SkipUnchangedFiles="false" />
     <Copy SourceFiles="@(ModAssets)" DestinationFiles="@(ModAssets->'$(ModDeploy)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="mod/DroneAutomation.dll;mod/0Harmony.dll" DestinationFolder="$(ModDeploy)" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="mod/DroneAutomation.dll" DestinationFolder="$(ModDeploy)" SkipUnchangedFiles="false" />
     <Message Importance="high" Text="Synced mod payload + DLL -> $(ModDeploy)" />
   </Target>
 </Project>
