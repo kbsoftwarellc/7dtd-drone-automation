@@ -14,5 +14,17 @@
 				<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
 			</effect_group>
 		</item>
+
+		<item name="modRoboticDroneAutoSalvageModSchematic">
+			<property name="Extends" value="schematicNoQualityMaster"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="230,150,40"/>
+			<property name="Unlocks" value="modRoboticDroneAutoSalvageMod"/>
+			<effect_group tiered="false">
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyCVar" cvar="modRoboticDroneAutoSalvageMod" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
+			</effect_group>
+		</item>
 	</append>
 </config>

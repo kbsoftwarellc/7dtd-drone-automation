@@ -18,6 +18,8 @@ namespace DroneAutomation
     {
         private static readonly ConditionalWeakTable<EntityDrone, VacuumCore> autoLootCores =
             new ConditionalWeakTable<EntityDrone, VacuumCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, SalvageCore> salvageCores =
+            new ConditionalWeakTable<EntityDrone, SalvageCore>();
 
         private static ulong lastDebugTick;
 
@@ -31,9 +33,10 @@ namespace DroneAutomation
             if (__instance.bag == null) { Debug(__instance, "no bag"); return; }
 
             ItemValue droneItem = __instance.OriginalItemValue;
-            bool autoLoot = HasModule(droneItem, DroneAutomationMod.AutoLootModuleName);
+            bool autoLoot    = HasModule(droneItem, DroneAutomationMod.AutoLootModuleName);
+            bool autoSalvage = HasModule(droneItem, DroneAutomationMod.AutoSalvageModuleName);
 
-            if (!autoLoot)
+            if (!autoLoot && !autoSalvage)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
                 return;
@@ -49,16 +52,21 @@ namespace DroneAutomation
             EntityPlayer owner = VacuumCore.ResolveOwner(world, __instance.OwnerID, out PersistentPlayerData ownerData);
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
-            Vector3 center = __instance.position;
             bool didSomething = false;
 
             if (autoLoot)
             {
                 VacuumCore core = autoLootCores.GetValue(__instance, _ => new VacuumCore(DroneAutomationMod.AutoLootSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), center);
+                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position);
             }
 
-            Debug(__instance, didSomething ? "collected this pass" : "active, nothing in range/afforded yet");
+            if (autoSalvage)
+            {
+                SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
+                didSomething |= core.Tick(world, owner, ownerData, __instance);
+            }
+
+            Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");
         }
 
         private static bool HasModule(ItemValue _droneItem, string _moduleName)

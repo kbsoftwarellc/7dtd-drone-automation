@@ -4,8 +4,10 @@
 	     schematic pool (med) and the robotics pool / working-stiff crates (low). -->
 	<append xpath="/lootcontainers/lootgroup[@name='schematicsModsAndGeneralT2']">
 		<item name="modRoboticDroneAutoLootModSchematic" loot_prob_template="med" />
+		<item name="modRoboticDroneAutoSalvageModSchematic" loot_prob_template="med" />
 	</append>
 	<append xpath="/lootcontainers/lootgroup[@name='groupBotSchematics']">
 		<item name="modRoboticDroneAutoLootModSchematic" loot_prob_template="low" />
+		<item name="modRoboticDroneAutoSalvageModSchematic" loot_prob_template="low" />
 	</append>
 </config>

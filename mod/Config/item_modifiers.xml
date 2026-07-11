@@ -10,5 +10,15 @@
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 		</item_modifier>
+
+		<!-- Auto-Salvage: the drone wrenches nearby unclaimed salvageable blocks into its bag. -->
+		<item_modifier name="modRoboticDroneAutoSalvageMod" installable_tags="drone" modifier_tags="droneAutoSalvage" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="230,150,40"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoSalvageModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+		</item_modifier>
 	</append>
 </config>

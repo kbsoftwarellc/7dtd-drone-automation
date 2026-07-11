@@ -36,6 +36,9 @@ namespace DroneAutomation
             VerticalRadius = 6f,
         };
 
+        /// <summary>Auto-Salvage tunables.</summary>
+        public static SalvageSettings SalvageSettings = new SalvageSettings();
+
         public void InitMod(Mod _modInstance)
         {
             try
@@ -73,6 +76,7 @@ namespace DroneAutomation
                 doc.Load(path);
 
                 ReadVacuum(doc.SelectSingleNode("/droneautomation/autoLoot"), AutoLootSettings);
+                ReadSalvage(doc.SelectSingleNode("/droneautomation/autoSalvage"), SalvageSettings);
 
                 string dbg = doc.SelectSingleNode("/droneautomation")?.Attributes?["Debug"]?.Value;
                 Debug = dbg == "1" || dbg == "true";
@@ -83,6 +87,17 @@ namespace DroneAutomation
             }
 
             AutoLootSettings.Clamp();
+            SalvageSettings.Clamp();
+        }
+
+        private static void ReadSalvage(XmlNode _node, SalvageSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.Radius);
+            ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
+            ReadFloat(_node, "SecondsPerStep", ref _settings.SecondsPerStep);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
         }
 
         private static void ReadVacuum(XmlNode _node, VacuumSettings _settings)

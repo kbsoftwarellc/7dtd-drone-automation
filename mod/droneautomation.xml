@@ -25,4 +25,15 @@
 	          ItemPickupSeconds="0.25"
 	          MaxCatchupSeconds="5"
 	          SkipIfPlayerWithin="0" />
+
+	<!--
+	  Auto-Salvage: wrench salvageable blocks (cars, sinks, machines) into the drone's bag.
+	  Destructive, so it only touches UNCLAIMED ground - never inside anyone's land claim.
+	    Radius / VerticalRadius   reach. Kept small by default because it destroys blocks.
+	    SecondsPerStep            charged per downgrade step (one wrench swing); a car takes several.
+	-->
+	<autoSalvage Radius="4"
+	             VerticalRadius="4"
+	             SecondsPerStep="1.5"
+	             MaxCatchupSeconds="5" />
 </droneautomation>
