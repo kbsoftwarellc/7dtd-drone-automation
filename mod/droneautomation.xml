@@ -7,6 +7,12 @@
     SpeedMultiplier     scales simulated action time. 0.5 = twice as fast.
     MaxCatchupSeconds   ceiling on banked seconds, so reloads cannot burst.
     VerticalRadius      vertical reach.
+
+  LEVELS: every reach/time value below is the Quality 6 (top-tier) ceiling. A module's installed
+  Quality (1-6) scales it toward the Q1 floor via two knobs per section:
+    LowQualityReach     Q1 reach as a fraction of the configured reach (0..1). Q6 = full.
+    LowQualityTimeMult  Q1 action time as a multiple of the configured time (>=1). Q6 = full speed.
+  Crafting always yields Q1; faster, longer-reach modules come from loot or the trader.
 -->
 <droneautomation Debug="1">
 	<!--
@@ -24,7 +30,9 @@
 	          MinSecondsPerTarget="0.25"
 	          ItemPickupSeconds="0.25"
 	          MaxCatchupSeconds="5"
-	          SkipIfPlayerWithin="0" />
+	          SkipIfPlayerWithin="0"
+	          LowQualityReach="0.55"
+	          LowQualityTimeMult="2" />
 
 	<!--
 	  Auto-Salvage: wrench salvageable blocks (cars, sinks, machines) into the drone's bag.
@@ -35,7 +43,9 @@
 	<autoSalvage Radius="4"
 	             VerticalRadius="4"
 	             SecondsPerStep="1.5"
-	             MaxCatchupSeconds="5" />
+	             MaxCatchupSeconds="5"
+	             LowQualityReach="0.55"
+	             LowQualityTimeMult="2" />
 
 	<!--
 	  Auto-Harvest: reap and replant grown crops in your own land claim, into the drone's bag.
@@ -45,7 +55,9 @@
 	<autoHarvest Radius="6"
 	             VerticalRadius="4"
 	             SecondsPerTarget="1"
-	             MaxCatchupSeconds="5" />
+	             MaxCatchupSeconds="5"
+	             LowQualityReach="0.55"
+	             LowQualityTimeMult="2" />
 
 	<!--
 	  Auto-Repair: repair damaged blocks in your own land claim, paying mats from the drone's bag.
@@ -55,5 +67,7 @@
 	<autoRepair Radius="6"
 	            VerticalRadius="5"
 	            SecondsPerBlock="1"
-	            MaxCatchupSeconds="5" />
+	            MaxCatchupSeconds="5"
+	            LowQualityReach="0.55"
+	            LowQualityTimeMult="2" />
 </droneautomation>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- Make the finished modules buyable from traders. Vanilla stocks mods through groupModsAll
+	     (which aggregates the melee/ranged/armor mod groups); drone mods are in none of those, so
+	     append them here. Quality + price are rolled by each module's TraderStageTemplate
+	     (modsTier3), so the trader sells the strong high-quality copies that crafting (always
+	     Quality 1) can never make. -->
+	<append xpath="/traders/trader_item_group[@name='groupModsAll']">
+		<item name="modRoboticDroneAutoLootMod"    unique_only="true"/>
+		<item name="modRoboticDroneAutoSalvageMod" unique_only="true"/>
+		<item name="modRoboticDroneAutoHarvestMod" unique_only="true"/>
+		<item name="modRoboticDroneAutoRepairMod"  unique_only="true"/>
+	</append>
+</config>

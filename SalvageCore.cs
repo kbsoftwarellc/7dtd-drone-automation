@@ -14,12 +14,18 @@ namespace DroneAutomation
         public float SecondsPerStep = 1.5f;
         public float MaxCatchupSeconds = 5f;
 
+        /// Q1 reach as a fraction of the configured (Q6) reach; Q6 = full.
+        public float LowQualityReach = 0.55f;
+        /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
+        public float LowQualityTimeMult = 2f;
+
         public void Clamp()
         {
             if (Radius < 0f) Radius = 0f;
             if (VerticalRadius < 0f) VerticalRadius = 0f;
             if (SecondsPerStep < 0.05f) SecondsPerStep = 0.05f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
 
@@ -46,18 +52,23 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
-            if (pacer.Credit < settings.SecondsPerStep) return false;
 
-            DroneWorld.CollectParents(_world, _drone.position, settings.Radius, settings.VerticalRadius, buffer);
+            float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality);
+            float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality);
+            float secondsPerStep = QualityScale.Time(settings.SecondsPerStep, settings.LowQualityTimeMult, _quality);
+
+            if (pacer.Credit < secondsPerStep) return false;
+
+            DroneWorld.CollectParents(_world, _drone.position, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
-                if (pacer.Credit < settings.SecondsPerStep) break;
+                if (pacer.Credit < secondsPerStep) break;
 
                 Vector3i pos = buffer[i];
                 BlockValue bv = _world.GetBlock(pos);
@@ -69,7 +80,7 @@ namespace DroneAutomation
                 // Unclaimed ground only - protects your own base and everyone else's.
                 if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.None) continue;
 
-                if (!pacer.TrySpend(settings.SecondsPerStep)) break;
+                if (!pacer.TrySpend(secondsPerStep)) break;
 
                 // Yield this stage's salvage, then knock it down one downgrade step. The downgraded
                 // stage is picked up on a later pass, so a car comes apart stage by stage, exactly

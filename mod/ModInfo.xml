@@ -2,7 +2,7 @@
 <xml>
 	<Name value="DroneAutomation"/>
 	<DisplayName value="Drone Automation Mods"/>
-	<Version value="0.2.0"/>
-	<Description value="A pack of junk-drone modules that automate chores while the drone follows you. Auto-Loot opens zombie loot bags and containers and grabs dropped items; Auto-Salvage wrenches nearby unclaimed salvageable blocks (cars, sinks, machines) apart; Auto-Harvest reaps and replants grown crops in your land claim; Auto-Repair fixes damaged blocks in your land claim, paying from the drone's own bag. Each module is a separate craftable drone attachment unlocked by a looted schematic, and each acts as if you did the work yourself, so your loot stage and perks apply, and each target takes the time it would take you by hand. Server-side only: install on the dedicated server, clients install nothing and can keep EAC on. Requires launching the server with EAC off (DLL mod)."/>
+	<Version value="0.3.0"/>
+	<Description value="A pack of junk-drone modules that automate chores while the drone follows you. Auto-Loot opens zombie loot bags and containers and grabs dropped items; Auto-Salvage wrenches nearby unclaimed salvageable blocks (cars, sinks, machines) apart; Auto-Harvest reaps and replants grown crops in your land claim; Auto-Repair fixes damaged blocks in your land claim, paying from the drone's own bag. Each module is a separate craftable drone attachment unlocked by a looted schematic, and each acts as if you did the work yourself, so your loot stage and perks apply, and each target takes the time it would take you by hand. Modules carry a Quality 1-6 level that scales their reach and speed: crafting always makes the Quality 1 baseline, while higher-quality modules come from loot or are bought from traders. Server-side only: install on the dedicated server, clients install nothing and can keep EAC on. Requires launching the server with EAC off (DLL mod)."/>
 	<Author value="tehAon"/>
 </xml>

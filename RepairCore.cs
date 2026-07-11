@@ -13,12 +13,18 @@ namespace DroneAutomation
         public float SecondsPerBlock = 1f;
         public float MaxCatchupSeconds = 5f;
 
+        /// Q1 reach as a fraction of the configured (Q6) reach; Q6 = full.
+        public float LowQualityReach = 0.55f;
+        /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
+        public float LowQualityTimeMult = 2f;
+
         public void Clamp()
         {
             if (Radius < 0f) Radius = 0f;
             if (VerticalRadius < 0f) VerticalRadius = 0f;
             if (SecondsPerBlock < 0.05f) SecondsPerBlock = 0.05f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
 
@@ -45,18 +51,23 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, PersistentPlayerData _ownerData, EntityDrone _drone)
+        public bool Tick(World _world, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
-            if (pacer.Credit < settings.SecondsPerBlock) return false;
 
-            DroneWorld.CollectParents(_world, _drone.position, settings.Radius, settings.VerticalRadius, buffer);
+            float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality);
+            float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality);
+            float secondsPerBlock = QualityScale.Time(settings.SecondsPerBlock, settings.LowQualityTimeMult, _quality);
+
+            if (pacer.Credit < secondsPerBlock) return false;
+
+            DroneWorld.CollectParents(_world, _drone.position, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
-                if (pacer.Credit < settings.SecondsPerBlock) break;
+                if (pacer.Credit < secondsPerBlock) break;
 
                 Vector3i pos = buffer[i];
                 BlockValue bv = _world.GetBlock(pos);
@@ -74,7 +85,7 @@ namespace DroneAutomation
                 // Only repair if the bag can pay in full - never leave a block part-repaired.
                 if (!CanAfford(b, bv, _drone.bag, out List<Cost> costs)) continue;
 
-                if (!pacer.TrySpend(settings.SecondsPerBlock)) break;
+                if (!pacer.TrySpend(secondsPerBlock)) break;
 
                 for (int c = 0; c < costs.Count; c++) _drone.bag.DecItem(costs[c].item, costs[c].count);
 
