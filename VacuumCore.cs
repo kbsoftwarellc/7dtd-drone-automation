@@ -19,6 +19,11 @@ namespace DroneAutomation
         public float MaxCatchupSeconds = 5f;
         public float SkipIfPlayerWithin;
 
+        /// Q1 reach as a fraction of the configured (Q6) reach; Q6 = full.
+        public float LowQualityReach = 0.55f;
+        /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
+        public float LowQualityTimeMult = 2f;
+
         public void Clamp()
         {
             if (ContainerRadius < 0f) ContainerRadius = 0f;
@@ -28,6 +33,7 @@ namespace DroneAutomation
             if (MinSecondsPerTarget < VacuumCore.MinOpenSeconds) MinSecondsPerTarget = VacuumCore.MinOpenSeconds;
             if (ItemPickupSeconds < 0f) ItemPickupSeconds = 0f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
 
@@ -79,6 +85,16 @@ namespace DroneAutomation
         private int processedThisPass;
         private bool stalled;
 
+        // Effective, quality-scaled values recomputed at the top of each Tick. The configured
+        // settings are the Q6 (top-tier) ceiling; a lower-quality module reaches less far and
+        // works more slowly.
+        private float effEntityRadius;
+        private float effContainerRadius;
+        private float effVerticalRadius;
+        private float effMinSecondsPerTarget;
+        private float effItemPickupSeconds;
+        private float effSpeedMultiplier;
+
         private static readonly List<Entity> entityBuffer = new List<Entity>();
         private static readonly List<TileEntity> tileEntityBuffer = new List<TileEntity>();
 
@@ -104,19 +120,27 @@ namespace DroneAutomation
         /// Runs one pass. Returns false when nothing could be afforded yet, so callers can cheaply bail.
         /// </summary>
         public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData,
-                         PlatformUserIdentifierAbs _ownerId, IVacuumSink _sink, Vector3 _center)
+                         PlatformUserIdentifierAbs _ownerId, IVacuumSink _sink, Vector3 _center, int _quality)
         {
             AccrueCredit();
 
+            // The configured radii/times are the Q6 ceiling; scale down toward the Q1 floor.
+            effEntityRadius        = QualityScale.Reach(settings.EntityRadius, settings.LowQualityReach, _quality);
+            effContainerRadius     = QualityScale.Reach(settings.ContainerRadius, settings.LowQualityReach, _quality);
+            effVerticalRadius      = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality);
+            effMinSecondsPerTarget = QualityScale.Time(settings.MinSecondsPerTarget, settings.LowQualityTimeMult, _quality);
+            effItemPickupSeconds   = QualityScale.Time(settings.ItemPickupSeconds, settings.LowQualityTimeMult, _quality);
+            effSpeedMultiplier     = QualityScale.Time(settings.SpeedMultiplier, settings.LowQualityTimeMult, _quality);
+
             // Cheapest possible target costs MinSecondsPerTarget, so this also throttles scanning.
-            if (credit < settings.MinSecondsPerTarget) return false;
+            if (credit < effMinSecondsPerTarget) return false;
             if (!HasFreeSlot(_sink)) return false;
 
             processedThisPass = 0;
             stalled = false;
 
             DrainBags(_world, _owner, _ownerData, _sink, _center);
-            if (!stalled && settings.ContainerRadius > 0f) DrainContainers(_world, _owner, _ownerData, _ownerId, _sink, _center);
+            if (!stalled && effContainerRadius > 0f) DrainContainers(_world, _owner, _ownerData, _ownerId, _sink, _center);
             if (!stalled) DrainLooseItems(_world, _ownerData, _sink, _center);
 
             return processedThisPass > 0;
@@ -168,7 +192,7 @@ namespace DroneAutomation
 
             float seconds = EffectManager.GetValue(PassiveEffects.ScavengingTime, null, baseTime, _owner)
                             * LootContainer.LootTimerModifier
-                            * settings.SpeedMultiplier;
+                            * effSpeedMultiplier;
 
             return seconds < MinOpenSeconds ? MinOpenSeconds : seconds;
         }
@@ -180,20 +204,20 @@ namespace DroneAutomation
         /// </summary>
         private float Cost(float _seconds)
         {
-            return _seconds < settings.MinSecondsPerTarget ? settings.MinSecondsPerTarget : _seconds;
+            return _seconds < effMinSecondsPerTarget ? effMinSecondsPerTarget : _seconds;
         }
 
         private void DrainBags(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData,
                                IVacuumSink _sink, Vector3 _center)
         {
             entityBuffer.Clear();
-            _world.GetEntitiesInBounds(typeof(EntityLootContainer), BoundsAround(_center, settings.EntityRadius), entityBuffer);
+            _world.GetEntitiesInBounds(typeof(EntityLootContainer), BoundsAround(_center, effEntityRadius), entityBuffer);
 
             for (int i = 0; i < entityBuffer.Count; i++)
             {
                 if (!(entityBuffer[i] is EntityLootContainer bagEntity)) continue;
                 if (bagEntity.bag == null) continue;
-                if (!InRange(_center, bagEntity.position, settings.EntityRadius)) continue;
+                if (!InRange(_center, bagEntity.position, effEntityRadius)) continue;
                 if (LockManager.Instance.IsLockedServer(bagEntity)) continue;
                 if (IsBlockedPosition(_world, _ownerData, World.worldToBlockPos(bagEntity.position))) continue;
                 if (!HasFreeSlot(_sink)) break;
@@ -230,7 +254,7 @@ namespace DroneAutomation
                 if (!te.TryGetSelfOrFeature(out ITileEntityLootable loot)) continue;
 
                 Vector3i pos = te.ToWorldPos();
-                if (!InRange(_center, te.ToWorldCenterPos(), settings.ContainerRadius)) continue;
+                if (!InRange(_center, te.ToWorldCenterPos(), effContainerRadius)) continue;
 
                 // bPlayerStorage is true for anything with an Owner, which covers every
                 // player-placed chest - and the loot vacuum block's own storage.
@@ -277,7 +301,7 @@ namespace DroneAutomation
         private void DrainLooseItems(World _world, PersistentPlayerData _ownerData, IVacuumSink _sink, Vector3 _center)
         {
             entityBuffer.Clear();
-            _world.GetEntitiesInBounds(typeof(EntityItem), BoundsAround(_center, settings.EntityRadius), entityBuffer);
+            _world.GetEntitiesInBounds(typeof(EntityItem), BoundsAround(_center, effEntityRadius), entityBuffer);
 
             for (int i = 0; i < entityBuffer.Count; i++)
             {
@@ -288,13 +312,13 @@ namespace DroneAutomation
                 if (entity is EntityBackpack || entity is EntityLootContainer) continue;
                 if (!(entity is EntityItem item)) continue;
                 if (item.itemStack == null || item.itemStack.IsEmpty()) continue;
-                if (!InRange(_center, item.position, settings.EntityRadius)) continue;
+                if (!InRange(_center, item.position, effEntityRadius)) continue;
                 if (IsBlockedPosition(_world, _ownerData, World.worldToBlockPos(item.position))) continue;
 
                 // With a free slot the move is all-or-nothing, so we never have to write a
                 // reduced count back to a live entity.
                 if (!HasFreeSlot(_sink)) break;
-                if (!TrySpend(Cost(settings.ItemPickupSeconds))) break;
+                if (!TrySpend(Cost(effItemPickupSeconds))) break;
 
                 ItemStack moving = item.itemStack.Clone();
                 if (!Absorb(_sink, moving, moving.count) || moving.count > 0) continue;
@@ -309,7 +333,7 @@ namespace DroneAutomation
         {
             tileEntityBuffer.Clear();
 
-            float r = settings.ContainerRadius;
+            float r = effContainerRadius;
             int minX = World.toChunkXZ(Utils.Fastfloor(_center.x - r));
             int maxX = World.toChunkXZ(Utils.Fastfloor(_center.x + r));
             int minZ = World.toChunkXZ(Utils.Fastfloor(_center.z - r));
@@ -347,7 +371,7 @@ namespace DroneAutomation
         /// </summary>
         private bool InRange(Vector3 _center, Vector3 _pos, float _horizontalRadius)
         {
-            if (Mathf.Abs(_pos.y - _center.y) > settings.VerticalRadius) return false;
+            if (Mathf.Abs(_pos.y - _center.y) > effVerticalRadius) return false;
 
             float dx = _pos.x - _center.x;
             float dz = _pos.z - _center.z;
@@ -356,7 +380,7 @@ namespace DroneAutomation
 
         private Bounds BoundsAround(Vector3 _center, float _horizontalRadius)
         {
-            return new Bounds(_center, new Vector3(_horizontalRadius * 2f, settings.VerticalRadius * 2f, _horizontalRadius * 2f));
+            return new Bounds(_center, new Vector3(_horizontalRadius * 2f, effVerticalRadius * 2f, _horizontalRadius * 2f));
         }
 
         private static bool HasFreeSlot(IVacuumSink _sink)

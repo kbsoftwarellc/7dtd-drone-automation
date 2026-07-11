@@ -9,6 +9,10 @@
 			<property name="DescriptionKey" value="modRoboticDroneAutoLootModDesc"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
+			<!-- Quality 1-6 bar. Crafting always makes Q1; loot/trader roll higher. The DLL reads
+			     this quality and scales the module's reach + speed (see QualityScale). -->
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
 		</item_modifier>
 
 		<!-- Auto-Salvage: the drone wrenches nearby unclaimed salvageable blocks into its bag. -->
@@ -19,6 +23,8 @@
 			<property name="DescriptionKey" value="modRoboticDroneAutoSalvageModDesc"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
 		</item_modifier>
 
 		<!-- Auto-Harvest: the drone reaps and replants grown crops in your land claim, into its bag. -->
@@ -29,6 +35,8 @@
 			<property name="DescriptionKey" value="modRoboticDroneAutoHarvestModDesc"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
 		</item_modifier>
 
 		<!-- Auto-Repair: the drone repairs damaged blocks in your land claim, paying from its bag. -->
@@ -39,6 +47,8 @@
 			<property name="DescriptionKey" value="modRoboticDroneAutoRepairModDesc"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
 		</item_modifier>
 	</append>
 </config>

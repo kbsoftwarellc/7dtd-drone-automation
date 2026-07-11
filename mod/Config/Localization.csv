@@ -1,17 +1,17 @@
 Key,File,Type,UsedInMainMenu,NoTranslate,english
 modRoboticDroneAutoLootMod,item_modifiers,Item,,,Drone Auto-Loot Module
-modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through zombie loot bags and containers and picks up dropped items as it follows you, opening them with your own loot stage and Lucky Looter. Loot goes into the drone's storage."
+modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through zombie loot bags and containers and picks up dropped items as it follows you, opening them with your own loot stage and Lucky Looter. Loot goes into the drone's storage. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic
 modRoboticDroneAutoLootModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Loot Module at a workbench."
 modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module
-modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base."
+modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic
 modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Salvage Module at a workbench."
 modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module
-modRoboticDroneAutoHarvestModDesc,item_modifiers,Item,,,"Your drone reaps grown crops in your land claim and replants them as it follows you, into its own storage. Only works your own claim, and leaves the seed replanted so the plot keeps producing."
+modRoboticDroneAutoHarvestModDesc,item_modifiers,Item,,,"Your drone reaps grown crops in your land claim and replants them as it follows you, into its own storage. Only works your own claim, and leaves the seed replanted so the plot keeps producing. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoHarvestModSchematic,items,Item,,,Drone Auto-Harvest Module Schematic
 modRoboticDroneAutoHarvestModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Harvest Module at a workbench."
 modRoboticDroneAutoRepairMod,item_modifiers,Item,,,Drone Auto-Repair Module
-modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full."
+modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoRepairModSchematic,items,Item,,,Drone Auto-Repair Module Schematic
 modRoboticDroneAutoRepairModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Repair Module at a workbench."

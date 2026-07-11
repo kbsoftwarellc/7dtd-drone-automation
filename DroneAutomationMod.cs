@@ -108,6 +108,8 @@ namespace DroneAutomation
             ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
             ReadFloat(_node, "SecondsPerBlock", ref _settings.SecondsPerBlock);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
 
         private static void ReadSalvage(XmlNode _node, SalvageSettings _settings)
@@ -118,6 +120,8 @@ namespace DroneAutomation
             ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
             ReadFloat(_node, "SecondsPerStep", ref _settings.SecondsPerStep);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
 
         private static void ReadHarvest(XmlNode _node, HarvestSettings _settings)
@@ -128,6 +132,8 @@ namespace DroneAutomation
             ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
             ReadFloat(_node, "SecondsPerTarget", ref _settings.SecondsPerTarget);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
 
         private static void ReadVacuum(XmlNode _node, VacuumSettings _settings)
@@ -142,6 +148,8 @@ namespace DroneAutomation
             ReadFloat(_node, "ItemPickupSeconds", ref _settings.ItemPickupSeconds);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
             ReadFloat(_node, "SkipIfPlayerWithin", ref _settings.SkipIfPlayerWithin);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
 
         internal static void ReadFloat(XmlNode _node, string _attr, ref float _value)

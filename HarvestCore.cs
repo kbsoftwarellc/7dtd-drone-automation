@@ -13,12 +13,18 @@ namespace DroneAutomation
         public float SecondsPerTarget = 1f;
         public float MaxCatchupSeconds = 5f;
 
+        /// Q1 reach as a fraction of the configured (Q6) reach; Q6 = full.
+        public float LowQualityReach = 0.55f;
+        /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
+        public float LowQualityTimeMult = 2f;
+
         public void Clamp()
         {
             if (Radius < 0f) Radius = 0f;
             if (VerticalRadius < 0f) VerticalRadius = 0f;
             if (SecondsPerTarget < 0.05f) SecondsPerTarget = 0.05f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
 
@@ -46,18 +52,23 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
-            if (pacer.Credit < settings.SecondsPerTarget) return false;
 
-            DroneWorld.CollectParents(_world, _drone.position, settings.Radius, settings.VerticalRadius, buffer);
+            float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality);
+            float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality);
+            float secondsPerTarget = QualityScale.Time(settings.SecondsPerTarget, settings.LowQualityTimeMult, _quality);
+
+            if (pacer.Credit < secondsPerTarget) return false;
+
+            DroneWorld.CollectParents(_world, _drone.position, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
-                if (pacer.Credit < settings.SecondsPerTarget) break;
+                if (pacer.Credit < secondsPerTarget) break;
 
                 Vector3i pos = buffer[i];
                 BlockValue bv = _world.GetBlock(pos);
@@ -72,7 +83,7 @@ namespace DroneAutomation
                 // Must know what to replant, or we leave the crop alone rather than destroy it.
                 if (!TryGetReplant(b, out BlockValue young)) continue;
 
-                if (!pacer.TrySpend(settings.SecondsPerTarget)) break;
+                if (!pacer.TrySpend(secondsPerTarget)) break;
 
                 DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand);
 

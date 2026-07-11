@@ -37,12 +37,12 @@ namespace DroneAutomation
             if (__instance.bag == null) { Debug(__instance, "no bag"); return; }
 
             ItemValue droneItem = __instance.OriginalItemValue;
-            bool autoLoot    = HasModule(droneItem, DroneAutomationMod.AutoLootModuleName);
-            bool autoSalvage = HasModule(droneItem, DroneAutomationMod.AutoSalvageModuleName);
-            bool autoHarvest = HasModule(droneItem, DroneAutomationMod.AutoHarvestModuleName);
-            bool autoRepair  = HasModule(droneItem, DroneAutomationMod.AutoRepairModuleName);
+            ItemValue autoLoot    = GetModule(droneItem, DroneAutomationMod.AutoLootModuleName);
+            ItemValue autoSalvage = GetModule(droneItem, DroneAutomationMod.AutoSalvageModuleName);
+            ItemValue autoHarvest = GetModule(droneItem, DroneAutomationMod.AutoHarvestModuleName);
+            ItemValue autoRepair  = GetModule(droneItem, DroneAutomationMod.AutoRepairModuleName);
 
-            if (!autoLoot && !autoSalvage && !autoHarvest && !autoRepair)
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
                 return;
@@ -60,45 +60,45 @@ namespace DroneAutomation
 
             bool didSomething = false;
 
-            if (autoLoot)
+            if (autoLoot != null)
             {
                 VacuumCore core = autoLootCores.GetValue(__instance, _ => new VacuumCore(DroneAutomationMod.AutoLootSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position);
+                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, autoLoot.Quality);
             }
 
-            if (autoSalvage)
+            if (autoSalvage != null)
             {
                 SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoSalvage.Quality);
             }
 
-            if (autoHarvest)
+            if (autoHarvest != null)
             {
                 HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoHarvest.Quality);
             }
 
-            if (autoRepair)
+            if (autoRepair != null)
             {
                 RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
-                didSomething |= core.Tick(world, ownerData, __instance);
+                didSomething |= core.Tick(world, ownerData, __instance, autoRepair.Quality);
             }
 
             Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");
         }
 
-        private static bool HasModule(ItemValue _droneItem, string _moduleName)
+        private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)
         {
             ItemValue[] mods = _droneItem?.Modifications;
-            if (mods == null) return false;
+            if (mods == null) return null;
 
             for (int i = 0; i < mods.Length; i++)
             {
                 ItemValue mod = mods[i];
                 if (mod == null || mod.IsEmpty() || mod.ItemClass == null) continue;
-                if (mod.ItemClass.Name == _moduleName) return true;
+                if (mod.ItemClass.Name == _moduleName) return mod;
             }
-            return false;
+            return null;
         }
 
         private static string DescribeMods(ItemValue _droneItem)
