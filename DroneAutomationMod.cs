@@ -22,6 +22,11 @@ namespace DroneAutomation
         public const string AutoSalvageModuleName = "modRoboticDroneAutoSalvageMod";
         public const string AutoHarvestModuleName = "modRoboticDroneAutoHarvestMod";
         public const string AutoRepairModuleName  = "modRoboticDroneAutoRepairMod";
+        public const string AutoPlantModuleName   = "modRoboticDroneAutoPlantMod";
+
+        // Enhancement meta-modules: no core of their own, they scale every installed core's knobs.
+        public const string OverclockModuleName   = "modRoboticDroneOverclockMod";
+        public const string AntennaModuleName     = "modRoboticDroneAntennaMod";
 
         public static string ModPath;
 
@@ -44,6 +49,15 @@ namespace DroneAutomation
 
         /// <summary>Auto-Repair tunables.</summary>
         public static RepairSettings RepairSettings = new RepairSettings();
+
+        /// <summary>Auto-Plant tunables.</summary>
+        public static PlantSettings PlantSettings = new PlantSettings();
+
+        /// <summary>Overclock meta-module tunables (speed boost for every core).</summary>
+        public static OverclockSettings OverclockSettings = new OverclockSettings();
+
+        /// <summary>Wide-Band Antenna meta-module tunables (reach boost for every core).</summary>
+        public static AntennaSettings AntennaSettings = new AntennaSettings();
 
         public void InitMod(Mod _modInstance)
         {
@@ -85,6 +99,9 @@ namespace DroneAutomation
                 ReadSalvage(doc.SelectSingleNode("/droneautomation/autoSalvage"), SalvageSettings);
                 ReadHarvest(doc.SelectSingleNode("/droneautomation/autoHarvest"), HarvestSettings);
                 ReadRepair(doc.SelectSingleNode("/droneautomation/autoRepair"), RepairSettings);
+                ReadPlant(doc.SelectSingleNode("/droneautomation/autoPlant"), PlantSettings);
+                ReadOverclock(doc.SelectSingleNode("/droneautomation/overclock"), OverclockSettings);
+                ReadAntenna(doc.SelectSingleNode("/droneautomation/antenna"), AntennaSettings);
 
                 string dbg = doc.SelectSingleNode("/droneautomation")?.Attributes?["Debug"]?.Value;
                 Debug = dbg == "1" || dbg == "true";
@@ -98,6 +115,9 @@ namespace DroneAutomation
             SalvageSettings.Clamp();
             HarvestSettings.Clamp();
             RepairSettings.Clamp();
+            PlantSettings.Clamp();
+            OverclockSettings.Clamp();
+            AntennaSettings.Clamp();
         }
 
         private static void ReadRepair(XmlNode _node, RepairSettings _settings)
@@ -150,6 +170,34 @@ namespace DroneAutomation
             ReadFloat(_node, "SkipIfPlayerWithin", ref _settings.SkipIfPlayerWithin);
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
+        }
+
+        private static void ReadPlant(XmlNode _node, PlantSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.Radius);
+            ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
+            ReadFloat(_node, "SecondsPerPlant", ref _settings.SecondsPerPlant);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
+        }
+
+        private static void ReadOverclock(XmlNode _node, OverclockSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Q1TimeMult", ref _settings.Q1TimeMult);
+            ReadFloat(_node, "Q6TimeMult", ref _settings.Q6TimeMult);
+        }
+
+        private static void ReadAntenna(XmlNode _node, AntennaSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Q1ReachMult", ref _settings.Q1ReachMult);
+            ReadFloat(_node, "Q6ReachMult", ref _settings.Q6ReachMult);
         }
 
         internal static void ReadFloat(XmlNode _node, string _attr, ref float _value)

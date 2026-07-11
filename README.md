@@ -10,8 +10,16 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 - **Auto-Salvage** (`modRoboticDroneAutoSalvageMod`) — wrenches nearby salvageable blocks (cars, sinks, machines) one downgrade step at a time into the drone bag. **Unclaimed ground only** — never inside anyone's land claim, so it can't wreck your base or a neighbour's. Reach is kept small by default because it destroys blocks.
 - **Auto-Harvest** (`modRoboticDroneAutoHarvestMod`) — reaps grown crops in **your own land claim** and replants the seed, into the drone bag. A crop is only reaped if its replant stage can be resolved, so a plot is never left empty.
 - **Auto-Repair** (`modRoboticDroneAutoRepairMod`) — repairs damaged blocks in **your own land claim**, paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
+- **Auto-Plant** (`modRoboticDroneAutoPlantMod`) — sows young crops from the drone bag onto empty farm plots in **your own land claim**. A "seed" is any bag item that resolves to a growing-plant block (e.g. `plantedCorn1`) — the same block Auto-Harvest deposits when it reaps, so the pair runs a self-sustaining farm. Only plants on the empty cell above a farm plot, never on invalid ground.
 
-Scope rules are deliberate: Auto-Salvage is destructive so it stays off claimed ground; Auto-Harvest and Auto-Repair only ever act inside your own claim.
+### Enhancement modules
+
+These have no automation of their own — they **improve the other modules**. Each uses one of the drone's limited mod slots, so slotting one trades against fitting another automation core.
+
+- **Overclock** (`modRoboticDroneOverclockMod`) — speeds up every installed automation module (cuts each core's per-action time). Boost scales with its own Quality 1-6.
+- **Wide-Band Antenna** (`modRoboticDroneAntennaMod`) — widens the working range (horizontal + vertical) of every installed automation module. Boost scales with its own Quality 1-6.
+
+Scope rules are deliberate: Auto-Salvage is destructive so it stays off claimed ground; Auto-Harvest, Auto-Repair and Auto-Plant only ever act inside your own claim.
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 

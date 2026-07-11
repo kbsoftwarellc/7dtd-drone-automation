@@ -120,7 +120,7 @@ namespace DroneAutomation
         /// Runs one pass. Returns false when nothing could be afforded yet, so callers can cheaply bail.
         /// </summary>
         public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData,
-                         PlatformUserIdentifierAbs _ownerId, IVacuumSink _sink, Vector3 _center, int _quality)
+                         PlatformUserIdentifierAbs _ownerId, IVacuumSink _sink, Vector3 _center, int _quality, DroneBoost _boost)
         {
             AccrueCredit();
 
@@ -131,6 +131,14 @@ namespace DroneAutomation
             effMinSecondsPerTarget = QualityScale.Time(settings.MinSecondsPerTarget, settings.LowQualityTimeMult, _quality);
             effItemPickupSeconds   = QualityScale.Time(settings.ItemPickupSeconds, settings.LowQualityTimeMult, _quality);
             effSpeedMultiplier     = QualityScale.Time(settings.SpeedMultiplier, settings.LowQualityTimeMult, _quality);
+
+            // Enhancement meta-modules (Overclock/Antenna) layer on top: farther reach, faster arms.
+            effEntityRadius        *= _boost.ReachMult;
+            effContainerRadius     *= _boost.ReachMult;
+            effVerticalRadius      *= _boost.ReachMult;
+            effMinSecondsPerTarget *= _boost.SpeedMult;
+            effItemPickupSeconds   *= _boost.SpeedMult;
+            effSpeedMultiplier     *= _boost.SpeedMult;
 
             // Cheapest possible target costs MinSecondsPerTarget, so this also throttles scanning.
             if (credit < effMinSecondsPerTarget) return false;
