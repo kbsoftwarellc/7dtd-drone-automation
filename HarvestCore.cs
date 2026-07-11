@@ -63,7 +63,8 @@ namespace DroneAutomation
 
             if (pacer.Credit < secondsPerTarget) return false;
 
-            DroneWorld.CollectParents(_world, _drone.position, radius, vertical, buffer);
+            // Scan around the OWNER, not the drone (the drone drifts as it hovers beside you).
+            DroneWorld.CollectParents(_world, _owner.position, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
