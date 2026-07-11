@@ -91,13 +91,13 @@ namespace DroneAutomation
             if (autoRepair != null)
             {
                 RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
-                didSomething |= core.Tick(world, ownerData, __instance, autoRepair.Quality, boost);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoRepair.Quality, boost);
             }
 
             if (autoPlant != null)
             {
                 PlantCore core = plantCores.GetValue(__instance, _ => new PlantCore(DroneAutomationMod.PlantSettings));
-                didSomething |= core.Tick(world, ownerData, __instance, autoPlant.Quality, boost);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoPlant.Quality, boost);
             }
 
             Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");

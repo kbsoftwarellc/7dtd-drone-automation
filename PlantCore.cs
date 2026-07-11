@@ -53,7 +53,7 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality, DroneBoost _boost)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality, DroneBoost _boost)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
@@ -68,7 +68,8 @@ namespace DroneAutomation
             CollectPlantables(_drone.bag);
             if (plantables.Count == 0) return false;
 
-            DroneWorld.CollectParents(_world, _drone.position, radius, vertical, buffer);
+            // Scan around the OWNER, not the drone (the drone drifts as it hovers beside you).
+            DroneWorld.CollectParents(_world, _owner.position, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)

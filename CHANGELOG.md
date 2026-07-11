@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1
+
+- **Modules now work around YOU, not the drone.** Every block module (Auto-Salvage, Auto-Harvest, Auto-Repair, Auto-Plant) centred its scan on the drone, which hovers off to your side and drifts — so a target you were standing right next to could sit outside the drone's bubble. This was most visible on Auto-Salvage: a roadside vehicle wreck is a single block cell hidden under a big model, so at Q1 reach it only salvaged once the drone happened to drift over the middle. The scan is now anchored to the player, so it reliably acts on what you're standing next to. (Auto-Loot is unchanged — its reach was already wide.)
+- **Auto-Salvage no longer destroys uncollected loot.** Some salvageable objects (e.g. tilt trucks, cabinets) are also loot containers, and many world containers generate their loot only when first opened — so an untouched one can read empty yet still pay out. Auto-Salvage now skips any container that is untouched, still holding items, or player-owned, and only wrenches it once you've emptied it.
+
 ## 0.4.0
 
 - **Auto-Plant** (`modRoboticDroneAutoPlantMod`) — a new automation module: the drone sows young crop blocks from its own bag onto empty farm plots in your land claim. A "plantable" bag item is any that resolves to a growing-plant block (e.g. `plantedCorn1`) — the same block Auto-Harvest deposits when it reaps, so the two modules form a self-running farm: harvest fills the bag with seed crops, plant spends them refilling empty plots. Only ever plants on the air cell above a farm plot inside your own claim, so it can't sow on invalid ground or a neighbour's farm.
