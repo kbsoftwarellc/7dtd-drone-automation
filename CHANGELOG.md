@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- **Fixed: traders never actually sold the drone modules.** The `traders.xml` patch pointed at `/traders/trader_item_group[...]`, but the game nests its groups one level deeper (`/traders/trader_item_groups/trader_item_group[...]`), so the patch matched nothing and was silently dropped — which is what produced the `WRN XML patch for "traders.xml" from mod "DroneAutomation" did not apply` line in the server log on every load. The warning is gone, and trader stock now works for the first time: the modules have been broken out of the trader pool ever since trader support was added in 0.3.0, so until now they were only obtainable by crafting (always Quality 1) or from loot. Traders are the intended source of the high-quality copies crafting can't make, so this is worth updating for. Thanks to the player who reported it with the exact fix.
+
 ## 0.4.1
 
 - **Modules now work around YOU, not the drone.** Every block module (Auto-Salvage, Auto-Harvest, Auto-Repair, Auto-Plant) centred its scan on the drone, which hovers off to your side and drifts — so a target you were standing right next to could sit outside the drone's bubble. This was most visible on Auto-Salvage: a roadside vehicle wreck is a single block cell hidden under a big model, so at Q1 reach it only salvaged once the drone happened to drift over the middle. The scan is now anchored to the player, so it reliably acts on what you're standing next to. (Auto-Loot is unchanged — its reach was already wide.)
