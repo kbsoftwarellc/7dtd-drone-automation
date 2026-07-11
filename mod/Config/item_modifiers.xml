@@ -50,5 +50,41 @@
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
 		</item_modifier>
+
+		<!-- Auto-Plant: the drone sows young crops from its bag onto empty farm plots in your claim. -->
+		<item_modifier name="modRoboticDroneAutoPlantMod" installable_tags="drone" modifier_tags="droneAutoPlant" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="220,200,60"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoPlantModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
+		</item_modifier>
+
+		<!-- Overclock (enhancement): no automation of its own; speeds up every other module. -->
+		<item_modifier name="modRoboticDroneOverclockMod" installable_tags="drone" modifier_tags="droneOverclock" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="200,80,220"/>
+			<property name="DescriptionKey" value="modRoboticDroneOverclockModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
+		</item_modifier>
+
+		<!-- Wide-Band Antenna (enhancement): no automation of its own; widens every module's reach. -->
+		<item_modifier name="modRoboticDroneAntennaMod" installable_tags="drone" modifier_tags="droneAntenna" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="60,200,220"/>
+			<property name="DescriptionKey" value="modRoboticDroneAntennaModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
+		</item_modifier>
 	</append>
 </config>

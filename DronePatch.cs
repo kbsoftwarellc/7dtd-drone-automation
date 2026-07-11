@@ -24,6 +24,8 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, HarvestCore>();
         private static readonly ConditionalWeakTable<EntityDrone, RepairCore> repairCores =
             new ConditionalWeakTable<EntityDrone, RepairCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, PlantCore> plantCores =
+            new ConditionalWeakTable<EntityDrone, PlantCore>();
 
         private static ulong lastDebugTick;
 
@@ -41,8 +43,14 @@ namespace DroneAutomation
             ItemValue autoSalvage = GetModule(droneItem, DroneAutomationMod.AutoSalvageModuleName);
             ItemValue autoHarvest = GetModule(droneItem, DroneAutomationMod.AutoHarvestModuleName);
             ItemValue autoRepair  = GetModule(droneItem, DroneAutomationMod.AutoRepairModuleName);
+            ItemValue autoPlant   = GetModule(droneItem, DroneAutomationMod.AutoPlantModuleName);
 
-            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null)
+            // Enhancement meta-modules have no core; they only scale the others, so they never
+            // trip the early-out below on their own.
+            ItemValue overclock = GetModule(droneItem, DroneAutomationMod.OverclockModuleName);
+            ItemValue antenna   = GetModule(droneItem, DroneAutomationMod.AntennaModuleName);
+
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
                 return;
@@ -58,33 +66,55 @@ namespace DroneAutomation
             EntityPlayer owner = VacuumCore.ResolveOwner(world, __instance.OwnerID, out PersistentPlayerData ownerData);
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
+            DroneBoost boost = BuildBoost(overclock, antenna);
+
             bool didSomething = false;
 
             if (autoLoot != null)
             {
                 VacuumCore core = autoLootCores.GetValue(__instance, _ => new VacuumCore(DroneAutomationMod.AutoLootSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, autoLoot.Quality);
+                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, autoLoot.Quality, boost);
             }
 
             if (autoSalvage != null)
             {
                 SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoSalvage.Quality);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoSalvage.Quality, boost);
             }
 
             if (autoHarvest != null)
             {
                 HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoHarvest.Quality);
+                didSomething |= core.Tick(world, owner, ownerData, __instance, autoHarvest.Quality, boost);
             }
 
             if (autoRepair != null)
             {
                 RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
-                didSomething |= core.Tick(world, ownerData, __instance, autoRepair.Quality);
+                didSomething |= core.Tick(world, ownerData, __instance, autoRepair.Quality, boost);
+            }
+
+            if (autoPlant != null)
+            {
+                PlantCore core = plantCores.GetValue(__instance, _ => new PlantCore(DroneAutomationMod.PlantSettings));
+                didSomething |= core.Tick(world, ownerData, __instance, autoPlant.Quality, boost);
             }
 
             Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");
+        }
+
+        /// <summary>
+        /// Combines the installed enhancement meta-modules into one multiplier bundle. Each is
+        /// quality-scaled (a Q6 module boosts more than a Q1), and an absent module contributes the
+        /// identity, so a drone with neither gets DroneBoost.None and behaves exactly as before.
+        /// </summary>
+        private static DroneBoost BuildBoost(ItemValue _overclock, ItemValue _antenna)
+        {
+            if (_overclock == null && _antenna == null) return DroneBoost.None;
+
+            float speed = _overclock != null ? DroneAutomationMod.OverclockSettings.SpeedMult(_overclock.Quality) : 1f;
+            float reach = _antenna != null ? DroneAutomationMod.AntennaSettings.ReachMult(_antenna.Quality) : 1f;
+            return new DroneBoost(speed, reach);
         }
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)

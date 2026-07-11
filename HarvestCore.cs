@@ -52,14 +52,14 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality, DroneBoost _boost)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
 
-            float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality);
-            float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality);
-            float secondsPerTarget = QualityScale.Time(settings.SecondsPerTarget, settings.LowQualityTimeMult, _quality);
+            float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality) * _boost.ReachMult;
+            float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality) * _boost.ReachMult;
+            float secondsPerTarget = QualityScale.Time(settings.SecondsPerTarget, settings.LowQualityTimeMult, _quality) * _boost.SpeedMult;
 
             if (pacer.Credit < secondsPerTarget) return false;
 

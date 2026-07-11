@@ -25,5 +25,23 @@
 			<ingredient name="resourceElectricParts" count="6" />
 			<ingredient name="resourceMechanicalParts" count="6" />
 		</recipe>
+		<recipe name="modRoboticDroneAutoPlantMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+			<ingredient name="resourceForgedSteel" count="5" />
+			<ingredient name="resourceScrapPolymers" count="10" />
+			<ingredient name="resourceElectricParts" count="4" />
+			<ingredient name="resourceMechanicalParts" count="4" />
+		</recipe>
+		<recipe name="modRoboticDroneOverclockMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+			<ingredient name="resourceForgedSteel" count="6" />
+			<ingredient name="resourceScrapPolymers" count="10" />
+			<ingredient name="resourceElectricParts" count="8" />
+			<ingredient name="resourceMechanicalParts" count="4" />
+		</recipe>
+		<recipe name="modRoboticDroneAntennaMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+			<ingredient name="resourceForgedSteel" count="6" />
+			<ingredient name="resourceScrapPolymers" count="10" />
+			<ingredient name="resourceElectricParts" count="6" />
+			<ingredient name="resourceMechanicalParts" count="4" />
+		</recipe>
 	</append>
 </config>

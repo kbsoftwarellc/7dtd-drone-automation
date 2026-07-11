@@ -70,4 +70,34 @@
 	            MaxCatchupSeconds="5"
 	            LowQualityReach="0.55"
 	            LowQualityTimeMult="2" />
+
+	<!--
+	  Auto-Plant: sow young crop blocks from the drone's bag onto empty farm plots in your claim.
+	  Pairs with Auto-Harvest (which deposits the young "seed" blocks) for a self-running farm.
+	    Radius / VerticalRadius   reach over your farm.
+	    SecondsPerPlant           charged per crop planted.
+	-->
+	<autoPlant Radius="6"
+	           VerticalRadius="3"
+	           SecondsPerPlant="1"
+	           MaxCatchupSeconds="5"
+	           LowQualityReach="0.55"
+	           LowQualityTimeMult="2" />
+
+	<!--
+	  Enhancement meta-modules: no automation of their own, they scale EVERY installed core.
+	  Each is itself Quality 1-6; the two knobs below are the Q1 and Q6 ends of that scaling.
+
+	  Overclock: cuts every core's per-action time (faster). Multipliers are in (0,1]; lower = faster.
+	    Q1TimeMult   action-time multiplier at Quality 1 (weakest overclock).
+	    Q6TimeMult   action-time multiplier at Quality 6 (strongest; must be <= Q1TimeMult).
+	-->
+	<overclock Q1TimeMult="0.85" Q6TimeMult="0.5" />
+
+	<!--
+	  Antenna: widens every core's reach (horizontal + vertical). Multipliers are >=1; higher = farther.
+	    Q1ReachMult  reach multiplier at Quality 1 (weakest antenna).
+	    Q6ReachMult  reach multiplier at Quality 6 (strongest; must be >= Q1ReachMult).
+	-->
+	<antenna Q1ReachMult="1.15" Q6ReachMult="1.6" />
 </droneautomation>

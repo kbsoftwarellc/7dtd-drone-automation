@@ -15,3 +15,15 @@ modRoboticDroneAutoRepairMod,item_modifiers,Item,,,Drone Auto-Repair Module
 modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoRepairModSchematic,items,Item,,,Drone Auto-Repair Module Schematic
 modRoboticDroneAutoRepairModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Repair Module at a workbench."
+modRoboticDroneAutoPlantMod,item_modifiers,Item,,,Drone Auto-Plant Module
+modRoboticDroneAutoPlantModDesc,item_modifiers,Item,,,"Your drone sows young crops from its own storage onto empty farm plots in your land claim as it follows you. Pairs with the Auto-Harvest Module, which deposits the seed crops it needs, for a self-running farm. Only plants on your own claim, never on invalid ground. Higher-quality modules reach farther and act faster."
+modRoboticDroneAutoPlantModSchematic,items,Item,,,Drone Auto-Plant Module Schematic
+modRoboticDroneAutoPlantModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Plant Module at a workbench."
+modRoboticDroneOverclockMod,item_modifiers,Item,,,Drone Overclock Module
+modRoboticDroneOverclockModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but speeds up every other automation module installed in the drone, so each chore takes less time. Higher-quality Overclock modules speed things up more. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
+modRoboticDroneOverclockModSchematic,items,Item,,,Drone Overclock Module Schematic
+modRoboticDroneOverclockModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Overclock Module at a workbench."
+modRoboticDroneAntennaMod,item_modifiers,Item,,,Drone Wide-Band Antenna Module
+modRoboticDroneAntennaModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but widens the working range of every other automation module installed in the drone. Higher-quality Antenna modules reach farther. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
+modRoboticDroneAntennaModSchematic,items,Item,,,Drone Wide-Band Antenna Module Schematic
+modRoboticDroneAntennaModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Wide-Band Antenna Module at a workbench."
