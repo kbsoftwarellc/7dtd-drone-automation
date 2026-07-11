@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<append xpath="/items">
+		<!-- Dropped schematic that unlocks the Auto-Loot module recipe, like the vanilla
+		     drone-mod schematics. The recipe is tagged "learnable" so it stays hidden until read. -->
+		<item name="modRoboticDroneAutoLootModSchematic">
+			<property name="Extends" value="schematicNoQualityMaster"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="60,220,60"/>
+			<property name="Unlocks" value="modRoboticDroneAutoLootMod"/>
+			<effect_group tiered="false">
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyCVar" cvar="modRoboticDroneAutoLootMod" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
+			</effect_group>
+		</item>
+	</append>
+</config>

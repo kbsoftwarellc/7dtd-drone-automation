@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<append xpath="/recipes">
+		<recipe name="modRoboticDroneAutoLootMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting">
+			<ingredient name="resourceForgedSteel" count="5" />
+			<ingredient name="resourceScrapPolymers" count="10" />
+			<ingredient name="resourceElectricParts" count="4" />
+			<ingredient name="resourceMechanicalParts" count="4" />
+		</recipe>
+	</append>
+</config>

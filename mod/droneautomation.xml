@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Settings for the Drone Automation modules. Debug="1" logs (throttled) why each module is or
+  isn't acting; set Debug="0" to silence once things work.
+
+  Shared knobs (per module section):
+    SpeedMultiplier     scales simulated action time. 0.5 = twice as fast.
+    MaxCatchupSeconds   ceiling on banked seconds, so reloads cannot burst.
+    VerticalRadius      vertical reach.
+-->
+<droneautomation Debug="1">
+	<!--
+	  Auto-Loot: open bags/containers, grab dropped items, into the drone's bag.
+	    Radius              horizontal metres for block containers. 0 = bags and dropped items only.
+	    EntityRadius        horizontal metres for loot bags and dropped items.
+	    MinSecondsPerTarget floor per target.
+	    ItemPickupSeconds   charged per loose ground item.
+	    SkipIfPlayerWithin  skip targets within this many metres of any online player. 0 disables.
+	-->
+	<autoLoot Radius="8"
+	          EntityRadius="15"
+	          VerticalRadius="6"
+	          SpeedMultiplier="1"
+	          MinSecondsPerTarget="0.25"
+	          ItemPickupSeconds="0.25"
+	          MaxCatchupSeconds="5"
+	          SkipIfPlayerWithin="0" />
+</droneautomation>

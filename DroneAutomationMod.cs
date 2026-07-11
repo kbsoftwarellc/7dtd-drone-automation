@@ -1,0 +1,108 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Xml;
+using HarmonyLib;
+
+namespace DroneAutomation
+{
+    /// <summary>
+    /// Drone Automation Mods — a pack of installable junk-drone modules, each opt-in and each
+    /// unlocked by a looted schematic. Everything runs server-side via a single Harmony postfix
+    /// on EntityDrone.OnUpdateEntity (see DronePatch), so clients install nothing.
+    /// </summary>
+    public class DroneAutomationMod : IModApi
+    {
+        // Must differ from every other mod's Harmony id (LootVacuum uses com.tehaon.lootvacuum).
+        public const string HarmonyId = "com.tehaon.droneautomation";
+
+        // Drone-mod item_modifier names. Matched against EntityDrone.OriginalItemValue.Modifications
+        // by ItemClass.Name, exactly as the game's own drone-mod code does.
+        public const string AutoLootModuleName    = "modRoboticDroneAutoLootMod";
+        public const string AutoSalvageModuleName = "modRoboticDroneAutoSalvageMod";
+        public const string AutoHarvestModuleName = "modRoboticDroneAutoHarvestMod";
+        public const string AutoRepairModuleName  = "modRoboticDroneAutoRepairMod";
+
+        public static string ModPath;
+
+        /// <summary>When set, every module logs (throttled) why it is or isn't acting.</summary>
+        public static bool Debug;
+
+        /// <summary>Auto-Loot tunables. Generous by default - a mobile version of the loot vacuum.</summary>
+        public static VacuumSettings AutoLootSettings = new VacuumSettings
+        {
+            ContainerRadius = 8f,
+            EntityRadius = 15f,
+            VerticalRadius = 6f,
+        };
+
+        public void InitMod(Mod _modInstance)
+        {
+            try
+            {
+                ModPath = _modInstance.Path;
+                LoadSettings();
+
+                Harmony harmony = new Harmony(HarmonyId);
+                harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+                int patched = 0;
+                foreach (var _ in harmony.GetPatchedMethods()) patched++;
+                if (patched == 0) Log.Warning("[DroneAutomation] No methods patched — every module will do nothing.");
+
+                Log.Out($"[DroneAutomation] InitMod complete — {patched} method(s) patched, server-side only. Path: {ModPath}");
+            }
+            catch (Exception e)
+            {
+                Log.Error("[DroneAutomation] InitMod failed: " + e);
+            }
+        }
+
+        private static void LoadSettings()
+        {
+            string path = Path.Combine(ModPath, "droneautomation.xml");
+            if (!File.Exists(path))
+            {
+                AutoLootSettings.Clamp();
+                return;
+            }
+
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                ReadVacuum(doc.SelectSingleNode("/droneautomation/autoLoot"), AutoLootSettings);
+
+                string dbg = doc.SelectSingleNode("/droneautomation")?.Attributes?["Debug"]?.Value;
+                Debug = dbg == "1" || dbg == "true";
+            }
+            catch (Exception e)
+            {
+                Log.Warning("[DroneAutomation] Could not read droneautomation.xml, using defaults: " + e.Message);
+            }
+
+            AutoLootSettings.Clamp();
+        }
+
+        private static void ReadVacuum(XmlNode _node, VacuumSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.ContainerRadius);
+            ReadFloat(_node, "EntityRadius", ref _settings.EntityRadius);
+            ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
+            ReadFloat(_node, "SpeedMultiplier", ref _settings.SpeedMultiplier);
+            ReadFloat(_node, "MinSecondsPerTarget", ref _settings.MinSecondsPerTarget);
+            ReadFloat(_node, "ItemPickupSeconds", ref _settings.ItemPickupSeconds);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "SkipIfPlayerWithin", ref _settings.SkipIfPlayerWithin);
+        }
+
+        internal static void ReadFloat(XmlNode _node, string _attr, ref float _value)
+        {
+            string raw = _node.Attributes[_attr]?.Value;
+            if (!string.IsNullOrEmpty(raw) && StringParsers.TryParseFloat(raw, out float parsed)) _value = parsed;
+        }
+    }
+}

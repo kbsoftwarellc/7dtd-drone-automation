@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<append xpath="/item_modifiers">
+		<!-- Auto-Loot: the drone opens bags/containers and grabs dropped items. -->
+		<item_modifier name="modRoboticDroneAutoLootMod" installable_tags="drone" modifier_tags="droneAutoLoot" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="60,220,60"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoLootModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+		</item_modifier>
+	</append>
+</config>

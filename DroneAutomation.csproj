@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build: DOTNET_ROOT=$HOME/.dotnet ~/.dotnet/dotnet build -c Release -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>DroneAutomation</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+    <GameDir>/home/tehaon/.steam/steam/steamapps/common/7 Days To Die</GameDir>
+    <GameManaged>$(GameDir)/7DaysToDie_Data/Managed</GameManaged>
+    <ModDeploy>$(GameDir)/Mods/DroneAutomation</ModDeploy>
+  </PropertyGroup>
+
+  <!-- Harmony patches EntityDrone.OnUpdateEntity to drive every module. -->
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">          <HintPath>$(GameManaged)/Assembly-CSharp.dll</HintPath>          <Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp-firstpass"><HintPath>$(GameManaged)/Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="LogLibrary">               <HintPath>$(GameManaged)/LogLibrary.dll</HintPath>               <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule">   <HintPath>$(GameManaged)/UnityEngine.CoreModule.dll</HintPath>   <Private>false</Private></Reference>
+    <Reference Include="UnityEngine">              <HintPath>$(GameManaged)/UnityEngine.dll</HintPath>              <Private>false</Private></Reference>
+  </ItemGroup>
+
+  <!-- mod/ = the deployable payload (source of truth for packaging). -->
+  <ItemGroup>
+    <ModAssets Include="mod/**/*" Exclude="mod/**/*.dll" />
+  </ItemGroup>
+
+  <Target Name="DeployMod" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)DroneAutomation.dll" DestinationFolder="mod" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)0Harmony.dll" DestinationFolder="mod" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="@(ModAssets)" DestinationFiles="@(ModAssets->'$(ModDeploy)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="mod/DroneAutomation.dll;mod/0Harmony.dll" DestinationFolder="$(ModDeploy)" SkipUnchangedFiles="false" />
+    <Message Importance="high" Text="Synced mod payload + DLL -> $(ModDeploy)" />
+  </Target>
+</Project>

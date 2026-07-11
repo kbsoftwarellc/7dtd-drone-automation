@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<Name value="DroneAutomation"/>
+	<DisplayName value="Drone Automation Mods"/>
+	<Version value="0.1.0"/>
+	<Description value="A pack of junk-drone modules that automate chores while the drone follows you. Auto-Loot opens zombie loot bags and containers and grabs dropped items; more modules (Auto-Salvage, Auto-Harvest, Auto-Repair) follow. Each module is a separate craftable drone attachment unlocked by a looted schematic, and each acts as if you did the work yourself, so your loot stage, Lucky Looter and other perks apply, and each target takes the time it would take you by hand. Server-side only: install on the dedicated server, clients install nothing and can keep EAC on. Requires launching the server with EAC off (DLL mod)."/>
+	<Author value="tehAon"/>
+</xml>

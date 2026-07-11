@@ -1,0 +1,5 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english
+modRoboticDroneAutoLootMod,item_modifiers,Item,,,Drone Auto-Loot Module
+modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through zombie loot bags and containers and picks up dropped items as it follows you, opening them with your own loot stage and Lucky Looter. Loot goes into the drone's storage."
+modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic
+modRoboticDroneAutoLootModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Loot Module at a workbench."

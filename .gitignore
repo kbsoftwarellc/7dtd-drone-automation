@@ -1,0 +1,7 @@
+bin/
+obj/
+*.zip
+.vs/
+*.user
+mod/DroneAutomation.dll
+mod/0Harmony.dll
