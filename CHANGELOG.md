@@ -6,6 +6,7 @@
 - **Overclock** (`modRoboticDroneOverclockMod`) — the first *enhancement* module: it does no work of its own, but speeds up **every** other automation module installed in the drone (cuts each core's per-action time). The boost scales with its own Quality 1-6.
 - **Wide-Band Antenna** (`modRoboticDroneAntennaMod`) — an enhancement module that widens the working range of every other automation module (horizontal and vertical reach). The boost scales with its own Quality 1-6.
 - Enhancement modules use one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design. Both are quality-scaled, craftable from a looted schematic, and sold by traders, like every other module.
+- **No longer bundles `0Harmony.dll`** — the mod now compiles against and runs on the game's own Harmony (The Fun Pimps ship it in `Mods/0_TFP_Harmony`, loaded before every other mod), so the exact runtime version is always used and the release zip is smaller. If updating from an earlier build, delete the stale `0Harmony.dll` from your `Mods/DroneAutomation` folder.
 
 ## 0.3.0
 
