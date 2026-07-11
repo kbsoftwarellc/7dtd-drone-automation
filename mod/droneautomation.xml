@@ -36,4 +36,24 @@
 	             VerticalRadius="4"
 	             SecondsPerStep="1.5"
 	             MaxCatchupSeconds="5" />
+
+	<!--
+	  Auto-Harvest: reap and replant grown crops in your own land claim, into the drone's bag.
+	    Radius / VerticalRadius   reach over your farm.
+	    SecondsPerTarget          charged per crop harvested.
+	-->
+	<autoHarvest Radius="6"
+	             VerticalRadius="4"
+	             SecondsPerTarget="1"
+	             MaxCatchupSeconds="5" />
+
+	<!--
+	  Auto-Repair: repair damaged blocks in your own land claim, paying mats from the drone's bag.
+	    Radius / VerticalRadius   reach over your base.
+	    SecondsPerBlock           charged per block fully repaired.
+	-->
+	<autoRepair Radius="6"
+	            VerticalRadius="5"
+	            SecondsPerBlock="1"
+	            MaxCatchupSeconds="5" />
 </droneautomation>

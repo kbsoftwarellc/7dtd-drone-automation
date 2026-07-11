@@ -5,9 +5,13 @@
 	<append xpath="/lootcontainers/lootgroup[@name='schematicsModsAndGeneralT2']">
 		<item name="modRoboticDroneAutoLootModSchematic" loot_prob_template="med" />
 		<item name="modRoboticDroneAutoSalvageModSchematic" loot_prob_template="med" />
+		<item name="modRoboticDroneAutoHarvestModSchematic" loot_prob_template="med" />
+		<item name="modRoboticDroneAutoRepairModSchematic" loot_prob_template="med" />
 	</append>
 	<append xpath="/lootcontainers/lootgroup[@name='groupBotSchematics']">
 		<item name="modRoboticDroneAutoLootModSchematic" loot_prob_template="low" />
 		<item name="modRoboticDroneAutoSalvageModSchematic" loot_prob_template="low" />
+		<item name="modRoboticDroneAutoHarvestModSchematic" loot_prob_template="low" />
+		<item name="modRoboticDroneAutoRepairModSchematic" loot_prob_template="low" />
 	</append>
 </config>

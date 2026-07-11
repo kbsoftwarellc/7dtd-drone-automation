@@ -20,5 +20,25 @@
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 		</item_modifier>
+
+		<!-- Auto-Harvest: the drone reaps and replants grown crops in your land claim, into its bag. -->
+		<item_modifier name="modRoboticDroneAutoHarvestMod" installable_tags="drone" modifier_tags="droneAutoHarvest" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="120,200,90"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoHarvestModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+		</item_modifier>
+
+		<!-- Auto-Repair: the drone repairs damaged blocks in your land claim, paying from its bag. -->
+		<item_modifier name="modRoboticDroneAutoRepairMod" installable_tags="drone" modifier_tags="droneAutoRepair" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="70,170,230"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoRepairModDesc"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+		</item_modifier>
 	</append>
 </config>

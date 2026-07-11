@@ -20,6 +20,10 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, VacuumCore>();
         private static readonly ConditionalWeakTable<EntityDrone, SalvageCore> salvageCores =
             new ConditionalWeakTable<EntityDrone, SalvageCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, HarvestCore> harvestCores =
+            new ConditionalWeakTable<EntityDrone, HarvestCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, RepairCore> repairCores =
+            new ConditionalWeakTable<EntityDrone, RepairCore>();
 
         private static ulong lastDebugTick;
 
@@ -35,8 +39,10 @@ namespace DroneAutomation
             ItemValue droneItem = __instance.OriginalItemValue;
             bool autoLoot    = HasModule(droneItem, DroneAutomationMod.AutoLootModuleName);
             bool autoSalvage = HasModule(droneItem, DroneAutomationMod.AutoSalvageModuleName);
+            bool autoHarvest = HasModule(droneItem, DroneAutomationMod.AutoHarvestModuleName);
+            bool autoRepair  = HasModule(droneItem, DroneAutomationMod.AutoRepairModuleName);
 
-            if (!autoLoot && !autoSalvage)
+            if (!autoLoot && !autoSalvage && !autoHarvest && !autoRepair)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
                 return;
@@ -64,6 +70,18 @@ namespace DroneAutomation
             {
                 SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
                 didSomething |= core.Tick(world, owner, ownerData, __instance);
+            }
+
+            if (autoHarvest)
+            {
+                HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
+                didSomething |= core.Tick(world, owner, ownerData, __instance);
+            }
+
+            if (autoRepair)
+            {
+                RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
+                didSomething |= core.Tick(world, ownerData, __instance);
             }
 
             Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");

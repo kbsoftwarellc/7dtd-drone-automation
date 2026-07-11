@@ -39,6 +39,12 @@ namespace DroneAutomation
         /// <summary>Auto-Salvage tunables.</summary>
         public static SalvageSettings SalvageSettings = new SalvageSettings();
 
+        /// <summary>Auto-Harvest tunables.</summary>
+        public static HarvestSettings HarvestSettings = new HarvestSettings();
+
+        /// <summary>Auto-Repair tunables.</summary>
+        public static RepairSettings RepairSettings = new RepairSettings();
+
         public void InitMod(Mod _modInstance)
         {
             try
@@ -77,6 +83,8 @@ namespace DroneAutomation
 
                 ReadVacuum(doc.SelectSingleNode("/droneautomation/autoLoot"), AutoLootSettings);
                 ReadSalvage(doc.SelectSingleNode("/droneautomation/autoSalvage"), SalvageSettings);
+                ReadHarvest(doc.SelectSingleNode("/droneautomation/autoHarvest"), HarvestSettings);
+                ReadRepair(doc.SelectSingleNode("/droneautomation/autoRepair"), RepairSettings);
 
                 string dbg = doc.SelectSingleNode("/droneautomation")?.Attributes?["Debug"]?.Value;
                 Debug = dbg == "1" || dbg == "true";
@@ -88,6 +96,18 @@ namespace DroneAutomation
 
             AutoLootSettings.Clamp();
             SalvageSettings.Clamp();
+            HarvestSettings.Clamp();
+            RepairSettings.Clamp();
+        }
+
+        private static void ReadRepair(XmlNode _node, RepairSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.Radius);
+            ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
+            ReadFloat(_node, "SecondsPerBlock", ref _settings.SecondsPerBlock);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
         }
 
         private static void ReadSalvage(XmlNode _node, SalvageSettings _settings)
@@ -97,6 +117,16 @@ namespace DroneAutomation
             ReadFloat(_node, "Radius", ref _settings.Radius);
             ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
             ReadFloat(_node, "SecondsPerStep", ref _settings.SecondsPerStep);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+        }
+
+        private static void ReadHarvest(XmlNode _node, HarvestSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.Radius);
+            ReadFloat(_node, "VerticalRadius", ref _settings.VerticalRadius);
+            ReadFloat(_node, "SecondsPerTarget", ref _settings.SecondsPerTarget);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
         }
 

@@ -7,9 +7,11 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 ## Modules
 
 - **Auto-Loot** (`modRoboticDroneAutoLootMod`) — opens zombie loot bags and containers and picks up dropped items, into the drone's storage. A mobile version of the Loot Vacuum block: bags and dropped items within 15m, block containers within 8m, 6m vertical.
-- *Auto-Salvage* — wrench nearby salvageable blocks (cars, sinks, machines) into the drone bag. *(coming)*
-- *Auto-Harvest* — harvest grown crops and replant, into the drone bag. *(coming)*
-- *Auto-Repair* — repair damaged blocks in your land claim, using mats from the drone bag. *(coming)*
+- **Auto-Salvage** (`modRoboticDroneAutoSalvageMod`) — wrenches nearby salvageable blocks (cars, sinks, machines) one downgrade step at a time into the drone bag. **Unclaimed ground only** — never inside anyone's land claim, so it can't wreck your base or a neighbour's. Reach is kept small by default because it destroys blocks.
+- **Auto-Harvest** (`modRoboticDroneAutoHarvestMod`) — reaps grown crops in **your own land claim** and replants the seed, into the drone bag. A crop is only reaped if its replant stage can be resolved, so a plot is never left empty.
+- **Auto-Repair** (`modRoboticDroneAutoRepairMod`) — repairs damaged blocks in **your own land claim**, paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
+
+Scope rules are deliberate: Auto-Salvage is destructive so it stays off claimed ground; Auto-Harvest and Auto-Repair only ever act inside your own claim.
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 

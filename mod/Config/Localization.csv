@@ -7,3 +7,11 @@ modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module
 modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base."
 modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic
 modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Salvage Module at a workbench."
+modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module
+modRoboticDroneAutoHarvestModDesc,item_modifiers,Item,,,"Your drone reaps grown crops in your land claim and replants them as it follows you, into its own storage. Only works your own claim, and leaves the seed replanted so the plot keeps producing."
+modRoboticDroneAutoHarvestModSchematic,items,Item,,,Drone Auto-Harvest Module Schematic
+modRoboticDroneAutoHarvestModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Harvest Module at a workbench."
+modRoboticDroneAutoRepairMod,item_modifiers,Item,,,Drone Auto-Repair Module
+modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full."
+modRoboticDroneAutoRepairModSchematic,items,Item,,,Drone Auto-Repair Module Schematic
+modRoboticDroneAutoRepairModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Repair Module at a workbench."
