@@ -30,8 +30,32 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, PlantCore>();
 
         private static ulong lastDebugTick;
+        private static ulong lastErrorTick;
 
+        /// <summary>
+        /// Nothing a module does is worth taking the server down for. This runs off
+        /// EntityDrone.OnUpdateEntity, so an escaping exception would throw once per drone per tick,
+        /// forever - one malformed block from any other mod would be enough. Swallow it, log it
+        /// (throttled, or the log becomes the outage), and let the drone try again next tick.
+        /// </summary>
         public static void Postfix(EntityDrone __instance)
+        {
+            try
+            {
+                Run(__instance);
+            }
+            catch (System.Exception e)
+            {
+                ulong now = GameTimer.Instance.ticks;
+                if (now < lastErrorTick || now - lastErrorTick >= 200UL)
+                {
+                    lastErrorTick = now;
+                    Log.Error($"[DroneAutomation][drone {__instance?.entityId}] module tick failed: {e}");
+                }
+            }
+        }
+
+        private static void Run(EntityDrone __instance)
         {
             // World.OnUpdateEntity runs this loop on clients too, for remote entities.
             ConnectionManager cm = SingletonMonoBehaviour<ConnectionManager>.Instance;

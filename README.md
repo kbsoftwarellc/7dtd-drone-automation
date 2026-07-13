@@ -49,7 +49,7 @@ A module's Quality (1-6) scales its reach and speed — and for the enhancement 
 
 Works in single-player, on a host, and on a dedicated server, and it is **server-side only**. The drone's bag and loot containers are client-authoritative, so every module pauses while the owner has the drone's storage open, and refuses locked or other-player targets. There is no custom network packet.
 
-If a module is not acting, set `Debug="1"` on the `<droneautomation>` line in `mod/droneautomation.xml` (on by default in current builds) and watch the log for `[DroneAutomation][drone <id>]` — it says, throttled, exactly which check is stopping it.
+If a module is not acting, set `Debug="1"` on the `<droneautomation>` line in `mod/droneautomation.xml` (off by default) and watch the log for `[DroneAutomation][drone <id>]` — it says, throttled, exactly which check is stopping it.
 
 ## Install
 
@@ -69,7 +69,17 @@ One wart, inherited from Loot Vacuum: `Localization.csv` is not synced, so on a 
 DOTNET_ROOT=$HOME/.dotnet ~/.dotnet/dotnet build -c Release
 ```
 
-Builds the DLL, refreshes `mod/`, and syncs into the game's `Mods/DroneAutomation`. Then `./package.sh` for a release zip.
+Builds the DLL, refreshes `mod/`, and syncs into the game's `Mods/DroneAutomation`. Set `GAME_DIR` (or `-p:GameDir=...`) if the game isn't in one of the usual Steam paths; the deploy step is skipped when it isn't found. Then `./package.sh` for a release zip.
+
+### XML validation
+
+```
+python3 tools/validate_xml.py
+```
+
+Resolves every xpath in `mod/Config/` against the game's shipped `Data/Config` and fails if one matches nothing. `package.sh` runs it before zipping.
+
+This exists because **the game does not fail a bad patch** — it drops it and logs one `WRN XML patch ... did not apply` line that nobody reads. That's how trader stock shipped broken for three versions. Run it before every release.
 
 ## Licence
 
