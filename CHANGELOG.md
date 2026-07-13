@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.3
+
+- **Fixed: Auto-Salvage stripped the trader's workstations.** The module's one scope rule was
+  "unclaimed ground only", on the assumption that a land claim marks everything worth protecting. It
+  doesn't: the game reports a **trader area as unclaimed** (`GetLandClaimOwner` returns `None` inside
+  one), which is the exact value Auto-Salvage reads as *safe to wrench*. So the land-claim rule wasn't
+  merely failing to cover traders — it was green-lighting them. Trader areas are now rejected
+  explicitly and cannot be re-enabled. Reported by players who watched their drone dismantle the
+  trader.
+- **Auto-Salvage no longer scraps workstations.** A forge, workbench, campfire, chemistry station or
+  cement mixer is something you *use* — and may still hold your materials — but each is salvageable,
+  unclaimed and therefore fair game to the old rules, which is how POI (and player-placed)
+  workstations were getting eaten. They're now skipped wherever they stand. Set
+  `SalvageWorkstations="1"` in `droneautomation.xml` if you really did want them scrapped. Detection
+  keys off the workstation's tile entity rather than its block class, so it covers modded stations
+  too.
+- **New Auto-Salvage config: a block deny-list and a POI switch.** Add `<exclude block="..."/>` under
+  `<autoSalvage>` to protect any block by name, and set `SalvageInPOIs="0"` to keep the drone from
+  wrenching anything inside a POI's footprint. POIs stay allowed by default — stripping cars and sinks
+  as you clear a building is the module's whole point.
+
 ## 0.4.2
 
 - **Fixed: traders never actually sold the drone modules.** The `traders.xml` patch pointed at `/traders/trader_item_group[...]`, but the game nests its groups one level deeper (`/traders/trader_item_groups/trader_item_group[...]`), so the patch matched nothing and was silently dropped — which is what produced the `WRN XML patch for "traders.xml" from mod "DroneAutomation" did not apply` line in the server log on every load. The warning is gone, and trader stock now works for the first time: the modules have been broken out of the trader pool ever since trader support was added in 0.3.0, so until now they were only obtainable by crafting (always Quality 1) or from loot. Traders are the intended source of the high-quality copies crafting can't make, so this is worth updating for. Thanks to the player who reported it with the exact fix.

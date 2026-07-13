@@ -19,6 +19,17 @@ namespace DroneAutomation
         /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
         public float LowQualityTimeMult = 2f;
 
+        /// Off by default: a forge or workbench is something the player uses, not scrap - and it may
+        /// still hold their materials. Covers every workstation, POI-placed or player-placed.
+        public bool SalvageWorkstations = false;
+
+        /// On by default: wrenching cars and sinks while you clear a building is the module's whole
+        /// point. Server ops who want POIs left intact can turn it off.
+        public bool SalvageInPOIs = true;
+
+        /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
+        public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
+
         public void Clamp()
         {
             if (Radius < 0f) Radius = 0f;
@@ -38,6 +49,13 @@ namespace DroneAutomation
     /// UNCLAIMED ground - never inside anyone's land claim, so it cannot wreck your base or a
     /// neighbour's - and never a container that still holds loot the player hasn't collected. One
     /// downgrade step per tick means a car visibly comes apart over several seconds.
+    ///
+    /// A land claim alone is NOT enough protection, which is why the guards below exist. The game's
+    /// World.GetLandClaimOwner returns EnumLandClaimOwner.None for a trader area - the very value
+    /// this module reads as "safe to wrench" - so the claim check does not merely fail to protect a
+    /// trader, it green-lights one. Trader areas are therefore rejected explicitly, and workstations
+    /// (a forge or workbench is something you use, and may still hold your materials) are skipped by
+    /// default wherever they stand.
     ///
     /// The work bubble is centred on the OWNER, not the drone: the drone hovers off to your side
     /// and drifts, so anchoring to the player makes it reliably salvage what you're standing next to.
@@ -86,6 +104,18 @@ namespace DroneAutomation
                 // Unclaimed ground only - protects your own base and everyone else's.
                 if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.None) continue;
 
+                // A trader area also reports as unclaimed, so the check above WAVES IT THROUGH. It
+                // has to be rejected on its own, or the drone strips the trader's workstations.
+                if (_world.IsWithinTraderArea(pos)) continue;
+
+                // Never scrap a workstation by default: it's a thing the player uses, and it may
+                // still hold their materials.
+                if (!settings.SalvageWorkstations && IsWorkstation(_world, pos)) continue;
+
+                if (settings.ExcludedBlocks.Count > 0 && settings.ExcludedBlocks.Contains(b.GetBlockName())) continue;
+
+                if (!settings.SalvageInPOIs && IsInsidePOI(_world, pos)) continue;
+
                 // Never wrench a container that still holds loot the player hasn't taken. Many
                 // world containers generate their loot only on first open, so an untouched one
                 // can read empty yet still pay out - leave anything untouched, non-empty, or
@@ -122,6 +152,28 @@ namespace DroneAutomation
             if (!loot.bTouched) return true;
             if (!loot.IsEmpty()) return true;
             return false;
+        }
+
+        /// <summary>
+        /// True for forge, workbench, campfire, chemistry station, cement mixer - and any modded
+        /// station. Detected off the tile entity rather than the block class on purpose: vanilla
+        /// spreads workstations across three different block classes (Workstation = workbench and
+        /// cement mixer, Forge = forge, Campfire = campfire AND chemistry station), so a class check
+        /// is brittle and blind to modded ones, while they all share this one tile entity.
+        /// </summary>
+        private static bool IsWorkstation(World _world, Vector3i _pos)
+        {
+            return _world.GetTileEntity(_pos) is TileEntityWorkstation;
+        }
+
+        /// <summary>
+        /// True when the position sits inside a POI's footprint. Only consulted when SalvageInPOIs
+        /// is off, since wrenching cars and sinks as you clear a building is the module's main use.
+        /// </summary>
+        private static bool IsInsidePOI(World _world, Vector3i _pos)
+        {
+            DynamicPrefabDecorator decorator = _world.ChunkCache?.ChunkProvider?.GetDynamicPrefabDecorator();
+            return decorator != null && decorator.GetPrefabAtPosition(_pos.ToVector3()) != null;
         }
 
         /// <summary>

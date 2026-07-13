@@ -37,15 +37,31 @@
 	<!--
 	  Auto-Salvage: wrench salvageable blocks (cars, sinks, machines) into the drone's bag.
 	  Destructive, so it only touches UNCLAIMED ground - never inside anyone's land claim.
+	  Trader areas are ALWAYS off limits and cannot be enabled (the game reports a trader area as
+	  unclaimed, so the land-claim rule alone would happily let the drone strip the trader).
 	    Radius / VerticalRadius   reach. Kept small by default because it destroys blocks.
 	    SecondsPerStep            charged per downgrade step (one wrench swing); a car takes several.
+	    SalvageWorkstations       1 = also scrap forges, workbenches, campfires, chem stations and
+	                              cement mixers. Off by default: they're things you use, and one may
+	                              still hold your materials.
+	    SalvageInPOIs             0 = never wrench anything inside a POI's footprint. On by default,
+	                              because stripping cars and sinks as you clear a building is the
+	                              whole point of the module.
+	    <exclude block="..."/>    any block the drone must never wrench. Add as many as you like.
 	-->
 	<autoSalvage Radius="4"
 	             VerticalRadius="4"
 	             SecondsPerStep="1.5"
 	             MaxCatchupSeconds="5"
 	             LowQualityReach="0.55"
-	             LowQualityTimeMult="2" />
+	             LowQualityTimeMult="2"
+	             SalvageWorkstations="0"
+	             SalvageInPOIs="1">
+		<!-- Examples. Workstations are already covered by SalvageWorkstations="0"; use these for
+		     anything else you want left standing. -->
+		<!-- <exclude block="cntVendingMachine"/> -->
+		<!-- <exclude block="cntBackpack"/> -->
+	</autoSalvage>
 
 	<!--
 	  Auto-Harvest: reap and replant grown crops in your own land claim, into the drone's bag.

@@ -142,6 +142,17 @@ namespace DroneAutomation
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
+            ReadBool(_node, "SalvageWorkstations", ref _settings.SalvageWorkstations);
+            ReadBool(_node, "SalvageInPOIs", ref _settings.SalvageInPOIs);
+
+            // <exclude block="..."/> children: blocks the drone must never wrench.
+            _settings.ExcludedBlocks.Clear();
+            foreach (XmlNode child in _node.ChildNodes)
+            {
+                if (child.Name != "exclude") continue;
+                string block = child.Attributes?["block"]?.Value;
+                if (!string.IsNullOrEmpty(block)) _settings.ExcludedBlocks.Add(block);
+            }
         }
 
         private static void ReadHarvest(XmlNode _node, HarvestSettings _settings)
@@ -204,6 +215,13 @@ namespace DroneAutomation
         {
             string raw = _node.Attributes[_attr]?.Value;
             if (!string.IsNullOrEmpty(raw) && StringParsers.TryParseFloat(raw, out float parsed)) _value = parsed;
+        }
+
+        internal static void ReadBool(XmlNode _node, string _attr, ref bool _value)
+        {
+            string raw = _node.Attributes[_attr]?.Value;
+            if (string.IsNullOrEmpty(raw)) return;
+            _value = raw == "1" || string.Equals(raw, "true", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
