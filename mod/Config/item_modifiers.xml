@@ -7,6 +7,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="60,220,60"/>
 			<property name="DescriptionKey" value="modRoboticDroneAutoLootModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoLootModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<!-- Quality 1-6 bar. Crafting always makes Q1; loot/trader roll higher. The DLL reads
@@ -21,6 +22,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="230,150,40"/>
 			<property name="DescriptionKey" value="modRoboticDroneAutoSalvageModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoSalvageModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
@@ -33,6 +35,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="120,200,90"/>
 			<property name="DescriptionKey" value="modRoboticDroneAutoHarvestModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoHarvestModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
@@ -45,6 +48,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="70,170,230"/>
 			<property name="DescriptionKey" value="modRoboticDroneAutoRepairModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoRepairModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
@@ -57,6 +61,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="220,200,60"/>
 			<property name="DescriptionKey" value="modRoboticDroneAutoPlantModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoPlantModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
@@ -69,6 +74,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="200,80,220"/>
 			<property name="DescriptionKey" value="modRoboticDroneOverclockModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneOverclockModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
@@ -81,6 +87,7 @@
 			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
 			<property name="CustomIconTint" value="60,200,220"/>
 			<property name="DescriptionKey" value="modRoboticDroneAntennaModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAntennaModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
