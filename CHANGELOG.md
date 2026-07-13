@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.0
+
+- **Park the drone and it works where you left it.** Tell the drone to hold position with the vanilla
+  "stay" command and the block modules (Auto-Salvage, Auto-Harvest, Auto-Repair, Auto-Plant) now work
+  the ground around the spot you parked it on, instead of around you. This is what the base modules
+  were always missing: Auto-Harvest, Auto-Plant and Auto-Repair tend a *base*, but they only ever
+  fired while you were standing in it — exactly when you don't need the help. Park the drone in the
+  farm and it keeps reaping and replanting while you're out looting; park it in the base and it keeps
+  repairing. Its owner still has to be online, but no longer has to be there. Set
+  `WorkWhileParked="0"` for the old behaviour. Auto-Loot is unchanged — it always works around the
+  drone itself.
+- **A drone left behind no longer works for you from across the map.** Since 0.4.1 the block modules
+  scanned around the *owner* while depositing into the *drone's* bag, and drones are exempt from the
+  chunk-loaded check — so a following drone abandoned anywhere kept harvesting and salvaging around
+  the player from any distance. A following drone must now actually be with its owner
+  (`MaxOwnerDistance`, 25m; 0 disables). Parked drones are exempt, since working away from you is the
+  entire point of parking one.
+
 ## 0.4.3
 
 - **Fixed: Auto-Salvage stripped the trader's workstations.** The module's one scope rule was

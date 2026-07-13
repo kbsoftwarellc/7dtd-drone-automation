@@ -52,7 +52,7 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality, DroneBoost _boost)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, Vector3 _scanCenter, int _quality, DroneBoost _boost)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
@@ -63,8 +63,9 @@ namespace DroneAutomation
 
             if (pacer.Credit < secondsPerTarget) return false;
 
-            // Scan around the OWNER, not the drone (the drone drifts as it hovers beside you).
-            DroneWorld.CollectParents(_world, _owner.position, radius, vertical, buffer);
+            // The caller picks the anchor: where the drone is parked when it's holding
+            // position, otherwise the owner (the drone drifts as it hovers beside you).
+            DroneWorld.CollectParents(_world, _scanCenter, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)

@@ -8,10 +8,12 @@ namespace DroneAutomation
     /// <summary>
     /// Single entry point for every drone module. Runs server-side off EntityDrone.OnUpdateEntity;
     /// the drone already carries an OwnerID, a Bag and an EntityLockContext, and World.cs exempts
-    /// drones from the chunk-loaded check, so it ticks wherever it follows you.
+    /// drones from the chunk-loaded check, so it ticks wherever it follows you - or wherever you
+    /// parked it.
     ///
     /// Each installed module gets its own paced core, held per-drone in a weak table so despawned
-    /// drones do not leak. Owner resolution and the bag lock check are shared by all modules.
+    /// drones do not leak. Owner resolution, the bag lock check and the choice of work anchor
+    /// (parked spot vs owner) are shared by all modules.
     /// </summary>
     [HarmonyPatch(typeof(EntityDrone), nameof(EntityDrone.OnUpdateEntity))]
     public static class DroneModulePatch
@@ -68,6 +70,30 @@ namespace DroneAutomation
 
             DroneBoost boost = BuildBoost(overclock, antenna);
 
+            // Where the block modules do their work. A drone told to hold position (the vanilla
+            // "stay" command) works the ground it was parked on; otherwise it works around its owner.
+            //
+            // This is what makes the base modules worth having: Auto-Harvest, Auto-Plant and
+            // Auto-Repair tend a base, but an owner-anchored bubble only fires while you're standing
+            // in it - exactly when you don't need the help. Park the drone in the farm and it keeps
+            // reaping while you're out looting.
+            bool parked = __instance.OrderState == EntityDrone.Orders.Stay;
+            if (parked && !DroneAutomationMod.WorkWhileParked)
+            {
+                Debug(__instance, "parked, and WorkWhileParked is off");
+                return;
+            }
+
+            Vector3 scanCenter = parked ? __instance.SentryPos : owner.position;
+
+            // A FOLLOWING drone must actually be with its owner before it works BLOCKS. Those modules
+            // act around the owner but deposit into the drone's bag, and drones are exempt from the
+            // chunk-loaded check, so an abandoned drone would otherwise keep harvesting and salvaging
+            // around the player from across the map. A parked drone is exempt - working away from its
+            // owner is why you parked it. Auto-Loot is exempt too: it works around itself, so it has
+            // nothing to exploit.
+            bool mayWorkBlocks = parked || IsNearOwner(__instance, owner);
+
             bool didSomething = false;
 
             if (autoLoot != null)
@@ -76,28 +102,35 @@ namespace DroneAutomation
                 didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, autoLoot.Quality, boost);
             }
 
-            if (autoSalvage != null)
+            if (!mayWorkBlocks)
             {
-                SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoSalvage.Quality, boost);
+                Debug(__instance, "following, but too far from owner to work blocks");
             }
-
-            if (autoHarvest != null)
+            else
             {
-                HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoHarvest.Quality, boost);
-            }
+                if (autoSalvage != null)
+                {
+                    SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoSalvage.Quality, boost);
+                }
 
-            if (autoRepair != null)
-            {
-                RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoRepair.Quality, boost);
-            }
+                if (autoHarvest != null)
+                {
+                    HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoHarvest.Quality, boost);
+                }
 
-            if (autoPlant != null)
-            {
-                PlantCore core = plantCores.GetValue(__instance, _ => new PlantCore(DroneAutomationMod.PlantSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance, autoPlant.Quality, boost);
+                if (autoRepair != null)
+                {
+                    RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoRepair.Quality, boost);
+                }
+
+                if (autoPlant != null)
+                {
+                    PlantCore core = plantCores.GetValue(__instance, _ => new PlantCore(DroneAutomationMod.PlantSettings));
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoPlant.Quality, boost);
+                }
             }
 
             Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");
@@ -115,6 +148,19 @@ namespace DroneAutomation
             float speed = _overclock != null ? DroneAutomationMod.OverclockSettings.SpeedMult(_overclock.Quality) : 1f;
             float reach = _antenna != null ? DroneAutomationMod.AntennaSettings.ReachMult(_antenna.Quality) : 1f;
             return new DroneBoost(speed, reach);
+        }
+
+        /// <summary>
+        /// True when the drone is close enough to its owner to work blocks around them, or when the
+        /// check is disabled (MaxOwnerDistance = 0). A following drone is normally right beside you -
+        /// vanilla teleports it back when it falls behind - so this only ever fires for a drone that
+        /// has been left somewhere.
+        /// </summary>
+        private static bool IsNearOwner(EntityDrone _drone, EntityPlayer _owner)
+        {
+            float max = DroneAutomationMod.MaxOwnerDistance;
+            if (max <= 0f) return true;
+            return (_drone.position - _owner.position).sqrMagnitude <= max * max;
         }
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)
