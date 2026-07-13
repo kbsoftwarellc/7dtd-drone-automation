@@ -57,8 +57,10 @@ namespace DroneAutomation
     /// (a forge or workbench is something you use, and may still hold your materials) are skipped by
     /// default wherever they stand.
     ///
-    /// The work bubble is centred on the OWNER, not the drone: the drone hovers off to your side
-    /// and drifts, so anchoring to the player makes it reliably salvage what you're standing next to.
+    /// The work bubble is centred on whatever the caller passes as the scan centre: the parked spot
+    /// when the drone is holding position, otherwise the OWNER rather than the drone itself (the
+    /// drone hovers off to your side and drifts, so a player-anchored bubble reliably covers what
+    /// you're standing next to).
     /// </summary>
     public sealed class SalvageCore
     {
@@ -74,7 +76,7 @@ namespace DroneAutomation
             pacer = new Pacer(_settings.MaxCatchupSeconds);
         }
 
-        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, int _quality, DroneBoost _boost)
+        public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, Vector3 _scanCenter, int _quality, DroneBoost _boost)
         {
             pacer.Accrue();
             if (settings.Radius <= 0f) return false;
@@ -85,9 +87,9 @@ namespace DroneAutomation
 
             if (pacer.Credit < secondsPerStep) return false;
 
-            // Scan around the OWNER, not the drone: the drone hovers a few metres off you and
-            // drifts, so a player-anchored bubble reliably covers what you're standing next to.
-            DroneWorld.CollectParents(_world, _owner.position, radius, vertical, buffer);
+            // The caller picks the anchor: where the drone is parked when it's holding
+            // position, otherwise the owner (the drone drifts as it hovers beside you).
+            DroneWorld.CollectParents(_world, _scanCenter, radius, vertical, buffer);
 
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)

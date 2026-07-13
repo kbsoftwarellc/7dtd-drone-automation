@@ -13,8 +13,18 @@
     LowQualityReach     Q1 reach as a fraction of the configured reach (0..1). Q6 = full.
     LowQualityTimeMult  Q1 action time as a multiple of the configured time (>=1). Q6 = full speed.
   Crafting always yields Q1; faster, longer-reach modules come from loot or the trader.
+
+  PARKING: tell the drone to hold position with the vanilla "stay" command and the block modules
+  work the ground around the spot you parked it on, instead of around you. Its owner still has to be
+  online, but no longer has to be standing there - so a drone parked in the farm keeps reaping while
+  you're out looting. Auto-Loot always works around the drone itself.
+    WorkWhileParked   0 = a parked drone idles instead (the old behaviour).
+    MaxOwnerDistance  how far a FOLLOWING drone may be from its owner and still work blocks, in
+                      metres (0 disables the check). A following drone is normally right beside you,
+                      so this only catches one that's been left behind. Parked drones are exempt -
+                      working away from you is the whole point of parking one.
 -->
-<droneautomation Debug="1">
+<droneautomation Debug="1" WorkWhileParked="1" MaxOwnerDistance="25">
 	<!--
 	  Auto-Loot: open bags/containers, grab dropped items, into the drone's bag.
 	    Radius              horizontal metres for block containers. 0 = bags and dropped items only.

@@ -33,6 +33,23 @@ namespace DroneAutomation
         /// <summary>When set, every module logs (throttled) why it is or isn't acting.</summary>
         public static bool Debug;
 
+        /// <summary>
+        /// When set, a drone told to hold position (the vanilla "stay" command) keeps working the
+        /// ground around the spot it was parked at, instead of around its owner. Its owner must still
+        /// be online, but no longer has to be standing there - so a drone parked in the farm keeps
+        /// reaping while you're out looting. Clear it to make a parked drone idle instead.
+        /// </summary>
+        public static bool WorkWhileParked = true;
+
+        /// <summary>
+        /// How far a FOLLOWING drone may be from its owner and still work (metres; 0 disables).
+        /// The block modules act around the owner but deposit into the drone's bag, and drones are
+        /// exempt from the chunk-loaded check, so without this a drone abandoned across the map keeps
+        /// harvesting and salvaging around the player. A parked drone is exempt: working away from
+        /// its owner is the entire point of parking it.
+        /// </summary>
+        public static float MaxOwnerDistance = 25f;
+
         /// <summary>Auto-Loot tunables. Generous by default - a mobile version of the loot vacuum.</summary>
         public static VacuumSettings AutoLootSettings = new VacuumSettings
         {
@@ -103,8 +120,14 @@ namespace DroneAutomation
                 ReadOverclock(doc.SelectSingleNode("/droneautomation/overclock"), OverclockSettings);
                 ReadAntenna(doc.SelectSingleNode("/droneautomation/antenna"), AntennaSettings);
 
-                string dbg = doc.SelectSingleNode("/droneautomation")?.Attributes?["Debug"]?.Value;
-                Debug = dbg == "1" || dbg == "true";
+                XmlNode root = doc.SelectSingleNode("/droneautomation");
+                if (root?.Attributes != null)
+                {
+                    ReadBool(root, "Debug", ref Debug);
+                    ReadBool(root, "WorkWhileParked", ref WorkWhileParked);
+                    ReadFloat(root, "MaxOwnerDistance", ref MaxOwnerDistance);
+                    if (MaxOwnerDistance < 0f) MaxOwnerDistance = 0f;
+                }
             }
             catch (Exception e)
             {

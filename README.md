@@ -21,6 +21,12 @@ These have no automation of their own — they **improve the other modules**. Ea
 
 Scope rules are deliberate: Auto-Salvage is destructive so it stays off claimed ground; Auto-Harvest, Auto-Repair and Auto-Plant only ever act inside your own claim.
 
+## Parking the drone
+
+Tell the drone to **hold position** with the vanilla "stay" command and the block modules work the ground around the spot you parked it on, instead of around you. Its owner still has to be online, but no longer has to be standing there — so a drone parked in the farm keeps reaping and replanting while you're out looting, and one parked in the base keeps repairing it. Send it back to following and it goes back to working around you. Auto-Loot always works around the drone itself.
+
+A drone that is **following** you only works blocks while it's actually with you (`MaxOwnerDistance`, 25m by default) — otherwise a drone left behind somewhere would keep working around you from across the map.
+
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 
 ## How it works
