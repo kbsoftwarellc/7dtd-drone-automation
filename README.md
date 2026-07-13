@@ -37,6 +37,14 @@ Everything runs server-side via one Harmony postfix on `EntityDrone.OnUpdateEnti
 
 Each module recipe is `learnable` — hidden until you find and read its schematic, which drops from the same loot as the vanilla drone-mod schematics. Then craft it at a workbench.
 
+## Levels
+
+A module's Quality (1-6) scales its reach and speed — and for the enhancement modules, how big a boost they give. Quality comes from three places:
+
+- **Crafting**, scaled by your **Robotics** crafting skill, on the same curve the junk drone itself uses: below Robotics 80 you get the Q1 baseline, from 80 it climbs, and at Robotics 100 you craft Q6. (The perk only changes the *quality* of what you craft — you still need the schematic to unlock the recipe at all.)
+- **Loot**, rolled by the container.
+- **Traders**, rolled by their `modsTier3` stage.
+
 ## Multiplayer
 
 Works in single-player, on a host, and on a dedicated server, and it is **server-side only**. The drone's bag and loot containers are client-authoritative, so every module pauses while the owner has the drone's storage open, and refuses locked or other-player targets. There is no custom network packet.

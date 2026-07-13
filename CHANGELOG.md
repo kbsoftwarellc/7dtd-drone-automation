@@ -2,6 +2,22 @@
 
 ## 0.5.0
 
+- **Crafted modules are no longer stuck at Quality 1.** Module quality scales reach and speed, so it
+  is the mod's whole progression axis — but drone mods sit outside the game's CraftingTier system, so
+  crafting one always produced the Q1 baseline and the only route to a Q6 module was a trader roll you
+  couldn't influence. Module recipes now follow a CraftingTier curve on the **Robotics** crafting
+  skill, the same one the junk drone itself uses: from Robotics 80 a crafted module comes out above
+  Q1, reaching Q6 at Robotics 100. Loot and traders still supply high-quality modules for anyone who
+  hasn't invested in the perk.
+  - The curve deliberately hangs on the mod's own tag rather than reusing the drone's
+    `gunBotT3JunkDrone` tag: that tag also carries a `RecipeTagUnlocked` effect at Robotics 76, so
+    borrowing it would have unlocked every module recipe at level 76 and quietly bypassed the looted
+    schematics that gate them. **The schematics still do the unlocking** — the perk only affects the
+    quality of what you craft.
+- **The crafting UI now tells you where a module comes from.** Every vanilla drone mod carries an
+  `UnlockedBy` property, which is what makes the UI show *"Unlocked by: …Schematic"*. These seven
+  never set it, so a player who hadn't found the schematic had no in-game pointer to where it drops.
+
 - **Park the drone and it works where you left it.** Tell the drone to hold position with the vanilla
   "stay" command and the block modules (Auto-Salvage, Auto-Harvest, Auto-Repair, Auto-Plant) now work
   the ground around the spot you parked it on, instead of around you. This is what the base modules

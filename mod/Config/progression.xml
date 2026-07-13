@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!--
+	  Crafted module quality.
+
+	  Drone mods sit outside the CraftingTier system in vanilla, which is why crafting one always
+	  yields Quality 1 and the only route to a Q6 module was a trader roll you cannot influence - a
+	  dead end for a mod whose whole progression axis is quality (it scales reach and speed).
+
+	  The junk drone itself already has a CraftingTier curve on the Robotics crafting skill, so its
+	  modules follow the same one: from Robotics 80 a crafted module comes out above Q1, reaching Q6
+	  at Robotics 100. Same levels the drone's own quality curve uses.
+
+	  This deliberately hangs the curve on OUR OWN tag rather than reusing the drone's
+	  "gunBotT3JunkDrone" tag. That tag also carries a RecipeTagUnlocked effect at Robotics 76, so
+	  borrowing it would unlock every module recipe at level 76 and quietly bypass the looted
+	  schematics that are supposed to gate them. A private tag takes the quality curve and nothing
+	  else, so the schematics still do the unlocking.
+	-->
+	<append xpath="/progression/crafting_skills/crafting_skill[@name='craftingRobotics']/effect_group">
+		<passive_effect name="CraftingTier" operation="base_add" level="80,85,90,95,100" value="1,2,3,4,5" tags="droneAutomationModule"/>
+	</append>
+</config>
