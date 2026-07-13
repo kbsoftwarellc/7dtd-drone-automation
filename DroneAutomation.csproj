@@ -12,7 +12,15 @@
     <DebugSymbols>false</DebugSymbols>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
-    <GameDir>/home/tehaon/.steam/steam/steamapps/common/7 Days To Die</GameDir>
+    <!-- Where the game is installed. Override for a different machine or install without editing
+         this file, either way round:
+             GAME_DIR="/path/to/7 Days To Die" dotnet build -c Release
+             dotnet build -c Release -p:GameDir="/path/to/7 Days To Die"
+         The two fallbacks are the usual native and Flatpak/Steam library paths. -->
+    <GameDir Condition="'$(GameDir)' == '' AND '$(GAME_DIR)' != ''">$(GAME_DIR)</GameDir>
+    <GameDir Condition="'$(GameDir)' == '' AND Exists('$(HOME)/.local/share/Steam/steamapps/common/7 Days To Die')">$(HOME)/.local/share/Steam/steamapps/common/7 Days To Die</GameDir>
+    <GameDir Condition="'$(GameDir)' == ''">$(HOME)/.steam/steam/steamapps/common/7 Days To Die</GameDir>
+
     <GameManaged>$(GameDir)/7DaysToDie_Data/Managed</GameManaged>
     <ModDeploy>$(GameDir)/Mods/DroneAutomation</ModDeploy>
   </PropertyGroup>
@@ -35,8 +43,14 @@
     <ModAssets Include="mod/**/*" Exclude="mod/**/*.dll" />
   </ItemGroup>
 
-  <Target Name="DeployMod" AfterTargets="Build">
+  <!-- Refresh mod/ with the freshly built DLL. Always safe: no game install needed. -->
+  <Target Name="RefreshModPayload" AfterTargets="Build">
     <Copy SourceFiles="$(OutputPath)DroneAutomation.dll" DestinationFolder="mod" SkipUnchangedFiles="false" />
+  </Target>
+
+  <!-- Sync into the live game folder. Skipped when the game isn't installed here, so the project
+       still builds on a machine that only wants the DLL. -->
+  <Target Name="DeployMod" AfterTargets="RefreshModPayload" Condition="Exists('$(GameDir)')">
     <Copy SourceFiles="@(ModAssets)" DestinationFiles="@(ModAssets->'$(ModDeploy)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="false" />
     <Copy SourceFiles="mod/DroneAutomation.dll" DestinationFolder="$(ModDeploy)" SkipUnchangedFiles="false" />
     <Message Importance="high" Text="Synced mod payload + DLL -> $(ModDeploy)" />

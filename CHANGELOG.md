@@ -27,6 +27,22 @@
   repairing. Its owner still has to be online, but no longer has to be there. Set
   `WorkWhileParked="0"` for the old behaviour. Auto-Loot is unchanged — it always works around the
   drone itself.
+- **Debug logging is off by default.** It shipped **on**, so every install was writing throttled
+  diagnostics to the server log out of the box. Set `Debug="1"` when you need to know why a module
+  isn't acting.
+- **A module can no longer take the server down.** The tick ran with no error handling, off
+  `EntityDrone.OnUpdateEntity` — so one malformed block, from this mod or any other, would have thrown
+  once per drone *per tick, forever*. Failures are now caught and logged (throttled), and the drone
+  tries again next tick.
+- **XML patches are validated before release** (`tools/validate_xml.py`, run by `package.sh`). Every
+  xpath is resolved against the game's shipped config, and packaging fails if one matches nothing.
+  The game doesn't fail a bad patch — it silently drops it and logs a single `WRN XML patch … did not
+  apply` line — which is exactly how trader stock shipped broken for three versions. That class of
+  bug is now impossible to ship.
+- **The project builds on someone else's machine.** `GameDir` was hard-coded to one absolute path;
+  it's now auto-detected, overridable with `GAME_DIR`, and the deploy step is skipped when the game
+  isn't there.
+
 - **A drone left behind no longer works for you from across the map.** Since 0.4.1 the block modules
   scanned around the *owner* while depositing into the *drone's* bag, and drones are exempt from the
   chunk-loaded check — so a following drone abandoned anywhere kept harvesting and salvaging around

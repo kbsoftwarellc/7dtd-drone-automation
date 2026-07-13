@@ -12,7 +12,8 @@
   Quality (1-6) scales it toward the Q1 floor via two knobs per section:
     LowQualityReach     Q1 reach as a fraction of the configured reach (0..1). Q6 = full.
     LowQualityTimeMult  Q1 action time as a multiple of the configured time (>=1). Q6 = full speed.
-  Crafting always yields Q1; faster, longer-reach modules come from loot or the trader.
+  Crafted quality follows your Robotics skill (Q1 below Robotics 80, up to Q6 at 100); loot and
+  traders roll their own.
 
   PARKING: tell the drone to hold position with the vanilla "stay" command and the block modules
   work the ground around the spot you parked it on, instead of around you. Its owner still has to be
@@ -24,7 +25,7 @@
                       so this only catches one that's been left behind. Parked drones are exempt -
                       working away from you is the whole point of parking one.
 -->
-<droneautomation Debug="1" WorkWhileParked="1" MaxOwnerDistance="25">
+<droneautomation Debug="0" WorkWhileParked="1" MaxOwnerDistance="25">
 	<!--
 	  Auto-Loot: open bags/containers, grab dropped items, into the drone's bag.
 	    Radius              horizontal metres for block containers. 0 = bags and dropped items only.
