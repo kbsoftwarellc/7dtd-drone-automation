@@ -57,6 +57,6 @@ DOTNET_ROOT=$HOME/.dotnet ~/.dotnet/dotnet build -c Release
 
 Builds the DLL, refreshes `mod/`, and syncs into the game's `Mods/DroneAutomation`. Then `./package.sh` for a release zip.
 
-## Licence
+---
 
-MIT.
+By **tehAon** — [more of my 7 Days to Die mods](https://next.nexusmods.com/profile/tehAon). MIT licensed.
