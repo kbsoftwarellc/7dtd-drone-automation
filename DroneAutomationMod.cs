@@ -23,6 +23,7 @@ namespace DroneAutomation
         public const string AutoHarvestModuleName = "modRoboticDroneAutoHarvestMod";
         public const string AutoRepairModuleName  = "modRoboticDroneAutoRepairMod";
         public const string AutoPlantModuleName   = "modRoboticDroneAutoPlantMod";
+        public const string AutoDefenseModuleName = "modRoboticDroneAutoDefenseMod";
 
         // Enhancement meta-modules: no core of their own, they scale every installed core's knobs.
         public const string OverclockModuleName   = "modRoboticDroneOverclockMod";
@@ -69,6 +70,9 @@ namespace DroneAutomation
 
         /// <summary>Auto-Plant tunables.</summary>
         public static PlantSettings PlantSettings = new PlantSettings();
+
+        /// <summary>Auto-Defense (bodyguard) tunables.</summary>
+        public static DefenseSettings DefenseSettings = new DefenseSettings();
 
         /// <summary>Overclock meta-module tunables (speed boost for every core).</summary>
         public static OverclockSettings OverclockSettings = new OverclockSettings();
@@ -117,6 +121,7 @@ namespace DroneAutomation
                 ReadHarvest(doc.SelectSingleNode("/droneautomation/autoHarvest"), HarvestSettings);
                 ReadRepair(doc.SelectSingleNode("/droneautomation/autoRepair"), RepairSettings);
                 ReadPlant(doc.SelectSingleNode("/droneautomation/autoPlant"), PlantSettings);
+                ReadDefense(doc.SelectSingleNode("/droneautomation/autoDefense"), DefenseSettings);
                 ReadOverclock(doc.SelectSingleNode("/droneautomation/overclock"), OverclockSettings);
                 ReadAntenna(doc.SelectSingleNode("/droneautomation/antenna"), AntennaSettings);
 
@@ -139,6 +144,7 @@ namespace DroneAutomation
             HarvestSettings.Clamp();
             RepairSettings.Clamp();
             PlantSettings.Clamp();
+            DefenseSettings.Clamp();
             OverclockSettings.Clamp();
             AntennaSettings.Clamp();
         }
@@ -216,6 +222,18 @@ namespace DroneAutomation
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
+        }
+
+        private static void ReadDefense(XmlNode _node, DefenseSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Range", ref _settings.Range);
+            ReadFloat(_node, "SecondsPerShot", ref _settings.SecondsPerShot);
+            ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
+            ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
+            ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
+            ReadBool(_node, "RequireLineOfSight", ref _settings.RequireLineOfSight);
         }
 
         private static void ReadOverclock(XmlNode _node, OverclockSettings _settings)

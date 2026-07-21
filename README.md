@@ -11,6 +11,7 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 - **Auto-Harvest** (`modRoboticDroneAutoHarvestMod`) — reaps grown crops in **your own land claim** and replants the seed, into the drone bag. A crop is only reaped if its replant stage can be resolved, so a plot is never left empty.
 - **Auto-Repair** (`modRoboticDroneAutoRepairMod`) — repairs damaged blocks in **your own land claim**, paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
 - **Auto-Plant** (`modRoboticDroneAutoPlantMod`) — sows young crops from the drone bag onto empty farm plots in **your own land claim**. A "seed" is any bag item that resolves to a growing-plant block (e.g. `plantedCorn1`) — the same block Auto-Harvest deposits when it reaps, so the pair runs a self-sustaining farm. Only plants on the empty cell above a farm plot, never on invalid ground.
+- **Auto-Defense** (`modRoboticDroneAutoDefenseMod`) — turns the drone into a **bodyguard**: it fires its own machine gun at the nearest hostile as it follows you, or stands **sentry** over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a `MachineGunWeapon` and an `Attack` state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply. Higher-quality modules fire faster and reach farther; per-shot damage is a flat bonus set on the module.
 
 ### Enhancement modules
 
@@ -26,6 +27,8 @@ Scope rules are deliberate: Auto-Salvage is destructive so it stays off claimed 
 Tell the drone to **hold position** with the vanilla "stay" command and the block modules work the ground around the spot you parked it on, instead of around you. Its owner still has to be online, but no longer has to be standing there — so a drone parked in the farm keeps reaping and replanting while you're out looting, and one parked in the base keeps repairing it. Send it back to following and it goes back to working around you. Auto-Loot always works around the drone itself.
 
 A drone that is **following** you only works blocks while it's actually with you (`MaxOwnerDistance`, 25m by default) — otherwise a drone left behind somewhere would keep working around you from across the map.
+
+**Auto-Defense** ignores all of this on purpose: it works around the drone itself and fights whether the drone is following or parked, and even while you have its storage open — a bodyguard that stops shooting when you step away or open a container isn't much of one. A parked drone becomes a stationary turret guarding that spot.
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 

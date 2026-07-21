@@ -68,6 +68,27 @@
 			<property name="QualityMin" value="1"/>
 		</item_modifier>
 
+		<!-- Auto-Defense: the drone fires its own (vanilla-dormant) machine gun at nearby hostiles. -->
+		<item_modifier name="modRoboticDroneAutoDefenseMod" installable_tags="drone" modifier_tags="droneAutoDefense" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modRoboticDroneCargoMod"/>
+			<property name="CustomIconTint" value="220,60,50"/>
+			<property name="DescriptionKey" value="modRoboticDroneAutoDefenseModDesc"/>
+			<property name="UnlockedBy" value="modRoboticDroneAutoDefenseModSchematic"/>
+			<property name="TraderStageTemplate" value="modsTier3"/>
+			<property name="MaxModsAllowed" value="4"/>
+			<property name="ShowQuality" value="true"/>
+			<property name="QualityMin" value="1"/>
+			<!-- Flat per-shot damage bonus. The junk drone's gun does 5 base damage (from
+			     entityJunkDrone's EntityDamage), and the drone's own firing code sums this passive off
+			     the installed mod through EffectManager, giving 15/shot. Kept flat on purpose: unlike a
+			     base weapon, a MOD's level= tiers don't reliably track the mod's own quality, so the
+			     DLL scales what it can guarantee - fire rate and reach - by the module's Quality. -->
+			<effect_group tiered="false">
+				<passive_effect name="EntityDamage" operation="base_add" value="10"/>
+			</effect_group>
+		</item_modifier>
+
 		<!-- Overclock (enhancement): no automation of its own; speeds up every other module. -->
 		<item_modifier name="modRoboticDroneOverclockMod" installable_tags="drone" modifier_tags="droneOverclock" type="attachment">
 			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>

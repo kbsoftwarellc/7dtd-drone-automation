@@ -11,6 +11,7 @@
 		<item name="modRoboticDroneAutoHarvestMod" unique_only="true"/>
 		<item name="modRoboticDroneAutoRepairMod"  unique_only="true"/>
 		<item name="modRoboticDroneAutoPlantMod"   unique_only="true"/>
+		<item name="modRoboticDroneAutoDefenseMod" unique_only="true"/>
 		<item name="modRoboticDroneOverclockMod"   unique_only="true"/>
 		<item name="modRoboticDroneAntennaMod"     unique_only="true"/>
 	</append>

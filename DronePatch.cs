@@ -28,6 +28,8 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, RepairCore>();
         private static readonly ConditionalWeakTable<EntityDrone, PlantCore> plantCores =
             new ConditionalWeakTable<EntityDrone, PlantCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, DefenseCore> defenseCores =
+            new ConditionalWeakTable<EntityDrone, DefenseCore>();
 
         private static ulong lastDebugTick;
         private static ulong lastErrorTick;
@@ -70,21 +72,18 @@ namespace DroneAutomation
             ItemValue autoHarvest = GetModule(droneItem, DroneAutomationMod.AutoHarvestModuleName);
             ItemValue autoRepair  = GetModule(droneItem, DroneAutomationMod.AutoRepairModuleName);
             ItemValue autoPlant   = GetModule(droneItem, DroneAutomationMod.AutoPlantModuleName);
+            ItemValue autoDefense = GetModule(droneItem, DroneAutomationMod.AutoDefenseModuleName);
 
             // Enhancement meta-modules have no core; they only scale the others, so they never
             // trip the early-out below on their own.
             ItemValue overclock = GetModule(droneItem, DroneAutomationMod.OverclockModuleName);
             ItemValue antenna   = GetModule(droneItem, DroneAutomationMod.AntennaModuleName);
 
-            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null)
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
                 return;
             }
-
-            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
-            // Every module reads or writes it, so pause them all while its owner has it open.
-            if (LockManager.Instance.IsLockedServer(__instance)) { Debug(__instance, "bag locked (owner has it open)"); return; }
 
             World world = GameManager.Instance?.World;
             if (world == null) return;
@@ -93,6 +92,27 @@ namespace DroneAutomation
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
             DroneBoost boost = BuildBoost(overclock, antenna);
+
+            bool didSomething = false;
+
+            // Auto-Defense fires the drone's own machine gun at nearby hostiles. It works around the
+            // drone itself and never touches the bag, so it runs BEFORE the bag-lock check below - the
+            // drone keeps laying down covering fire while you have its storage open - and independently
+            // of the parked / near-owner gates that bound the block modules: a parked drone stands
+            // sentry, a following one guards you.
+            if (autoDefense != null)
+            {
+                DefenseCore core = defenseCores.GetValue(__instance, _ => new DefenseCore(DroneAutomationMod.DefenseSettings));
+                didSomething |= core.Tick(__instance, autoDefense.Quality, boost);
+            }
+
+            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
+            // Every module below reads or writes it, so pause them all while its owner has it open.
+            if (LockManager.Instance.IsLockedServer(__instance))
+            {
+                Debug(__instance, didSomething ? "acted this pass" : "bag locked (owner has it open)");
+                return;
+            }
 
             // Where the block modules do their work. A drone told to hold position (the vanilla
             // "stay" command) works the ground it was parked on; otherwise it works around its owner.
@@ -117,8 +137,6 @@ namespace DroneAutomation
             // owner is why you parked it. Auto-Loot is exempt too: it works around itself, so it has
             // nothing to exploit.
             bool mayWorkBlocks = parked || IsNearOwner(__instance, owner);
-
-            bool didSomething = false;
 
             if (autoLoot != null)
             {

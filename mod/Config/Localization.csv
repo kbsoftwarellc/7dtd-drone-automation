@@ -19,6 +19,10 @@ modRoboticDroneAutoPlantMod,item_modifiers,Item,,,Drone Auto-Plant Module
 modRoboticDroneAutoPlantModDesc,item_modifiers,Item,,,"Your drone sows young crops from its own storage onto empty farm plots in your land claim as it follows you. Pairs with the Auto-Harvest Module, which deposits the seed crops it needs, for a self-running farm. Only plants on your own claim, never on invalid ground. Higher-quality modules reach farther and act faster."
 modRoboticDroneAutoPlantModSchematic,items,Item,,,Drone Auto-Plant Module Schematic
 modRoboticDroneAutoPlantModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Plant Module at a workbench."
+modRoboticDroneAutoDefenseMod,item_modifiers,Item,,,Drone Auto-Defense Module
+modRoboticDroneAutoDefenseModDesc,item_modifiers,Item,,,"Turns your drone into a bodyguard: it fires its built-in machine gun at nearby zombies and other hostiles as it follows you, or stands sentry over the spot where you park it. Kills are credited to you, and it never targets you, your allies, party members or traders. Higher-quality modules fire faster and reach farther."
+modRoboticDroneAutoDefenseModSchematic,items,Item,,,Drone Auto-Defense Module Schematic
+modRoboticDroneAutoDefenseModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Defense Module at a workbench."
 modRoboticDroneOverclockMod,item_modifiers,Item,,,Drone Overclock Module
 modRoboticDroneOverclockModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but speeds up every other automation module installed in the drone, so each chore takes less time. Higher-quality Overclock modules speed things up more. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
 modRoboticDroneOverclockModSchematic,items,Item,,,Drone Overclock Module Schematic

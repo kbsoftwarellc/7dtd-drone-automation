@@ -31,6 +31,12 @@
 			<ingredient name="resourceElectricParts" count="4" />
 			<ingredient name="resourceMechanicalParts" count="4" />
 		</recipe>
+		<recipe name="modRoboticDroneAutoDefenseMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting,droneAutomationModule">
+			<ingredient name="resourceForgedSteel" count="8" />
+			<ingredient name="resourceScrapPolymers" count="10" />
+			<ingredient name="resourceElectricParts" count="6" />
+			<ingredient name="resourceMechanicalParts" count="8" />
+		</recipe>
 		<recipe name="modRoboticDroneOverclockMod" count="1" craft_area="workbench" tags="learnable,workbenchCrafting,droneAutomationModule">
 			<ingredient name="resourceForgedSteel" count="6" />
 			<ingredient name="resourceScrapPolymers" count="10" />
