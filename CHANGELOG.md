@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.6.0
+
+- **New module — Auto-Defense (`modRoboticDroneAutoDefenseMod`): the drone becomes a bodyguard.** It
+  fires its own machine gun at the nearest hostile as it follows you, or stands sentry over the spot
+  where you park it (the vanilla "stay" command). Kills are credited to you (XP and quests), and it
+  never targets you, your allies, party members or traders. Server-side only, EAC-safe, and vanilla
+  clients see the muzzle flash with nothing installed.
+  - This reuses combat the junk drone has always carried but never used: `EntityDrone` ships a full
+    weapon rig (`MachineGunWeapon`, an `Attack` state, an `attackMode`) that The Fun Pimps left
+    disconnected — `attackState()` is empty and the gun is never instantiated. The module drives that
+    real gun, so the drone's own hitscan, damage and muzzle FX apply, rather than faking damage.
+  - **Quality scales fire rate and reach** (via the DLL, like every other module). Per-shot damage is
+    a flat bonus set on the module (15/shot: the drone gun's base 5 plus 10). A weapon *mod's* quality
+    tiers don't reliably drive an in-XML damage curve the way a base weapon's do, so the module scales
+    only what can be guaranteed and leaves damage flat — worth confirming at a workbench before relying
+    on the exact numbers.
+  - Config knobs under `<autoDefense>` in `droneautomation.xml`: `Range`, `SecondsPerShot`,
+    `MaxCatchupSeconds`, the two quality knobs, and `RequireLineOfSight` (on by default — the drone gun
+    does no block damage, so this only avoids wasting shots into cover). Crafted from a looted
+    schematic, sold by traders, and drops in the same pools as the other module schematics.
+  - Auto-Defense is exempt from the parked / near-owner rules that bound the block modules (a sentry is
+    meant to fight even while you're away) and keeps firing while you have the drone's storage open.
+    Note: firing wears the drone slightly, the same durability path any drone weapon uses.
+
 ## 0.5.0
 
 - **Crafted modules are no longer stuck at Quality 1.** Module quality scales reach and speed, so it

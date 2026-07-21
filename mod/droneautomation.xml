@@ -112,6 +112,27 @@
 	           LowQualityTimeMult="2" />
 
 	<!--
+	  Auto-Defense: the drone fires its own machine gun at the nearest hostile, as a bodyguard while
+	  following you or a sentry over the spot you park it on. Kills credit you; it never targets you,
+	  your allies, party members or traders. Works regardless of the parking/near-owner rules above
+	  (a sentry is meant to fight even when you're away) and keeps firing while you have its bag open.
+	  Per-shot damage is set on the module itself (item_modifiers.xml); Quality scales these:
+	    Range               engagement reach in metres. The drone gun tops out at 15m, so past that
+	                        is wasted; this is the Q6 ceiling, scaled down toward Q1 by LowQualityReach.
+	    SecondsPerShot      Q6 (fastest) time banked per shot; Q1 is LowQualityTimeMult times slower.
+	    MaxCatchupSeconds   ceiling on banked shots, so it can't unload a stored burst on the first
+	                        enemy to wander up. Kept small for that reason.
+	    RequireLineOfSight  1 = only fire on a clear shot (the drone gun does no block damage, so this
+	                        only saves wasted shots into cover; 0 fires the instant an enemy is in range).
+	-->
+	<autoDefense Range="15"
+	             SecondsPerShot="0.4"
+	             MaxCatchupSeconds="2"
+	             LowQualityReach="0.6"
+	             LowQualityTimeMult="2"
+	             RequireLineOfSight="1" />
+
+	<!--
 	  Enhancement meta-modules: no automation of their own, they scale EVERY installed core.
 	  Each is itself Quality 1-6; the two knobs below are the Q1 and Q6 ends of that scaling.
 
