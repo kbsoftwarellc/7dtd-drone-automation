@@ -13,7 +13,7 @@ namespace DroneAutomation
     /// </summary>
     public class DroneAutomationMod : IModApi
     {
-        // Must differ from every other mod's Harmony id (LootVacuum uses com.tehaon.lootvacuum).
+        // Must differ from every other mod's Harmony id (Loot Magnet uses com.tehaon.lootmagnet).
         public const string HarmonyId = "com.tehaon.droneautomation";
 
         // Drone-mod item_modifier names. Matched against EntityDrone.OriginalItemValue.Modifications

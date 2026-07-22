@@ -84,6 +84,6 @@ Resolves every xpath in `mod/Config/` against the game's shipped `Data/Config` a
 
 This exists because **the game does not fail a bad patch** — it drops it and logs one `WRN XML patch ... did not apply` line that nobody reads. That's how trader stock shipped broken for three versions. Run it before every release.
 
-## Licence
+---
 
-MIT.
+By **tehAon** — [more of my 7 Days to Die mods](https://next.nexusmods.com/profile/tehAon). MIT licensed.
