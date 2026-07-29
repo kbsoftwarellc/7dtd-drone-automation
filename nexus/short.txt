@@ -1,0 +1,1 @@
+Server-side 7 Days to Die V3.0 mod: junk-drone modules that automate chores while the drone follows you. Auto-Loot, Auto-Salvage, Auto-Harvest, Auto-Repair, and Auto-Plant work as if you did it yourself; Overclock and Wide-Band Antenna enhancement modules speed up and widen the rest. Craft-able, quality-scaled drone attachments.

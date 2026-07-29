@@ -1,0 +1,90 @@
+[size=6][b]Drone Automation Mods[/b][/size]
+[i]A pack of junk-drone modules for 7 Days to Die V3.0 that automate your chores while the drone follows you.[/i]
+
+[line]
+
+
+[size=5][b]Description[/b][/size]
+
+Your junk drone already tags along everywhere — so put it to work. This is a pack of installable drone modules that do your grunt work as you explore: looting, salvaging, farming and repairs, all handled by the drone at your side.
+
+Each module does the work [b]as if you did it yourself[/b] — your loot stage, your perks and your tool bonuses all apply, and each target takes about the time it would take you by hand. Nothing is free or instant; the drone just saves you the clicks.
+
+Every module is a separate craftable drone attachment, unlocked by a looted schematic (just like the vanilla drone mods), and carries a [b]Quality 1–6[/b] level that scales its reach and speed. Crafting always makes the Quality 1 baseline — stronger, faster, longer-reach copies come from loot or the trader.
+
+Best of all, it is [b]100% server-side[/b]. Install it on the server (or your single-player game) and every client connects with nothing to download.
+
+[line]
+
+
+[size=5][b]Main Features[/b][/size]
+
+[b]Automation modules[/b] — the drone does the chore:
+[list]
+[*][b]Auto-Loot[/b] — opens zombie loot bags and containers and picks up dropped items into the drone's storage. A mobile Loot Vacuum: bags and dropped items within 15m, block containers within 8m.
+[*][b]Auto-Salvage[/b] — wrenches nearby salvageable blocks (cars, sinks, machines) apart one step at a time into the drone's bag. [b]Unclaimed ground only[/b] — never inside any land claim, so it can't wreck your base or a neighbour's.
+[*][b]Auto-Harvest[/b] — reaps grown crops in [b]your own land claim[/b] and replants the seed. A plot is only reaped if it can be replanted, so it is never left empty.
+[*][b]Auto-Repair[/b] — repairs damaged blocks in [b]your own land claim[/b], paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
+[*][b]Auto-Plant[/b] — sows young crops from the drone's bag onto empty farm plots in [b]your own land claim[/b]. Pairs with Auto-Harvest — the crops it reaps become the seed Auto-Plant sows, for a self-running farm. Only ever plants on a real farm plot, never on bad ground.
+[/list]
+[b]Enhancement modules[/b] — no chore of their own; they [b]make the other modules better[/b] (each takes one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design):
+[list]
+[*][b]Overclock[/b] — speeds up [b]every[/b] installed automation module (cuts each action's time). Boost scales with its own Quality 1–6.
+[*][b]Wide-Band Antenna[/b] — widens the working range (horizontal + vertical) of every installed automation module. Boost scales with its own Quality 1–6.
+[/list]
+[b]Built to be fair and safe:[/b]
+[list]
+[*]Scope rules are deliberate — the destructive module (Auto-Salvage) stays off claimed ground; Auto-Harvest, Auto-Repair and Auto-Plant only ever act inside [i]your own[/i] claim.
+[*]Paced off your real action time and capped, so a reload can't burst a backlog of work.
+[*]Modules stack with each other and with the vanilla cargo mod.
+[*]Sold by traders and dropped as schematics, rolled by the same loot the vanilla drone mods use.
+[/list]
+[line]
+
+
+[size=5][b]Requirements[/b][/size]
+
+[list]
+[*][b]7 Days to Die V3.0[/b]
+[*][b]Server-side install[/b] — only the server (or single-player host) needs the mod; clients install nothing.
+[*][b]EasyAntiCheat must be OFF on the server[/b] — this is a DLL (Harmony) mod. Clients can keep EAC on.
+[*]No other mods required. Harmony ships inside the mod.
+[/list]
+[line]
+
+
+[size=5][b]Installation[/b][/size]
+
+[list=1]
+[*]Download and unzip.
+[*]Copy the [b]DroneAutomation[/b] folder into your server's [b]Mods/[/b] directory (create [b]Mods/[/b] if it doesn't exist).
+[*]Launch the server with [b]EasyAntiCheat OFF[/b] (DLL mod).
+[*]That's it. Single-player and hosted games install the exact same way — just drop it in your own [b]Mods/[/b] folder.
+[/list]
+[b]Clients:[/b] install nothing and can keep EAC on. The server ships the patched item, recipe and loot data automatically.
+
+[i]Note: on a dedicated server, localization text is not auto-synced, so clients may briefly see raw key names on the new items until a client-side text modlet is added. Functionality is unaffected.[/i]
+
+[line]
+
+
+[size=5][b]How It Works[/b][/size]
+
+Everything runs server-side through a single Harmony patch on the drone's update loop. The drone already carries its owner, a bag and a lock, so a module ticks wherever the drone follows you with nothing new synced across the network. Loot containers and the drone's bag stay client-authoritative, so every module politely pauses while you have the drone's storage open, and refuses locked or other-player targets. There is no custom network packet.
+
+[line]
+
+
+[size=5][b]Credits[/b][/size]
+
+[list]
+[*][b]Author:[/b] tehAon
+[*][b]Built with:[/b] Harmony (
+[*][b]Licence:[/b] MIT
+[/list]
+[line]
+[size=5][b]Bugs, help & updates[/b][/size]
+Hit a bug or want update news? Post it on the [b]Bugs[/b] tab here, or join the tehAon modding Discord — the hub for all my 7 Days to Die mods:
+[b][url=https://discord.gg/DYCzCPSvwa]discord.gg/DYCzCPSvwa[/url][/b]
+
+[center][size=3]By [b]tehAon[/b] — [url=https://next.nexusmods.com/profile/tehAon]more of my 7 Days to Die mods[/url] • MIT licensed[/size][/center]
