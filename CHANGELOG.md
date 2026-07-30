@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **Your settings now live in `droneautomation.local.xml`.** Drop a file of that name beside
+  `droneautomation.xml` holding only the values you want different, and the mod folds it over its own
+  config at load. Attributes are matched by element name plus `name=`, so overriding the second of
+  several same-named blocks cannot silently edit the first. Nothing is written back to the file the
+  mod ships, so a mod update or a Nexus re-extract can no longer wipe what you changed. No local file
+  is shipped in the release zip — it is yours, and it stays yours.
+
 ## 0.6.0
 
 - **New module — Auto-Defense (`modRoboticDroneAutoDefenseMod`): the drone becomes a bodyguard.** It
