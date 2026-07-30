@@ -102,6 +102,96 @@ namespace DroneAutomation
             }
         }
 
+        /// <summary>
+        /// Folds droneautomation.local.xml (if present) onto the shipped droneautomation.xml before
+        /// anything is parsed.
+        ///
+        /// droneautomation.xml is ours: an update — a build, a re-extracted zip, a Nexus download —
+        /// overwrites it, which is how new settings and their docs reach you. droneautomation.local.xml
+        /// is yours: it ships in no package, so nothing ever writes over it. Put only the handful of
+        /// values you want changed in it and they win over the shipped ones, e.g.
+        ///
+        ///     &lt;droneautomation MaxOwnerDistance="60"&gt;
+        ///       &lt;autoLoot Radius="12" /&gt;
+        ///     &lt;/droneautomation&gt;
+        ///
+        /// Attribute names and values are exactly the ones droneautomation.xml uses, so the same
+        /// clamping applies. A broken local file is logged and skipped, never fatal.
+        /// </summary>
+        private static void ApplyLocalOverrides(XmlDocument _doc)
+        {
+            string localPath = Path.Combine(ModPath, "droneautomation.local.xml");
+            if (!File.Exists(localPath)) return;
+
+            try
+            {
+                XmlDocument local = new XmlDocument();
+                local.Load(localPath);
+
+                XmlElement baseRoot = _doc.DocumentElement;
+                XmlElement localRoot = local.DocumentElement;
+                if (baseRoot == null || localRoot == null) return;
+
+                int n = MergeInto(baseRoot, localRoot);
+                Log.Out($"[DroneAutomation] droneautomation.local.xml applied ({n} override(s)).");
+            }
+            catch (Exception e)
+            {
+                Log.Warning("[DroneAutomation] Ignoring malformed droneautomation.local.xml: " + e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Copies every attribute of the local element onto the shipped one, then recurses into child
+        /// elements. This config nests one level per module, so a merge that only handled the root
+        /// would silently ignore every override that matters. Returns the attribute count applied.
+        /// </summary>
+        private static int MergeInto(XmlElement _base, XmlElement _local)
+        {
+            int n = 0;
+            foreach (XmlAttribute a in _local.Attributes)
+            {
+                _base.SetAttribute(a.Name, a.Value);
+                n++;
+            }
+
+            foreach (XmlNode child in _local.ChildNodes)
+            {
+                if (!(child is XmlElement le)) continue;
+
+                XmlElement match = FindChild(_base, le);
+                // No counterpart in the shipped file: take the local element wholesale, so a local file
+                // can add a section as well as edit one.
+                if (match == null)
+                {
+                    _base.AppendChild(_base.OwnerDocument.ImportNode(le, true));
+                    n++;
+                    continue;
+                }
+                n += MergeInto(match, le);
+            }
+            return n;
+        }
+
+        /// <summary>
+        /// The shipped child matching a local one: same element name, and — for repeated elements that
+        /// are distinguished by a name attribute — the same name. Without the name test, overriding the
+        /// second of several same-named sections would edit the first.
+        /// </summary>
+        private static XmlElement FindChild(XmlElement _parent, XmlElement _like)
+        {
+            string key = _like.GetAttribute("name");
+            if (string.IsNullOrEmpty(key)) key = null;
+
+            foreach (XmlNode c in _parent.ChildNodes)
+            {
+                if (!(c is XmlElement ce) || ce.Name != _like.Name) continue;
+                if (key == null) return ce;
+                if (ce.GetAttribute("name") == key) return ce;
+            }
+            return null;
+        }
+
         private static void LoadSettings()
         {
             string path = Path.Combine(ModPath, "droneautomation.xml");
@@ -115,6 +205,7 @@ namespace DroneAutomation
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(path);
+                ApplyLocalOverrides(doc);
 
                 ReadVacuum(doc.SelectSingleNode("/droneautomation/autoLoot"), AutoLootSettings);
                 ReadSalvage(doc.SelectSingleNode("/droneautomation/autoSalvage"), SalvageSettings);
