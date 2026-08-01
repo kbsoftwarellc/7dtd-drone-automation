@@ -10,10 +10,14 @@ byte-identical except the DLL, which differs solely by the build's embedded comm
   passed every other check: plain ZIP, no nested archives, no password, not self-extracting,
   `unzip -t` clean, and Nexus's own file-manifest generated fine. So this was a false positive, not
   a finding.
-- The one thing that made this zip unlike every other tehAon mod: it was built with `zip -qr -`
-  streamed to stdout, which leaves Unix extra fields (timestamps + uid/gid) on every entry. Every
-  mod Nexus marks "Safe to use" is built with `zip -r -X` to a real file. That was never proven to
-  be the cause, but the difference is gone now — this packager matches the others exactly.
+- **What triggered it is still unknown, and this release does not claim to fix it.** The packaging
+  was the obvious suspect — this was the only tehAon mod built with `zip -qr -` streamed to stdout,
+  which leaves Unix extra fields (timestamps + uid/gid) on every entry, where every mod Nexus marks
+  "Safe to use" is built `zip -r -X` to a real file. That suspicion is now **ruled out**: v0.4.0 and
+  v0.4.2 were built exactly the same way and Nexus accepted both. Clearing a quarantine is a
+  moderator action; a re-upload is not guaranteed to do it.
+- The packaging is aligned with the other mods anyway, because there is no reason for this one to
+  be built differently.
 - `package.sh` also strips any stray `*.local.xml` before zipping, so a personal config can never
   ship (it already could not reach the zip, but now it cannot even by accident).
 
