@@ -49,10 +49,17 @@
   </Target>
 
   <!-- Sync into the live game folder. Skipped when the game isn't installed here, so the project
-       still builds on a machine that only wants the DLL. -->
-  <Target Name="DeployMod" AfterTargets="RefreshModPayload" Condition="Exists('$(GameDir)')">
+       still builds on a machine that only wants the DLL — and skippable on demand: Mono keeps the
+       deployed assembly mapped while the game is running, so overwriting it under a live client
+       risks a SIGBUS. Build with /p:SkipDeploy=true (or SkipDeploy=true in the environment, which
+       is how release.sh can cut a zip without touching a running game) whenever the game is open. -->
+  <Target Name="DeployMod" AfterTargets="RefreshModPayload" Condition="Exists('$(GameDir)') AND '$(SkipDeploy)' != 'true'">
     <Copy SourceFiles="@(ModAssets)" DestinationFiles="@(ModAssets->'$(ModDeploy)/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="false" />
     <Copy SourceFiles="mod/DroneAutomation.dll" DestinationFolder="$(ModDeploy)" SkipUnchangedFiles="false" />
     <Message Importance="high" Text="Synced mod payload + DLL -> $(ModDeploy)" />
+  </Target>
+
+  <Target Name="ReportSkippedDeploy" AfterTargets="RefreshModPayload" Condition="'$(SkipDeploy)' == 'true'">
+    <Message Importance="high" Text="SkipDeploy=true — built to mod/ only, live Mods folder untouched" />
   </Target>
 </Project>

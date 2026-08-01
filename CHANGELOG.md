@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 — 2026-08-01
 
 - **Your settings now live in `droneautomation.local.xml`.** Drop a file of that name beside
   `droneautomation.xml` holding only the values you want different, and the mod folds it over its own
@@ -8,6 +8,11 @@
   several same-named blocks cannot silently edit the first. Nothing is written back to the file the
   mod ships, so a mod update or a Nexus re-extract can no longer wipe what you changed. No local file
   is shipped in the release zip — it is yours, and it stays yours.
+- Build-only: `SkipDeploy=true` stops the post-build copy into the live `Mods` folder, so a release
+  can be cut while the game is running. Mono keeps the deployed assembly mapped for as long as the
+  client is up, and overwriting it under a live game risks a SIGBUS.
+- The release zip now carries the verified game version in its name (`_gameV3.0.0`), matching the
+  other tehAon mods — `ModInfo.xml` has no field for it, so the file name is the only place it fits.
 
 ## 0.6.0
 
