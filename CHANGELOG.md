@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.1 — 2026-08-01
+
+Repackaging only — the mod itself is unchanged from 0.7.0. Every file inside the zip is
+byte-identical except the DLL, which differs solely by the build's embedded commit id.
+
+- Nexus put the 0.7.0 download into automatic quarantine, which removed its download button.
+  VirusTotal cleared the exact same bytes **0 / 67** — no vendor flagged anything — and the archive
+  passed every other check: plain ZIP, no nested archives, no password, not self-extracting,
+  `unzip -t` clean, and Nexus's own file-manifest generated fine. So this was a false positive, not
+  a finding.
+- The one thing that made this zip unlike every other tehAon mod: it was built with `zip -qr -`
+  streamed to stdout, which leaves Unix extra fields (timestamps + uid/gid) on every entry. Every
+  mod Nexus marks "Safe to use" is built with `zip -r -X` to a real file. That was never proven to
+  be the cause, but the difference is gone now — this packager matches the others exactly.
+- `package.sh` also strips any stray `*.local.xml` before zipping, so a personal config can never
+  ship (it already could not reach the zip, but now it cannot even by accident).
+
 ## 0.7.0 — 2026-08-01
 
 - **Your settings now live in `droneautomation.local.xml`.** Drop a file of that name beside
