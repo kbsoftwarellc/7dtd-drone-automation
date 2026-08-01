@@ -26,6 +26,7 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [*][b]Auto-Harvest[/b] — reaps grown crops in [b]your own land claim[/b] and replants the seed. A plot is only reaped if it can be replanted, so it is never left empty.
 [*][b]Auto-Repair[/b] — repairs damaged blocks in [b]your own land claim[/b], paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
 [*][b]Auto-Plant[/b] — sows young crops from the drone's bag onto empty farm plots in [b]your own land claim[/b]. Pairs with Auto-Harvest — the crops it reaps become the seed Auto-Plant sows, for a self-running farm. Only ever plants on a real farm plot, never on bad ground.
+[*][b]Auto-Defense[/b] — the drone becomes a [b]bodyguard[/b]: it fires its own machine gun at the nearest hostile as it follows you, or stands [b]sentry[/b] over the spot you park it on. Kills are credited to you (XP and quests), and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a machine gun and an attack state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply, rather than faked damage. Vanilla clients see the muzzle flash with nothing installed.
 [/list]
 [b]Enhancement modules[/b] — no chore of their own; they [b]make the other modules better[/b] (each takes one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design):
 [list]
@@ -48,7 +49,7 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [*][b]7 Days to Die V3.0[/b]
 [*][b]Server-side install[/b] — only the server (or single-player host) needs the mod; clients install nothing.
 [*][b]EasyAntiCheat must be OFF on the server[/b] — this is a DLL (Harmony) mod. Clients can keep EAC on.
-[*]No other mods required. Harmony ships inside the mod.
+[*]No other mods required. Uses the game's built-in Harmony (The Fun Pimps ship it in [i]Mods/0_TFP_Harmony[/i], loaded automatically before every other mod).
 [/list]
 [line]
 
@@ -68,6 +69,21 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [line]
 
 
+[size=5][b]Settings[/b][/size]
+
+Every knob lives in [i]droneautomation.xml[/i] — ranges, action times, the quality curves, and per-module toggles.
+
+That file is [b]ours[/b]: updating the mod overwrites it, which is how new settings and their docs reach you. So put your own tuning in [i]droneautomation.local.xml[/i] beside it instead — list only the values you want different and they win over the shipped ones:
+
+[code]<droneautomation MaxOwnerDistance="60">
+  <autoLoot Radius="12" />
+</droneautomation>[/code]
+
+No local file ships in the download, so nothing ever writes over yours. A malformed one is logged and skipped, never fatal.
+
+[line]
+
+
 [size=5][b]How It Works[/b][/size]
 
 Everything runs server-side through a single Harmony patch on the drone's update loop. The drone already carries its owner, a bag and a lock, so a module ticks wherever the drone follows you with nothing new synced across the network. Loot containers and the drone's bag stay client-authoritative, so every module politely pauses while you have the drone's storage open, and refuses locked or other-player targets. There is no custom network packet.
@@ -79,7 +95,8 @@ Everything runs server-side through a single Harmony patch on the drone's update
 
 [list]
 [*][b]Author:[/b] tehAon
-[*][b]Built with:[/b] Harmony (
+[*][b]Built with:[/b] Harmony — uses the game's own copy (The Fun Pimps' 0_TFP_Harmony); nothing extra bundled
+[*]Split out of the Loot Vacuum mod, whose placeable storage-vacuum block stays there.
 [*][b]Licence:[/b] MIT
 [/list]
 [line]
