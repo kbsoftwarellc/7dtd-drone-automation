@@ -72,7 +72,9 @@ One wart, inherited from Loot Vacuum: `Localization.csv` is not synced, so on a 
 DOTNET_ROOT=$HOME/.dotnet ~/.dotnet/dotnet build -c Release
 ```
 
-Builds the DLL, refreshes `mod/`, and syncs into the game's `Mods/DroneAutomation`. Set `GAME_DIR` (or `-p:GameDir=...`) if the game isn't in one of the usual Steam paths; the deploy step is skipped when it isn't found. Then `./package.sh` for a release zip.
+Builds the DLL, refreshes `mod/`, and syncs into the game's `Mods/DroneAutomation`. Set `GAME_DIR` (or `-p:GameDir=...`) if the game isn't in one of the usual Steam paths; the deploy step is skipped when it isn't found. Then `./package.sh` for a release zip. Pass `-p:SkipDeploy=true` to build without touching a live `Mods/` folder.
+
+**[BUILD.md](BUILD.md)** has the full build-from-scratch instructions, the prerequisites (SDK version, game version, referenced game assemblies with their hashes), and the per-release SHA-256 table. Every released DLL is byte-for-byte reproducible from its commit, so anyone can confirm the binary published on Nexus Mods was built from this source.
 
 ### XML validation
 

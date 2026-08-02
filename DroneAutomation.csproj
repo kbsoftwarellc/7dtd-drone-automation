@@ -11,6 +11,14 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!-- Reproducible builds: every released DLL rebuilds byte-for-byte from its commit, so anyone
+         can confirm the binary on Nexus came from this source. Deterministic is the SDK default —
+         set explicitly because the guarantee is documented and depended on. No PDB is emitted
+         (DebugType none above), so no build path leaks into the output either. The SDK stamps the
+         git commit id into AssemblyInformationalVersion, which is how a shipped DLL says which
+         commit built it. global.json pins the SDK, since Roslyn output varies by compiler version.
+         See BUILD.md for the verification steps and the per-release hash table. -->
+    <Deterministic>true</Deterministic>
 
     <!-- Where the game is installed. Override for a different machine or install without editing
          this file, either way round:
