@@ -33,6 +33,11 @@
 	    MinSecondsPerTarget floor per target.
 	    ItemPickupSeconds   charged per loose ground item.
 	    SkipIfPlayerWithin  skip targets within this many metres of any online player. 0 disables.
+	    ThrownGraceSeconds  how long anything you THREW is left alone. A thrown rock, molotov or
+	                        grenade is a normal dropped item as far as the game is concerned, so
+	                        without this the drone can pick one up in mid-air. Live explosives and
+	                        items still in flight are always skipped, whatever this is set to; the
+	                        grace period is what leaves a thrown rock long enough to pull a zombie.
 	-->
 	<autoLoot Radius="8"
 	          EntityRadius="15"
@@ -42,6 +47,7 @@
 	          ItemPickupSeconds="0.25"
 	          MaxCatchupSeconds="5"
 	          SkipIfPlayerWithin="0"
+	          ThrownGraceSeconds="5"
 	          LowQualityReach="0.55"
 	          LowQualityTimeMult="2" />
 

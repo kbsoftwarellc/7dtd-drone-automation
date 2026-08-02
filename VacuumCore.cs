@@ -19,6 +19,11 @@ namespace DroneAutomation
         public float MaxCatchupSeconds = 5f;
         public float SkipIfPlayerWithin;
 
+        /// How long a thrown item is left alone after it is thrown. Everything a player throws -
+        /// a rock, a molotov, a grenade - is a live EntityItem, so without this the drone catches
+        /// it. Zero disables the grace period, but never the in-flight and armed checks.
+        public float ThrownGraceSeconds = 5f;
+
         /// Q1 reach as a fraction of the configured (Q6) reach; Q6 = full.
         public float LowQualityReach = 0.55f;
         /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
@@ -33,6 +38,7 @@ namespace DroneAutomation
             if (MinSecondsPerTarget < VacuumCore.MinOpenSeconds) MinSecondsPerTarget = VacuumCore.MinOpenSeconds;
             if (ItemPickupSeconds < 0f) ItemPickupSeconds = 0f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            if (ThrownGraceSeconds < 0f) ThrownGraceSeconds = 0f;
             QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
@@ -320,6 +326,7 @@ namespace DroneAutomation
                 if (entity is EntityBackpack || entity is EntityLootContainer) continue;
                 if (!(entity is EntityItem item)) continue;
                 if (item.itemStack == null || item.itemStack.IsEmpty()) continue;
+                if (!IsSettledLoot(item)) continue;
                 if (!InRange(_center, item.position, effEntityRadius)) continue;
                 if (IsBlockedPosition(_world, _ownerData, World.worldToBlockPos(item.position))) continue;
 
@@ -335,6 +342,42 @@ namespace DroneAutomation
             }
 
             entityBuffer.Clear();
+        }
+
+        /// <summary>
+        /// Vanilla's own pickup rule, plus a grace period for anything a player threw.
+        ///
+        /// A thrown rock, molotov, grenade or pipe bomb is not a special projectile: ItemActionThrowAway
+        /// spawns a plain EntityItem and hands it the throw as its initial motion, so an unfiltered
+        /// EntityItem scan catches live ones out of the air. EntityItem.AllowActivationCommand gates a
+        /// player's own "take" on CanCollect() and onGround, which covers both the in-flight case and an
+        /// armed explosive - ItemClassTimeBomb.CanCollect turns false as soon as its fuse is running.
+        ///
+        /// onGround alone is not enough. It is a vertical-motion heuristic that banks a tick every time
+        /// the item barely moves up or down and never gives those ticks back, so a lobbed item collects
+        /// enough of them near the top of its arc to flip itself mid-flight. The grace period covers that,
+        /// and it also leaves a thrown decoy on the ground long enough to actually pull anything.
+        ///
+        /// Ordinary loot is unaffected: bags, harvest yields and dropped stacks are spawned with no
+        /// motion, so AddVelocity never runs for them and bWasThrown stays false.
+        /// </summary>
+        private bool IsSettledLoot(EntityItem _item)
+        {
+            if (!_item.onGround) return false;
+            if (!_item.CanCollect()) return false;
+            if (!_item.bWasThrown) return true;
+
+            return _item.ticksExisted >= ThrownGraceTicks();
+        }
+
+        private int ThrownGraceTicks()
+        {
+            if (settings.ThrownGraceSeconds <= 0f) return 0;
+
+            float perSecond = GameTimer.Instance.ticksPerSecond;
+            if (perSecond <= 0f) perSecond = 20f;
+
+            return Mathf.CeilToInt(settings.ThrownGraceSeconds * perSecond);
         }
 
         private void CollectTileEntitiesInRange(World _world, Vector3 _center)

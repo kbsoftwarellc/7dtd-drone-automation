@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.7.2 — 2026-08-02
+
+- **Auto-Loot no longer catches things you throw.** A thrown rock, molotov, grenade, pipe bomb or
+  stick of dynamite is not a special projectile — the game spawns each one as an ordinary dropped
+  item that happens to be moving — so the drone was picking them out of the air, and could pocket a
+  molotov that was already burning. Auto-Loot now applies the same rule the game applies to you: it
+  only takes an item that has come to rest and that you would be allowed to pick up by hand, which
+  leaves live explosives alone.
+- Anything you threw is also left where it lands for a few seconds, so a rock still works as a decoy
+  instead of going straight into the drone. Tune with `ThrownGraceSeconds` in the `autoLoot` section
+  (default 5, 0 disables the wait). Items still in flight and armed explosives are skipped whatever
+  it is set to.
+- Loot you did not throw is untouched by any of this: bags, harvest yields, backpacks and dropped
+  stacks are spawned without motion, so the drone treats them exactly as it did before.
+
 ## 0.7.1 — 2026-08-01
 
 Repackaging only — the mod itself is unchanged from 0.7.0. Every file inside the zip is

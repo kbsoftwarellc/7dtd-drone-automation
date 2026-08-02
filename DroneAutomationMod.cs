@@ -299,6 +299,7 @@ namespace DroneAutomation
             ReadFloat(_node, "ItemPickupSeconds", ref _settings.ItemPickupSeconds);
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
             ReadFloat(_node, "SkipIfPlayerWithin", ref _settings.SkipIfPlayerWithin);
+            ReadFloat(_node, "ThrownGraceSeconds", ref _settings.ThrownGraceSeconds);
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
