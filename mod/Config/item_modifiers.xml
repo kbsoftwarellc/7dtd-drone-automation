@@ -10,8 +10,10 @@
 			<property name="UnlockedBy" value="modRoboticDroneAutoLootModSchematic"/>
 			<property name="TraderStageTemplate" value="modsTier3"/>
 			<property name="MaxModsAllowed" value="4"/>
-			<!-- Quality 1-6 bar. Crafting always makes Q1; loot/trader roll higher. The DLL reads
-			     this quality and scales the module's reach + speed (see QualityScale). -->
+			<!-- Quality 1-6 bar. Crafted quality follows the Robotics crafting skill (progression.xml);
+			     traders roll their own off TraderStageTemplate. Loot is NOT a source - vanilla V3 has
+			     every modRoboticDrone*Mod commented out of loot.xml, so only schematics drop. The DLL
+			     reads this quality and scales the module's reach + speed (see QualityScale). -->
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
 		</item_modifier>

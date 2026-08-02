@@ -12,8 +12,8 @@
   Quality (1-6) scales it toward the Q1 floor via two knobs per section:
     LowQualityReach     Q1 reach as a fraction of the configured reach (0..1). Q6 = full.
     LowQualityTimeMult  Q1 action time as a multiple of the configured time (>=1). Q6 = full speed.
-  Crafted quality follows your Robotics skill (Q1 below Robotics 80, up to Q6 at 100); loot and
-  traders roll their own.
+  Crafted quality follows your Robotics crafting skill (Q1 below Robotics 80, up to Q6 at 100);
+  traders roll their own. Loot never drops a module, only its schematic.
 
   PARKING: tell the drone to hold position with the vanilla "stay" command and the block modules
   work the ground around the spot you parked it on, instead of around you. Its owner still has to be

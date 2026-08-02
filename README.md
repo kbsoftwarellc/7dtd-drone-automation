@@ -42,11 +42,12 @@ Each module recipe is `learnable` — hidden until you find and read its schemat
 
 ## Levels
 
-A module's Quality (1-6) scales its reach and speed — and for the enhancement modules, how big a boost they give. Quality comes from three places:
+A module's Quality (1-6) scales its reach and speed — and for the enhancement modules, how big a boost they give. Quality comes from two places:
 
-- **Crafting**, scaled by your **Robotics** crafting skill, on the same curve the junk drone itself uses: below Robotics 80 you get the Q1 baseline, from 80 it climbs, and at Robotics 100 you craft Q6. (The perk only changes the *quality* of what you craft — you still need the schematic to unlock the recipe at all.)
-- **Loot**, rolled by the container.
-- **Traders**, rolled by their `modsTier3` stage.
+- **Crafting**, scaled by your **Robotics** crafting skill, on the same curve the junk drone itself uses: below Robotics 80 you get the Q1 baseline, then Q2 at 80, Q3 at 85, Q4 at 90, Q5 at 95 and Q6 at 100. Robotics is a crafting skill, so it goes up by reading **Tech Planet** magazines, not by spending perk points — though `perkElectrocutioner` and `perkTurrets` both raise how often those magazines drop. (The skill only changes the *quality* of what you craft — you still need the schematic to unlock the recipe at all.)
+- **Traders**, rolled by their `modsTier3` stage: Q2 from stage 45, Q3 from 50, Q4 from 55, Q5 from 60, Q6 from 65. Early game a trader only ever offers Q1.
+
+**Not from loot.** Drone mods cannot drop as loot in V3 — The Fun Pimps commented every `modRoboticDrone*Mod` out of the vanilla loot tables, and these modules follow the same rule. Only the *schematics* drop.
 
 ## Multiplayer
 
