@@ -17,6 +17,16 @@ if [ "${SKIP_XML_CHECK:-0}" != "1" ]; then
 	python3 tools/validate_xml.py
 fi
 
+# The DLL half of exactly the same problem. v0.7.3 shipped labelled V3.0.0-V3.1 and could not run on
+# 3.0.0 at all: it was compiled against a newer game, which moved AddItem and TryStackItem onto a
+# base class that does not exist in 3.0.0. Nothing said so - the build succeeded, and the mod booted
+# fine on the machine it was tested on. This resolves the built DLL against every version
+# GAME_VERSIONS claims and refuses to zip unless all of them are verified.
+# Set SKIP_REF_CHECK=1 to package without the game builds available.
+if [ "${SKIP_REF_CHECK:-0}" != "1" ]; then
+	python3 tools/check_game_versions.py "mod/$MOD.dll"
+fi
+
 STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 
