@@ -1,5 +1,5 @@
 **Drone Automation Mods**\
-*A pack of junk-drone modules for 7 Days to Die V3.0 that automate your chores while the drone follows you.*
+*A pack of junk-drone modules for 7 Days to Die V3.0.0 through V3.1 that automate your chores while the drone follows you.*
 
 **Description**
 
