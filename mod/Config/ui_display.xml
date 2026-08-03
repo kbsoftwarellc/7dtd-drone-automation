@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!--
+	  The item info window's second tab (the stat rows next to "Description"). An item only gets one
+	  if its DisplayType names an <item_display_info> block here - that is the half vanilla splits
+	  across two files: the numbers live on the item as <display_value>, the LABELS live here, and a
+	  display_value that nothing here references is silently never drawn.
+
+	  Every value shown is a fraction of that module's own configured maximum, so these rows stay
+	  true whatever reach and timing you set in droneautomation.xml. They are derived from
+	  QualityScale (T = (quality-1)/5, linear): reach runs LowQualityReach -> 1, and action time runs
+	  LowQualityTimeMult -> 1, shown here as its reciprocal so higher is better on every row. Change
+	  LowQualityReach or LowQualityTimeMult and the tiers still behave correctly - only these
+	  displayed percentages would need re-deriving.
+	-->
+	<append xpath="/ui_display_info/item_display">
+		<!-- The five block/loot automation cores: reach and action speed both scale with quality. -->
+		<item_display_info display_type="droneAutomationModule" display_group="droneAutomation">
+			<display_entry name="dDroneModuleRange" title_key="statDroneModuleRange" display_type="Percent"/>
+			<display_entry name="dDroneModuleSpeed" title_key="statDroneModuleSpeed" display_type="Percent"/>
+		</item_display_info>
+
+		<!-- Auto-Defense: same shape, but its own reach floor (LowQualityReach 0.6, not 0.55). Its
+		     per-shot damage is deliberately flat and quality-independent, so there is no row for it. -->
+		<item_display_info display_type="droneAutomationDefense" display_group="droneAutomation">
+			<display_entry name="dDroneModuleRange" title_key="statDroneModuleRange" display_type="Percent"/>
+			<display_entry name="dDroneModuleSpeed" title_key="statDroneModuleSpeed" display_type="Percent"/>
+		</item_display_info>
+
+		<!-- Overclock: multiplies every other installed module's action time. Lower is faster, so this
+		     row is the multiplier itself rather than a reciprocal - 50% means half the time. -->
+		<item_display_info display_type="droneAutomationOverclock" display_group="droneAutomation">
+			<display_entry name="dDroneBoostTime" title_key="statDroneBoostTime" display_type="Percent"/>
+		</item_display_info>
+
+		<!-- Wide-Band Antenna: multiplies every other installed module's reach. -->
+		<item_display_info display_type="droneAutomationAntenna" display_group="droneAutomation">
+			<display_entry name="dDroneBoostRange" title_key="statDroneBoostRange" display_type="Percent"/>
+		</item_display_info>
+	</append>
+</config>
