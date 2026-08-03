@@ -2,12 +2,12 @@
 """
 Prove the built DLL resolves against EVERY game build GAME_VERSIONS claims - especially the oldest.
 
-This exists because v0.7.3 shipped labelled `V3.0.0-V3.1` and could not run on 3.0.0 at all.
-Nothing in the source changed; the DLL was simply compiled against a newer game. 3.0.1 introduced
-`InventoryBase` as a base class of the inventory types and moved `AddItem` and `TryStackItem` up
-onto it, so a build made against 3.0.1+ emits its member references on `InventoryBase` - a type
-that does not exist in 3.0.0. The mod loads, then throws the first time Mono JITs the auto-loot
-path, which is the mod's main feature.
+This exists because DroneAutomation v0.7.3 shipped labelled `V3.0.0-V3.1` and could not run on 3.0.0
+at all. Nothing in its source changed; the DLL was simply compiled against a newer game. 3.0.1
+introduced `InventoryBase` as a base class of the inventory types and moved `AddItem` and
+`TryStackItem` up onto it, so a build made against 3.0.1+ emits those member references on
+`InventoryBase` - a type that does not exist in 3.0.0. The mod loads, then throws the first time
+Mono JITs the affected path.
 
 The asymmetry is the whole point, and it decides which build you must compile against:
 
@@ -15,14 +15,14 @@ The asymmetry is the whole point, and it decides which build you must compile ag
     reference on a BASE type     -> resolves on NOTHING older than the build that introduced it
 
 So compile against the OLDEST version you claim to support. Building against the newest silently
-drops the oldest, and nothing in the build output says so - `dotnet build` succeeds, refcheck
-against the newest build passes, the mod boots fine on the machine you tested. It is only broken
-for the players you never hear from.
+drops the oldest, and nothing in the build output says so - `dotnet build` succeeds, a refcheck
+against the newest build passes, the mod boots fine on the machine you tested. It is only broken for
+the players you never hear from.
 
 Checking the newest build is not optional either - that is what catches a member the game removed.
 Both ends matter; only the oldest end is easy to get wrong without noticing.
 
-Usage:  python3 tools/check_game_versions.py [mod/DroneAutomation.dll]
+Usage:  python3 tools/check_game_versions.py [path/to/Mod.dll]
 
 Where the builds live:  $GAME_BUILDS (default ~/7dtd-servers), one directory per version, named
 exactly as it appears in GAME_VERSIONS without the leading V:
@@ -30,8 +30,8 @@ exactly as it appears in GAME_VERSIONS without the leading V:
     ~/7dtd-servers/3.0.0/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll
     ~/7dtd-servers/3.1/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll
 
-A client install (7DaysToDie_Data) is accepted in the same place. Point $GAME_BUILDS somewhere else
-if you keep them elsewhere.
+A client install (7DaysToDie_Data) is accepted in the same place. Point $GAME_BUILDS elsewhere if
+you keep them somewhere else.
 
 Exit 0 = every claimed version was located AND every reference resolved in it.
 Exit 1 = a reference does not resolve somewhere, or a claimed version could not be checked at all.
@@ -43,6 +43,7 @@ import os
 import re
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -75,6 +76,25 @@ def parse_versions(text):
     return sorted(set(found), key=KNOWN.index)
 
 
+def find_dll():
+    """The mod's own DLL. Named from ModInfo.xml, because in a git worktree the directory is not."""
+    mod_dir = REPO / "mod"
+    try:
+        name = ET.parse(mod_dir / "ModInfo.xml").getroot().find("Name").get("value")
+        candidate = mod_dir / f"{name}.dll"
+        if candidate.is_file():
+            return candidate
+    except Exception:
+        pass
+    ours = [p for p in sorted(mod_dir.glob("*.dll")) if p.name != "0Harmony.dll"]
+    if len(ours) == 1:
+        return ours[0]
+    raise SystemExit(
+        f"cannot tell which DLL is ours in {mod_dir} ({len(ours)} candidates) - pass it as an "
+        f"argument, or build first"
+    )
+
+
 def assembly_for(version):
     """Locate Assembly-CSharp.dll for one version, server layout or client layout."""
     root = Path(os.environ.get("GAME_BUILDS", Path.home() / "7dtd-servers")) / version
@@ -86,15 +106,9 @@ def assembly_for(version):
 
 
 def main():
-    dll = Path(sys.argv[1]) if len(sys.argv) > 1 else REPO / "mod" / f"{REPO.name}.dll"
+    dll = Path(sys.argv[1]) if len(sys.argv) > 1 else find_dll()
     if not dll.is_file():
-        # In a git worktree the repo directory is not the mod name, so fall back to the only DLL.
-        candidates = sorted((REPO / "mod").glob("*.dll"))
-        candidates = [c for c in candidates if c.name != "0Harmony.dll"]
-        if len(candidates) == 1:
-            dll = candidates[0]
-        else:
-            raise SystemExit(f"no DLL to check at {dll} - build first")
+        raise SystemExit(f"no DLL to check at {dll} - build first")
 
     claimed = parse_versions((REPO / "GAME_VERSIONS").read_text().strip())
     print(f"{dll.name}: GAME_VERSIONS claims {', '.join('V' + v for v in claimed)}")
