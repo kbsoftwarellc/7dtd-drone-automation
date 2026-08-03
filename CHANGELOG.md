@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.7.4 — 2026-08-03
+
+- **Fixed: v0.7.3 could not run on game 3.0.0, which it claimed to support.** If you are on 3.0.0,
+  Auto-Loot — the module most people install this for — threw the first time the drone tried to put
+  something in a bag, and kept throwing. Every other module that stores an item was in the same
+  boat. 3.0.1 and 3.1 were unaffected.
+
+  Nothing in the source was wrong. The released DLL was compiled against a newer game than the
+  oldest one on its label, and that is enough on its own. 3.0.1 introduced `InventoryBase` as a base
+  class above the inventory types and moved `AddItem` and `TryStackItem` up onto it, so a build made
+  against 3.0.1 or later points those calls at `InventoryBase` — a type 3.0.0 has never heard of.
+
+  The direction matters and it is worth stating plainly, because it is the part that is easy to get
+  backwards. A reference made against a *derived* type still resolves on newer builds, because the
+  runtime walks up the hierarchy to find the member. A reference made against a *base* type that was
+  introduced later resolves on nothing older, because the type itself is missing. So the build has
+  to be made against the **oldest** version claimed, not the newest.
+
+  What makes this worth a release note rather than a one-line fix is that every check passed. The
+  build succeeded. `refcheck.py` against 3.1 passed — it was only ever run against the newest build.
+  A live 3.1 dedicated server booted the mod cleanly. None of it could see the version that broke.
+
+- **`package.sh` now refuses to build a zip whose label it cannot back up.** New
+  `tools/check_game_versions.py` reads `GAME_VERSIONS`, locates a game build for each version named,
+  and resolves every external reference in the DLL against all of them. A claimed version with no
+  build available fails too, rather than quietly passing — an unverified claim is the whole bug.
+  `GAME_BUILDS` says where the builds live (default `~/7dtd-servers`); `SKIP_REF_CHECK=1` skips it
+  for anyone packaging without them.
+
+- **`BUILD.md` now records which game build each release was compiled against.** Without it the
+  hash table could not be reproduced even from the right commit, which made the reproducibility
+  claim thinner than it looked.
+
 ## 0.7.3 — 2026-08-02
 
 - **Fixed: every module you bought or spawned was secretly Quality 1.** Only *crafted* modules ever

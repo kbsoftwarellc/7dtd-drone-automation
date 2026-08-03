@@ -47,6 +47,13 @@ The complete set of `using` directives across all source files is: `HarmonyLib`,
    Pimps' property and cannot be redistributed in this repository**, so the build needs a real
    install to reference. Their SHA-256 hashes are listed in section 5 so you can confirm your copy
    matches the one used to produce the releases.
+
+   **It has to be that version, and not merely "a supported one."** 3.0.0 is the oldest build in
+   `GAME_VERSIONS`, and the build has to be made against the oldest version claimed — a reference
+   emitted against a derived type still resolves on newer builds, but one emitted against a base
+   type that a later build introduced resolves on nothing older. v0.7.3 was built against a newer
+   game and could not run on 3.0.0 at all; see the 0.7.4 changelog entry. `package.sh` now checks
+   this before it will produce a zip.
 3. **git.** The build embeds the commit id in the assembly (see section 4) — build from a clone, not
    from a source tarball, or the hash will not match.
 
@@ -95,12 +102,25 @@ This is also why two builds of identical source produce different bytes at diffe
 docs-only commit changes the embedded id and therefore the hash. It is the only thing that varies;
 the compiled code is unchanged.
 
-| Release | Commit | `DroneAutomation.dll` SHA-256 | Release zip SHA-256 |
-|---|---|---|---|
-| **v0.7.0** (the file under review) | `ccf67bc199d9365d5d64267f5bf801508963066b` | `10d754bbb6e2c7e6b6832618062c366e5c01659720675b422ab3feed56bc36c2` | `7bd4075704a0477288852848b16b81bd7a2c883c7518ed58abe8326b937ced5f` |
-| **v0.7.1** (repackage) | `b30f84485c04e385aeb98ccefa8326cf0a96174c` | `4520775eb39fc43ef4e122da36f6fdd4b4fb38d93a3cfe72850e38bd91e9fd05` | `fe105f3c7b8a288390bdb305cc9d4d5faf2a652624eac69c7d041159abeb4047` |
-| **v0.7.2** | `f0499f273b2e8273e86bb4277f384c2246f33641` | `cb02049596c6e7a0256aef5b150bb9384005302f31fd92d390aec58e0759127d` | `4b2bf33efb376aa0b94e9b404bd0aa5bb88f2f99a4cb0b8a56329e37c33c4f11` |
-| **v0.7.3** | `960d4d444b73f5299ac11dbd7908ae4766193492` | `941f0fbc91f100c8fd73481a33bf792c532a203e4490c84d2bcfac9764942d8c` | `682bc107ffc8695f776f261143cfab76193197501405c4d5f09067e02043679e` |
+**The game build is part of the recipe.** The same commit compiled against a different game version
+produces a different DLL, so a row is only reproducible together with the build it was made against.
+That column was missing until 0.7.4, and it is how v0.7.3 came to ship against an undocumented game
+version without anyone noticing.
+
+| Release | Commit | Game build | `DroneAutomation.dll` SHA-256 | Release zip SHA-256 |
+|---|---|---|---|---|
+| **v0.7.0** (the file under review) | `ccf67bc199d9365d5d64267f5bf801508963066b` | V 3.0.0 (b259) | `10d754bbb6e2c7e6b6832618062c366e5c01659720675b422ab3feed56bc36c2` | `7bd4075704a0477288852848b16b81bd7a2c883c7518ed58abe8326b937ced5f` |
+| **v0.7.1** (repackage) | `b30f84485c04e385aeb98ccefa8326cf0a96174c` | V 3.0.0 (b259) | `4520775eb39fc43ef4e122da36f6fdd4b4fb38d93a3cfe72850e38bd91e9fd05` | `fe105f3c7b8a288390bdb305cc9d4d5faf2a652624eac69c7d041159abeb4047` |
+| **v0.7.2** | `f0499f273b2e8273e86bb4277f384c2246f33641` | V 3.0.0 (b259) | `cb02049596c6e7a0256aef5b150bb9384005302f31fd92d390aec58e0759127d` | `4b2bf33efb376aa0b94e9b404bd0aa5bb88f2f99a4cb0b8a56329e37c33c4f11` |
+| **v0.7.3** ⚠ withdrawn | `960d4d444b73f5299ac11dbd7908ae4766193492` | **3.0.1 or newer — not the documented 3.0.0** | `941f0fbc91f100c8fd73481a33bf792c532a203e4490c84d2bcfac9764942d8c` | `682bc107ffc8695f776f261143cfab76193197501405c4d5f09067e02043679e` |
+| **v0.7.4** | _(this release)_ | V 3.0.0 (b259) | _filled in at release_ | _filled in at release_ |
+
+⚠ **v0.7.3 does not rebuild from its own instructions.** Section 2 names V 3.0.0 (b259), but that
+DLL binds `AddItem` and `TryStackItem` on `InventoryBase`, a type 3.0.1 introduced — so it was built
+against a later game than this document specifies, and it cannot run on 3.0.0. Building that commit
+per section 2 yields a *different, working* DLL rather than the published hash. The row is kept for
+the record; use v0.7.4. Which exact build produced it is not recoverable from the binary, only that
+it was 3.0.1 or newer.
 
 To verify end to end:
 

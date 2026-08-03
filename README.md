@@ -92,14 +92,30 @@ This exists because **the game does not fail a bad patch** — it drops it and l
 ### Game-version compatibility
 
 ```
-python3 tools/refcheck.py mod/DroneAutomation.dll \
-    "<game 3.0>/7DaysToDie_Data/Managed/Assembly-CSharp.dll" \
-    "<server 3.1>/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll"
+GAME_BUILDS=~/7dtd-servers python3 tools/check_game_versions.py
 ```
 
-Walks every external member the DLL binds to and checks it resolves against each target build, so a
-renamed method or a field that became a property is caught here rather than as a per-tick
-`MissingMethodException` on someone's server. Run it against every build listed in `GAME_VERSIONS`.
+Reads `GAME_VERSIONS`, finds a game build for each version it claims, and resolves every external
+member the DLL binds to against all of them — so a renamed method, or a field that became a
+property, is caught here instead of as a per-tick `MissingMethodException` on someone's server. A
+claimed version with no build available is a failure, not a pass: an unchecked claim is the bug this
+exists for. `package.sh` runs it before zipping.
+
+**Compile against the oldest version you claim to support.** Not a style preference — it is the
+direction the runtime resolves in:
+
+| a reference on… | resolves on newer builds? | resolves on older builds? |
+|---|---|---|
+| a **derived** type | yes, the runtime walks up to the base | yes |
+| a **base** type introduced later | yes | **no — the type isn't there** |
+
+v0.7.3 is what that costs. Built against a newer game, its calls to `AddItem` and `TryStackItem`
+were emitted against `InventoryBase` — a class 3.0.1 introduced above the inventory types. On 3.0.0
+that type does not exist, so auto-loot threw the first time it ran, while the build, `refcheck`
+against 3.1 and a 3.1 boot test all passed. The same source built against 3.0.0 resolves on all
+three.
+
+`tools/refcheck.py` is still there for checking a single build by hand.
 
 ---
 
