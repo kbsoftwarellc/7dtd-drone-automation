@@ -47,6 +47,8 @@ A module's Quality (1-6) scales its reach and speed — and for the enhancement 
 - **Crafting**, scaled by your **Robotics** crafting skill, on the same curve the junk drone itself uses: below Robotics 80 you get the Q1 baseline, then Q2 at 80, Q3 at 85, Q4 at 90, Q5 at 95 and Q6 at 100. Robotics is a crafting skill, so it goes up by reading **Tech Planet** magazines, not by spending perk points — though `perkElectrocutioner` and `perkTurrets` both raise how often those magazines drop. (The skill only changes the *quality* of what you craft — you still need the schematic to unlock the recipe at all.)
 - **Traders**, rolled by their `modsTier3` stage: Q2 from stage 45, Q3 from 50, Q4 from 55, Q5 from 60, Q6 from 65. Early game a trader only ever offers Q1.
 
+Both of those need the module's effects to be *tiered*, or the game never rolls a quality at all and every generated copy is Quality 0 — see `mod/Config/item_modifiers.xml`. That was a real bug up to 0.7.2, which is why trader-bought modules were always the weakest tier.
+
 **Not from loot.** Drone mods cannot drop as loot in V3 — The Fun Pimps commented every `modRoboticDrone*Mod` out of the vanilla loot tables, and these modules follow the same rule. Only the *schematics* drop.
 
 ## Multiplayer

@@ -16,6 +16,24 @@
 			     reads this quality and scales the module's reach + speed (see QualityScale). -->
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- Listed in the creative menu. modGeneralMaster sets CreativeMode="None", so without
+			     this an item modifier is filtered out of it entirely (ItemClass.GetItemsAndBlocks
+			     skips None unconditionally - the show-hidden toggle does NOT override it). -->
+			<property name="CreativeMode" value="Player"/>
+
+			<!-- REQUIRED for quality to be ROLLED, not merely displayed. ItemClass.HasQuality is
+			     `Effects.IsOwnerTiered()`, and every generation path - the creative menu
+			     (ItemClass.CreateItemStacks) and trader stock alike - goes through
+			     ItemValue(type, minQ, maxQ), which assigns Quality ONLY when that is true. With no
+			     effect_group at all these modules came out Quality 0, which the creative menu renders
+			     as "*" (XUiC_ItemStack falls back to "*" for a mod at quality 0) and which the DLL
+			     then clamps back up to Quality 1 - so every generated module was silently the weakest
+			     tier. An effect_group is tiered unless it says tiered="false", so this one group is
+			     enough. It carries a display_value and NO passive_effect on purpose: the reach and
+			     speed scaling lives in the DLL (QualityScale), not in the item's own effects. -->
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Auto-Salvage: the drone wrenches nearby unclaimed salvageable blocks into its bag. -->
@@ -29,6 +47,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Auto-Harvest: the drone reaps and replants grown crops in your land claim, into its bag. -->
@@ -42,6 +68,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Auto-Repair: the drone repairs damaged blocks in your land claim, paying from its bag. -->
@@ -55,6 +89,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Auto-Plant: the drone sows young crops from its bag onto empty farm plots in your claim. -->
@@ -68,6 +110,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Auto-Defense: the drone fires its own (vanilla-dormant) machine gun at nearby hostiles. -->
@@ -81,6 +131,7 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<property name="CreativeMode" value="Player"/>
 			<!-- Flat per-shot damage bonus. The junk drone's gun does 5 base damage (from
 			     entityJunkDrone's EntityDamage), and the drone's own firing code sums this passive off
 			     the installed mod through EffectManager, giving 15/shot. Kept flat on purpose: unlike a
@@ -88,6 +139,12 @@
 			     DLL scales what it can guarantee - fire rate and reach - by the module's Quality. -->
 			<effect_group tiered="false">
 				<passive_effect name="EntityDamage" operation="base_add" value="10"/>
+			</effect_group>
+			<!-- The damage group above is deliberately tiered="false", which also meant this module
+			     had NO tiered group and so no rollable quality. A second, tiered group fixes that
+			     without touching the flat damage: IsOwnerTiered() is true if ANY group is tiered. -->
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
 			</effect_group>
 		</item_modifier>
 
@@ -102,6 +159,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 
 		<!-- Wide-Band Antenna (enhancement): no automation of its own; widens every module's reach. -->
@@ -115,6 +180,14 @@
 			<property name="MaxModsAllowed" value="4"/>
 			<property name="ShowQuality" value="true"/>
 			<property name="QualityMin" value="1"/>
+			<!-- See the Auto-Loot block above for why both of these are needed: CreativeMode because
+			     modGeneralMaster hides modifiers from the creative menu, and a TIERED effect_group
+			     because ItemClass.HasQuality is Effects.IsOwnerTiered() and nothing rolls a quality
+			     without it. display_value only - the scaling itself lives in the DLL. -->
+			<property name="CreativeMode" value="Player"/>
+			<effect_group>
+				<display_value name="dDroneModuleLevel" value="1,2,3,4,5,6" tier="1,2,3,4,5,6"/>
+			</effect_group>
 		</item_modifier>
 	</append>
 </config>
