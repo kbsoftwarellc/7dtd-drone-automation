@@ -48,7 +48,7 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [list]
 [*][b]7 Days to Die V3.0 or V3.1[/b]
 [*][b]Server-side install[/b] — only the server (or single-player host) needs the mod; clients install nothing.
-[*][b]EasyAntiCheat must be OFF on the server[/b] — this is a DLL (Harmony) mod. Clients can keep EAC on.
+[*][b]A dedicated server keeps EasyAntiCheat ON[/b] — a dedicated server does not gate mod DLLs on anti-cheat. Clients keep EAC on too. [b]Single-player and hosted games need EAC off[/b], because there the server runs inside your own EAC-protected game process.
 [*]No other mods required. Uses the game's built-in Harmony (The Fun Pimps ship it in [i]Mods/0_TFP_Harmony[/i], loaded automatically before every other mod).
 [/list]
 [line]
@@ -59,8 +59,8 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [list=1]
 [*]Download and unzip.
 [*]Copy the [b]DroneAutomation[/b] folder into your server's [b]Mods/[/b] directory (create [b]Mods/[/b] if it doesn't exist).
-[*]Launch the server with [b]EasyAntiCheat OFF[/b] (DLL mod).
-[*]That's it. Single-player and hosted games install the exact same way — just drop it in your own [b]Mods/[/b] folder.
+[*]Leave [b]EasyAntiCheat[/b] as it is — a dedicated server loads this with EACEnabled="true".
+[*]That's it. Single-player and hosted games install the exact same way — just drop it in your own [b]Mods/[/b] folder — but launch those with [b]EAC off[/b], because there the server runs inside your own game process.
 [/list]
 [b]Clients:[/b] install nothing and can keep EAC on. The server ships the patched item, recipe and loot data automatically.
 

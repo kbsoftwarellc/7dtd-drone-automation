@@ -59,9 +59,9 @@ If a module is not acting, set `Debug="1"` on the `<droneautomation>` line in `m
 
 ## Install
 
-**Server-side only.** Copy the `DroneAutomation` folder into the server's `Mods/` and launch with **EasyAntiCheat off** (DLL mod). Clients install nothing and can keep EAC on — `item_modifiers`, `items`, `recipes` and `loot` are all `_sendToClients: true`, so the server ships the patched copies.
+**Server-side only.** Copy the `DroneAutomation` folder into the server's `Mods/`. A **dedicated server keeps EasyAntiCheat on** — it does not gate mod DLLs on anti-cheat (`Mod.LoadAssemblies` only runs that check when `GameManager.IsDedicatedServer` is false). Clients install nothing and keep EAC on too — `item_modifiers`, `items`, `recipes` and `loot` are all `_sendToClients: true`, so the server ships the patched copies.
 
-Single-player and hosted games install it the same way.
+Single-player and hosted games install it the same way, but must launch with **EAC off**: there the server runs inside your own EAC-protected game process.
 
 One wart, inherited from Loot Vacuum: `Localization.csv` is not synced, so on a dedicated server clients see raw key names until a client-side, XML-only CSV modlet is added.
 
