@@ -100,6 +100,7 @@ the compiled code is unchanged.
 | **v0.7.0** (the file under review) | `ccf67bc199d9365d5d64267f5bf801508963066b` | `10d754bbb6e2c7e6b6832618062c366e5c01659720675b422ab3feed56bc36c2` | `7bd4075704a0477288852848b16b81bd7a2c883c7518ed58abe8326b937ced5f` |
 | **v0.7.1** (repackage) | `b30f84485c04e385aeb98ccefa8326cf0a96174c` | `4520775eb39fc43ef4e122da36f6fdd4b4fb38d93a3cfe72850e38bd91e9fd05` | `fe105f3c7b8a288390bdb305cc9d4d5faf2a652624eac69c7d041159abeb4047` |
 | **v0.7.2** | `f0499f273b2e8273e86bb4277f384c2246f33641` | `cb02049596c6e7a0256aef5b150bb9384005302f31fd92d390aec58e0759127d` | `4b2bf33efb376aa0b94e9b404bd0aa5bb88f2f99a4cb0b8a56329e37c33c4f11` |
+| **v0.7.3** | `960d4d444b73f5299ac11dbd7908ae4766193492` | `941f0fbc91f100c8fd73481a33bf792c532a203e4490c84d2bcfac9764942d8c` | `682bc107ffc8695f776f261143cfab76193197501405c4d5f09067e02043679e` |
 
 To verify end to end:
 
@@ -115,10 +116,11 @@ each member's modification timestamp, so repacking the same files at a later dat
 archive hash. Verify the DLL by hash, and the config files by content — they are plain text and
 identical to the ones in this repository under `mod/`.
 
-The release zip contains 15 entries (13 files plus 2 directory entries): the DLL, `ModInfo.xml`,
-`droneautomation.xml`, `README.md`, `CHANGELOG.md`, `LICENSE`, and seven files under `Config/`
+The release zip contains 16 entries (14 files plus 2 directory entries): the DLL, `ModInfo.xml`,
+`droneautomation.xml`, `README.md`, `CHANGELOG.md`, `LICENSE`, and eight files under `Config/`
 (`item_modifiers.xml`, `items.xml`, `loot.xml`, `progression.xml`, `recipes.xml`, `traders.xml`,
-`Localization.csv`).
+`ui_display.xml`, `Localization.csv`). Releases before v0.7.3 have 15 entries — `ui_display.xml` is
+new in v0.7.3.
 
 ---
 
