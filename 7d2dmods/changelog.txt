@@ -1,0 +1,20 @@
+0.7.3
+
+## 0.7.3
+
+- **Fixed: modules you bought or spawned were secretly stuck at Level 1.** Only *crafted* modules\
+  ever had a real level. A module bought from a trader — or taken from the creative menu, where it\
+  showed a `*` instead of a number — came out with no level at all and behaved as Level 1: the\
+  shortest reach and the slowest actions, no matter what you paid or which trader you bought from.\
+  Buying a module is worth it again.
+
+- **Modules now show up in the creative menu**, at a real Level 1–6. They were missing from it\
+  entirely before. Tip: type `#6` in the creative search box to force everything it shows to Level 6.
+
+- **Modules now have an effects tab.** The item window gains a second tab next to the description\
+  showing what the level actually buys you — working range and action speed as a percentage of that\
+  module's maximum. Overclock and the Wide-Band Antenna show the boost they apply to every other\
+  module instead. The numbers come from the real scaling curve, so they stay accurate even if you\
+  retune `droneautomation.xml`.
+
+- **Verified on 7 Days to Die 3.1**, as well as 3.0.
