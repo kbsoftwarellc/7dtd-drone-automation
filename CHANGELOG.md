@@ -22,6 +22,14 @@
   bring them back. All eight are now listed, at a real Quality 1-6. Tip: typing `#6` in the creative
   search box forces everything it shows to Quality 6.
 
+- **Modules now have an effects tab.** Like a vanilla mod, the item info window gains a second tab
+  next to the description showing what the level actually buys you: working range and action speed
+  as a percentage of that module's maximum (Overclock and the Antenna show the multiplier they apply
+  to every other module). Both halves were missing — the numbers have to live on the item as
+  `display_value` *and* the labels in `ui_display.xml`, and a value nothing references is silently
+  never drawn. The percentages are derived from the real scaling curve, so they stay true whatever
+  reach and timing you set in `droneautomation.xml`.
+
 - **Verified on game 3.1.** `GAME_VERSIONS` is now `V3.0.0-V3.1`; the previous `V3.0.0` only meant
   "last version anyone checked", not that 3.1 was unsupported.
 

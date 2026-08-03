@@ -31,3 +31,7 @@ modRoboticDroneAntennaMod,item_modifiers,Item,,,Drone Wide-Band Antenna Module
 modRoboticDroneAntennaModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but widens the working range of every other automation module installed in the drone. Higher-quality Antenna modules reach farther. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
 modRoboticDroneAntennaModSchematic,items,Item,,,Drone Wide-Band Antenna Module Schematic
 modRoboticDroneAntennaModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Wide-Band Antenna Module at a workbench."
+statDroneModuleRange,ui_display,Item,,,Working Range
+statDroneModuleSpeed,ui_display,Item,,,Action Speed
+statDroneBoostTime,ui_display,Item,,,Module Action Time
+statDroneBoostRange,ui_display,Item,,,Module Reach
