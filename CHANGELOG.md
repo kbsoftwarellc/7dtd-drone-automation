@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.7.3 — 2026-08-02
+
+- **Fixed: every module you bought or spawned was secretly Quality 1.** Only *crafted* modules ever
+  had a real level. A module bought from a trader, or taken from the creative menu, came out at
+  Quality 0 — which the creative menu shows as `*` instead of a number, and which the mod then
+  treated as Quality 1. So the shortest reach and slowest actions, no matter what you paid or which
+  trader you bought from. This is the answer to "I can buy them from traders but never get anything
+  above level 1".
+
+  The cause is a piece of vanilla plumbing that is easy to miss: the game only ever *rolls* a quality
+  for an item whose effects are tiered (`ItemClass.HasQuality` is `Effects.IsOwnerTiered()`), and
+  these modules deliberately had no effect groups at all, because their reach and speed scaling lives
+  in the mod's own code rather than in item effects. Each module now carries one tiered `effect_group`
+  holding a display value and no passive effects, which switches quality rolling on without changing
+  any behaviour. Auto-Defense keeps its flat `tiered="false"` damage group and gained a second, tiered
+  one alongside it.
+
+- **Modules now appear in the creative menu.** They inherited `CreativeMode="None"` from vanilla's
+  `modGeneralMaster`, and the game filters those out unconditionally — the show-hidden toggle does not
+  bring them back. All eight are now listed, at a real Quality 1-6. Tip: typing `#6` in the creative
+  search box forces everything it shows to Quality 6.
+
+- **Verified on game 3.1.** `GAME_VERSIONS` is now `V3.0.0-V3.1`; the previous `V3.0.0` only meant
+  "last version anyone checked", not that 3.1 was unsupported.
+
 ## 0.7.2 — 2026-08-02
 
 - **Auto-Loot no longer catches things you throw.** A thrown rock, molotov, grenade, pipe bomb or
