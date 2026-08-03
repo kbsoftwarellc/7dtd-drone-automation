@@ -1,6 +1,6 @@
 # Drone Automation Mods
 
-A pack of installable junk-drone modules for 7 Days to Die **V 3.0** that automate chores while the drone follows you. Each module is a separate craftable drone attachment, unlocked by a looted schematic (like the vanilla drone mods), and each does the work **as if you did it yourself** — your loot stage, perks and tool bonuses apply, and each target takes about the time it would take you by hand.
+A pack of installable junk-drone modules for 7 Days to Die **V3.0 and V3.1** that automate chores while the drone follows you. Each module is a separate craftable drone attachment, unlocked by a looted schematic (like the vanilla drone mods), and each does the work **as if you did it yourself** — your loot stage, perks and tool bonuses apply, and each target takes about the time it would take you by hand.
 
 Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuum block stays there.
 
@@ -86,6 +86,18 @@ python3 tools/validate_xml.py
 Resolves every xpath in `mod/Config/` against the game's shipped `Data/Config` and fails if one matches nothing. `package.sh` runs it before zipping.
 
 This exists because **the game does not fail a bad patch** — it drops it and logs one `WRN XML patch ... did not apply` line that nobody reads. That's how trader stock shipped broken for three versions. Run it before every release.
+
+### Game-version compatibility
+
+```
+python3 tools/refcheck.py mod/DroneAutomation.dll \
+    "<game 3.0>/7DaysToDie_Data/Managed/Assembly-CSharp.dll" \
+    "<server 3.1>/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll"
+```
+
+Walks every external member the DLL binds to and checks it resolves against each target build, so a
+renamed method or a field that became a property is caught here rather than as a per-tick
+`MissingMethodException` on someone's server. Run it against every build listed in `GAME_VERSIONS`.
 
 ---
 
