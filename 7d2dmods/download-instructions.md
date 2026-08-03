@@ -12,9 +12,7 @@ Install
 Requirements
 
 - **7 Days to Die V3.0.0 through V3.1**
-- **A dedicated server keeps EasyAntiCheat ON.** A dedicated server does not gate mod DLLs on\
-  anti-cheat, so both it and its clients stay protected. Only single-player and client-hosted\
-  games need EAC off, because there the server runs inside your own EAC-protected game process.
+- **A dedicated server keeps EasyAntiCheat ON.** A dedicated server does not gate mod DLLs on anti-cheat, so both it and its clients stay protected. Only single-player and client-hosted games need EAC off, because there the server runs inside your own EAC-protected game process.
 - No other mods needed. It uses the Harmony that The Fun Pimps ship with the game in `Mods/0_TFP_Harmony`, which loads before every other mod automatically.
 
 Steps
@@ -28,8 +26,7 @@ Steps
 
    You want `Mods\DroneAutomation\ModInfo.xml` — **not** `Mods\DroneAutomation\DroneAutomation\ModInfo.xml`. One folder too deep is the most common install mistake.
 
-3. Start it. A **dedicated** server needs no EAC change; **single-player or a hosted game** must\
-   be launched with **EasyAntiCheat OFF**, since the server is your own game process.
+3. Start it. A **dedicated** server needs no EAC change; **single-player or a hosted game** must be launched with **EasyAntiCheat OFF**, since the server is your own game process.
 
 4. Confirm it loaded. The log should contain:
 
