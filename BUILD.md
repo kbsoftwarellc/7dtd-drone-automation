@@ -54,6 +54,30 @@ The complete set of `using` directives across all source files is: `HarmonyLib`,
    type that a later build introduced resolves on nothing older. v0.7.3 was built against a newer
    game and could not run on 3.0.0 at all; see the 0.7.4 changelog entry. `package.sh` now checks
    this before it will produce a zip.
+
+   **From v0.8.0 the reference set is the V 3.0.0 (b259) DEDICATED SERVER, not the client** (Steam
+   appid `294420`). Same game version, different build of it: `0Harmony.dll` and both UnityEngine
+   assemblies are byte-identical between the two, but `Assembly-CSharp.dll`,
+   `Assembly-CSharp-firstpass.dll` and `LogLibrary.dll` are not, so the two produce different
+   binaries and the distinction has to be recorded — that is the whole lesson of the v0.7.3 row in
+   section 4. Section 5 lists both sets; **check the "Game build" column in section 4 to see which
+   one a given release used.**
+
+   The reason is availability, and it arguably makes the recipe *easier* to follow: Steam serves
+   only the current client, so a V 3.0.0 client cannot be installed any more, while the dedicated
+   server for an exact build is still freely downloadable by anyone with `steamcmd` and no purchase
+   required. This mod is server-side only, so the server assemblies are also the ones it actually
+   runs against. Point the build at a server install with:
+
+   ```
+   dotnet build -c Release \
+     -p:GameDir="/path/to/7dtd-server-3.0.0" \
+     -p:GameManaged="/path/to/7dtd-server-3.0.0/7DaysToDieServer_Data/Managed"
+   ```
+
+   `GameManaged` must be passed explicitly: the project derives it as
+   `$(GameDir)/7DaysToDie_Data/Managed`, which is the client layout, and only a command-line
+   `-p:` global property can override that.
 3. **git.** The build embeds the commit id in the assembly (see section 4) — build from a clone, not
    from a source tarball, or the hash will not match.
 
@@ -147,9 +171,15 @@ new in v0.7.3.
 
 ## 5. Referenced game assemblies
 
-Taken from a V 3.0.0 (b259) install. Five live in `7DaysToDie_Data/Managed/`, one in
-`Mods/0_TFP_Harmony/`. All are referenced with `<Private>false</Private>` — compiled against, never
-copied into our output or the release zip.
+Six assemblies, all referenced with `<Private>false</Private>` — compiled against, never copied into
+our output or the release zip. Both sets below are V 3.0.0 (b259); they differ only in that one comes
+from the client and the other from the dedicated server. **Three of the six are byte-identical across
+the two**, which is exactly why the difference is easy to miss and has to be written down.
+
+### 5a. V 3.0.0 (b259) CLIENT — used by v0.7.0 through v0.7.5
+
+Steam appid `251570`, buildid `23906531`. Five live in `7DaysToDie_Data/Managed/`, one in
+`Mods/0_TFP_Harmony/`.
 
 | Assembly | Path (relative to game root) | SHA-256 |
 |---|---|---|
@@ -159,6 +189,27 @@ copied into our output or the release zip.
 | `LogLibrary.dll` | `7DaysToDie_Data/Managed/` | `1afc0388ee1e769f6bfbb238e28892d9a51e15f21f2ef37979df65359f258191` |
 | `UnityEngine.CoreModule.dll` | `7DaysToDie_Data/Managed/` | `44d613b2996334c7fc7afadbdd2020d769e70fee1f7e7060db9d51eb5e545e07` |
 | `UnityEngine.dll` | `7DaysToDie_Data/Managed/` | `c8c7fcb038611eeb6b6293601d1fffef72bffebc317256f16cfbc33a333b10fa` |
+
+### 5b. V 3.0.0 (b259) DEDICATED SERVER — used from v0.8.0
+
+Steam appid `294420`. Five live in `7DaysToDieServer_Data/Managed/`, one in `Mods/0_TFP_Harmony/`.
+Rows marked **=** are identical to the client set above.
+
+| Assembly | Path (relative to server root) | SHA-256 | |
+|---|---|---|---|
+| `0Harmony.dll` | `Mods/0_TFP_Harmony/` | `c349e1a3fd13fa5a9facc9805a5e160161b14489f46f6bdd38202b8e124f78df` | **=** |
+| `Assembly-CSharp.dll` | `7DaysToDieServer_Data/Managed/` | `1fd182f4a85bd4fd4c20c38ded0b50be3410fe3f4adb3ebbe9762bceebb26758` | |
+| `Assembly-CSharp-firstpass.dll` | `7DaysToDieServer_Data/Managed/` | `934f01c44762ae032275230651015f8270177b929993efcd04652a37c4e40221` | |
+| `LogLibrary.dll` | `7DaysToDieServer_Data/Managed/` | `85c1e3b2b6ae1070873dc226a602df295a1423b163f27dc157659ceacedf375b` | |
+| `UnityEngine.CoreModule.dll` | `7DaysToDieServer_Data/Managed/` | `44d613b2996334c7fc7afadbdd2020d769e70fee1f7e7060db9d51eb5e545e07` | **=** |
+| `UnityEngine.dll` | `7DaysToDieServer_Data/Managed/` | `c8c7fcb038611eeb6b6293601d1fffef72bffebc317256f16cfbc33a333b10fa` | **=** |
+
+Fetch that server build with `steamcmd`:
+
+```
+steamcmd +force_install_dir /path/to/7dtd-server-3.0.0 +login anonymous \
+         +app_update 294420 -beta v3.0 validate +quit
+```
 
 ---
 
