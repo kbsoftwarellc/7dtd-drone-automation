@@ -46,6 +46,14 @@ namespace DroneAutomation
         private static readonly List<Vector3i> buffer = new List<Vector3i>();
         private static readonly FastTags<TagGroup.Global> cropsTag = FastTags<TagGroup.Global>.Parse("crops");
 
+        /// <summary>
+        /// Why the last scan reaped nothing, for the Debug log. "Nothing in range" is not a useful
+        /// thing to tell someone standing in a field of corn: the interesting number is WHICH of the
+        /// four conditions threw the crop out - out of reach, not a crop, not your claim, or no
+        /// replant - because each one points at a different fix.
+        /// </summary>
+        public string LastScan { get; private set; }
+
         public HarvestCore(HarvestSettings _settings)
         {
             settings = _settings;
@@ -55,19 +63,24 @@ namespace DroneAutomation
         public bool Tick(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData, EntityDrone _drone, Vector3 _scanCenter, int _quality, DroneBoost _boost)
         {
             pacer.Accrue();
-            if (settings.Radius <= 0f) return false;
+            LastScan = null;
+            if (settings.Radius <= 0f) { LastScan = "Radius is 0 in config"; return false; }
 
             float radius = QualityScale.Reach(settings.Radius, settings.LowQualityReach, _quality) * _boost.ReachMult;
             float vertical = QualityScale.Reach(settings.VerticalRadius, settings.LowQualityReach, _quality) * _boost.ReachMult;
             float secondsPerTarget = QualityScale.Time(settings.SecondsPerTarget, settings.LowQualityTimeMult, _quality) * _boost.SpeedMult;
 
-            if (pacer.Credit < secondsPerTarget) return false;
+            if (pacer.Credit < secondsPerTarget)
+            {
+                LastScan = $"banking time ({pacer.Credit:0.0}/{secondsPerTarget:0.0}s)";
+                return false;
+            }
 
             // The caller picks the anchor: where the drone is parked when it's holding
             // position, otherwise the owner (the drone drifts as it hovers beside you).
             DroneWorld.CollectParents(_world, _scanCenter, radius, vertical, buffer);
 
-            int did = 0;
+            int did = 0, crops = 0, outsideClaim = 0, noReplant = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
                 if (pacer.Credit < secondsPerTarget) break;
@@ -78,12 +91,13 @@ namespace DroneAutomation
 
                 Block b = bv.Block;
                 if (b == null || !IsGrownCrop(b)) continue;
+                crops++;
 
                 // Your own farm only.
-                if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.Self) continue;
+                if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.Self) { outsideClaim++; continue; }
 
                 // Must know what to replant, or we leave the crop alone rather than destroy it.
-                if (!TryGetReplant(b, out BlockValue young)) continue;
+                if (!TryGetReplant(b, out BlockValue young)) { noReplant++; continue; }
 
                 if (!pacer.TrySpend(secondsPerTarget)) break;
 
@@ -93,6 +107,13 @@ namespace DroneAutomation
                 // and syncs to clients; it also stops this crop being reaped again until it regrows.
                 _world.SetBlockRPC(pos, young);
                 did++;
+            }
+
+            if (did == 0)
+            {
+                LastScan = $"anchor ({_scanCenter.x:0},{_scanCenter.y:0},{_scanCenter.z:0}) r={radius:0.0}/{vertical:0.0} q{_quality}: "
+                         + $"{buffer.Count} blocks, {crops} grown crops"
+                         + (crops == 0 ? " -> none in reach" : $", {outsideClaim} outside your claim, {noReplant} with no replant");
             }
 
             return did > 0;
@@ -110,22 +131,28 @@ namespace DroneAutomation
         }
 
         /// <summary>
-        /// Finds the replant block among the crop's own DESTROY drops: the drop whose item resolves
-        /// to a growing plant block (e.g. plantedCorn3Harvest lists plantedCorn1 there). Non-block
-        /// drops resolve to no block, so they are ignored here.
+        /// Finds the replant block among the crop's own Harvest drops: the drop whose item resolves
+        /// to a growing plant block. Food drops resolve to no block, so they are ignored here.
         ///
-        /// The event matters, and getting it wrong is silent. A crop's Harvest drops are its
-        /// PRODUCE only - foodCropCorn, resourceCropCoffeeBeans - and never the young plant; the
-        /// young plant is listed under Destroy. Reading Harvest here therefore found a replant for
-        /// no crop in the game, and because the caller requires one before it will reap, Auto-Harvest
-        /// skipped every crop rather than harvesting without replanting. Verified identical across
-        /// game 3.0.0, 3.0.1, 3.1 and 3.1.0-b14, so this was never a regression - it never worked.
+        /// WHICH crop block this is matters, and the distinction is easy to miss. Every crop has TWO
+        /// harvestable variants: the WILD one that generates in the world (`plantedCorn3Harvest`,
+        /// produce drops only) and the PLAYER-grown one a farm plot actually grows into
+        /// (`plantedCorn3HarvestPlayer`), which additionally lists its young stage:
+        ///
+        ///     &lt;drop event="Harvest" name="plantedCorn1" count="1" tag="farmerBonusSeed" /&gt;
+        ///
+        /// Only the Player variant is on the growth chain - `plantedCorn1 -&gt; plantedCorn2 -&gt;
+        /// plantedCorn3HarvestPlayer` - so only it is what the module ever meets on a real farm.
+        /// A wild crop therefore finds no replant and is deliberately left standing rather than
+        /// reaped into a bare plot. If you are testing this by hand, spawn the *Player* variant or
+        /// grow one from `plantedCorn1`; spawning `plantedCorn3Harvest` reproduces a "does nothing"
+        /// that is the module behaving correctly.
         /// </summary>
         private static bool TryGetReplant(Block _b, out BlockValue _young)
         {
             _young = default;
             if (_b.itemsToDrop == null) return false;
-            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Destroy, out List<Block.SItemDropProb> list) || list == null) return false;
+            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> list) || list == null) return false;
 
             for (int i = 0; i < list.Count; i++)
             {

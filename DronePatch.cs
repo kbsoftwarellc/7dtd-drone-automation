@@ -94,6 +94,7 @@ namespace DroneAutomation
             DroneBoost boost = BuildBoost(overclock, antenna);
 
             bool didSomething = false;
+            string harvestDetail = null;
 
             // Auto-Defense fires the drone's own machine gun at nearby hostiles. It works around the
             // drone itself and never touches the bag, so it runs BEFORE the bag-lock check below - the
@@ -160,6 +161,7 @@ namespace DroneAutomation
                 {
                     HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
                     didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoHarvest.Quality, boost);
+                    harvestDetail = core.LastScan;
                 }
 
                 if (autoRepair != null)
@@ -175,7 +177,9 @@ namespace DroneAutomation
                 }
             }
 
-            Debug(__instance, didSomething ? "acted this pass" : "active, nothing in range/afforded yet");
+            Debug(__instance, didSomething
+                ? "acted this pass"
+                : "active, nothing in range/afforded yet" + (harvestDetail != null ? "  ||  harvest: " + harvestDetail : ""));
         }
 
         /// <summary>

@@ -2,31 +2,31 @@
 
 ## Unreleased
 
-- **Fixed: Auto-Harvest never harvested anything.** If you installed the Auto-Harvest module, parked
-  the drone in your claim over a field of grown crops and waited, nothing happened — no error, no log
-  line, no partial behaviour. It skipped every crop in the game, and it had done so in every release
-  that has ever shipped this module.
+- **Auto-Harvest now says why it reaped nothing.** With `Debug="1"` a pass that harvests nothing
+  prints the numbers behind the decision instead of a flat "nothing in range":
 
-  Auto-Harvest is a reap-*and-replant* module: it will not take a crop unless it can work out what to
-  put back in its place, so the replant lookup is ANDed into the same condition that decides whether
-  to harvest at all. That lookup read the crop's **Harvest** drop list looking for something that
-  resolves to a growing plant block. A crop's Harvest drops are its produce and nothing else —
-  `plantedCorn3Harvest` drops `foodCropCorn`, `plantedCoffee3Harvest` drops
-  `resourceCropCoffeeBeans` — while the young plant it should replant with, `plantedCorn1`, is listed
-  under the **Destroy** event. So the lookup found a replant for no crop, and one failed lookup meant
-  the crop was passed over entirely rather than harvested without replanting.
+  ```
+  harvest: anchor (666,61,907) r=9.6/6.4 q6: 2201 blocks, 27 grown crops,
+           0 outside your claim, 27 with no replant
+  ```
 
-  `TryGetReplant` now reads `EnumDropEvent.Destroy`. Harvesting itself still emits the Harvest drops,
-  which was always correct — only the replant lookup had the wrong event.
+  Each figure points at a different cause — out of reach, wrong claim, or no replant — and the anchor
+  and post-quality radius are printed because for a *following* drone the scan is centred on the
+  **owner**, not the drone, which is its own easy misread. "Nothing in range" is not a useful thing to
+  tell someone standing in a field of corn.
 
-  Checked against all 14 harvest-stage crop blocks: not one lists a plantable in its Harvest drops,
-  and every one lists its young plant under Destroy. The drop tables are identical in game 3.0.0,
-  3.0.1, 3.1 and 3.1.0-b14, so **this was never a regression — the module has not worked since it was
-  introduced.** The 0.7.4 playtest did not catch it because that pass ran on 3.0.0 and concentrated on
-  Auto-Loot.
+  This came out of a playtest where Auto-Harvest appeared dead. It was not: the field had been spawned
+  with the **wild** crop blocks (`plantedCorn3Harvest`), which carry produce drops only. A player-grown
+  crop becomes `plantedCorn3HarvestPlayer`, which also lists
+  `<drop event="Harvest" name="plantedCorn1" tag="farmerBonusSeed"/>` — the young stage the module
+  replants with. Only the Player variant sits on the growth chain
+  (`plantedCorn1 -> plantedCorn2 -> plantedCorn3HarvestPlayer`), so only it is what the module meets on
+  a real farm. Refusing a wild crop is deliberate: reaping one would leave a bare plot, since there is
+  nothing to put back.
 
-  Auto-Salvage uses `EnumDropEvent.Harvest` too and is *correct* — it looks for a Harvest drop tagged
-  `salvage`, which is exactly how the game marks wrenchable objects. Only the replant lookup was wrong.
+  No behaviour changed. `TryGetReplant` still reads `EnumDropEvent.Harvest`, which was always correct;
+  the comment above it now records the wild-vs-Player distinction so the next person testing by hand
+  does not spawn the wrong block and conclude the module is broken.
 
 ## 0.7.4 — 2026-08-03
 
