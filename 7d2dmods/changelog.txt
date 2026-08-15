@@ -1,4 +1,29 @@
-0.7.4
+0.7.5
+
+## 0.7.5
+
+- **Fixed: Auto-Harvest handed you a free seed every time it reaped a crop.** A crop drops its own\
+  young stage when harvested, and the module put that seed in the drone's bag *and* planted a\
+  separate fresh one in the empty plot. Two seeds where the crop produced one.
+
+  That is not what harvesting by hand does. Vanilla leaves a reaped plot bare, and the seed the crop\
+  hands you is the one you spend putting it back. So a drone farm quietly produced a spare seed per\
+  crop per cycle — on a 27-plot field, 27 seeds a cycle, compounding into more plots.
+
+  The replant is now paid for by the seed the drone just reaped. Only that one seed is consumed, so\
+  a perk-boosted harvest still hands over the surplus, and your produce is untouched.
+
+- **Auto-Harvest now explains itself when it reaps nothing.** Set `Debug="1"` in\
+  *droneautomation.xml* and a pass that harvests nothing prints what it actually saw: where it\
+  scanned from, its reach after quality scaling, how many grown crops were in range, how many were\
+  outside your claim, and how many had no replant — naming one.
+
+  Worth knowing if you ever test this by hand: crops come in two flavours. The ones growing wild in\
+  the world carry no seed, so the drone deliberately leaves them standing rather than reap a plot it\
+  cannot replant. Only crops grown on a farm plot are harvested. A drone ignoring a field of wild\
+  corn is working correctly.
+
+  The setting ships off, so nothing changes unless you turn it on.
 
 ## 0.7.4
 
