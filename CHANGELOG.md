@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.7.5 — 2026-08-14
+
+- **Fixed: Auto-Harvest minted a free seed every time it reaped a crop.** A crop's harvest drops
+  include its own young stage — `plantedCorn3HarvestPlayer` lists
+  `<drop event="Harvest" name="plantedCorn1" tag="farmerBonusSeed"/>` — and the module banked that
+  seed in the drone's bag *and* separately planted a fresh one in the empty plot. Two seeds where the
+  crop produced one.
+
+  That is not what harvesting by hand does. Vanilla leaves a reaped plot **bare**: crops ship with
+  `DowngradeBlock` commented out, and a block with no `DowngradeBlock` resolves to air
+  (`Block.cs:1789`, and the downgrade path at `Block.cs:2461` only runs when it is not air). The seed
+  the crop hands you is the one you are meant to spend putting the plot back. So a drone farm quietly
+  produced a spare seed per crop per cycle — on a 27-plot field, 27 seeds a cycle, compounding into
+  more plots.
+
+  Auto-Harvest now pays for the replant with the seed it just reaped. `EmitDrops` takes an optional
+  `_payOne`, withholding a **single unit** of that one item from the payout, so perk-boosted seed
+  drops still hand over the surplus — only the one seed the drone plants on your behalf is consumed.
+  Produce is untouched.
+
+- **Auto-Harvest now says why it reaped nothing.** With `Debug="1"` a pass that harvests nothing
+  prints the numbers behind the decision instead of a flat "nothing in range":
+
+  ```
+  harvest: anchor (666,61,907) r=9.6/6.4 q6: 2201 blocks, 27 grown crops,
+           0 outside your claim, 27 with no replant
+  ```
+
+  Each figure points at a different cause — out of reach, wrong claim, or no replant — and the anchor
+  and post-quality radius are printed because for a *following* drone the scan is centred on the
+  **owner**, not the drone, which is its own easy misread. "Nothing in range" is not a useful thing to
+  tell someone standing in a field of corn.
+
+  This came out of a playtest where Auto-Harvest appeared dead. It was not: the field had been spawned
+  with the **wild** crop blocks (`plantedCorn3Harvest`), which carry produce drops only. A player-grown
+  crop becomes `plantedCorn3HarvestPlayer`, which also lists
+  `<drop event="Harvest" name="plantedCorn1" tag="farmerBonusSeed"/>` — the young stage the module
+  replants with. Only the Player variant sits on the growth chain
+  (`plantedCorn1 -> plantedCorn2 -> plantedCorn3HarvestPlayer`), so only it is what the module meets on
+  a real farm. Refusing a wild crop is deliberate: reaping one would leave a bare plot, since there is
+  nothing to put back.
+
+  No behaviour changed. `TryGetReplant` still reads `EnumDropEvent.Harvest`, which was always correct;
+  the comment above it now records the wild-vs-Player distinction so the next person testing by hand
+  does not spawn the wrong block and conclude the module is broken.
+
 ## 0.7.4 — 2026-08-03
 
 - **Fixed: v0.7.3 could not run on game 3.0.0, which it claimed to support.** If you are on 3.0.0,
