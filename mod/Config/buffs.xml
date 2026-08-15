@@ -6,9 +6,8 @@
 	  WHY BUFFS AT ALL. The menu has to change server-side state from a click in a client-side UI,
 	  and this mod ships no client DLL. The dialog system's only extensible write is
 	  <action type="AddBuff"/> (BaseDialogAction.ActionTypes has exactly six members, and AddBuff is
-	  the only one that isn't quest/trader/voice plumbing). So each menu row adds a buff that lives
-	  for a tenth of a second, writes one CVar, and expires - the same shape vanilla uses for its
-	  triggerInfection / triggerAbrasion test buffs.
+	  the only one that isn't quest/trader/voice plumbing). So each menu row adds a buff that writes
+	  one CVar, and DronePatch reads that CVar.
 
 	  The round trip is what makes it work without a client mod:
 	    - the client's own EntityBuffs.AddBuff runs the effect locally, so the menu row flips the
@@ -17,113 +16,148 @@
 	      server, so the server runs the same ModifyCVar and DronePatch reads the result.
 	  Nothing is polled and no custom NetPackage exists, so a vanilla client cannot be kicked over it.
 
+	  *** WHY onSelfBuffStack AND NOT onSelfBuffStart. ***
+	  This is the whole reason these buffs are permanent, and it is not obvious.
+
+	  EntityBuffs.AddBuff, on a buff the entity does NOT already have, only appends a BuffValue to
+	  ActiveBuffs. It fires NOTHING. onSelfBuffStart is raised later, when the buff first ticks.
+	  But the dialog redraws its row list exactly once per click - XUiC_DialogResponseList.Update
+	  rebuilds only while IsDirty, and OnPressResponse is the only thing that sets it - and a row's
+	  requirement is evaluated only in the XUiC_DialogResponseEntry.CurrentResponse setter, during
+	  that rebuild. So a CVar written on buff start lands AFTER the only redraw, and every row shows
+	  the state from the previous click: click once, nothing appears to happen; click again and you
+	  see the first click's result. That was the 0.7.5 behaviour and it looked like dropped clicks.
+
+	  The stacking branch of AddBuff is different: when the buff IS already active it calls
+	  FireEvent(onSelfBuffStack, ...) inline, before AddBuff returns. So the CVar is already written
+	  by the time SelectResponse switches the statement, and the rebuild that follows sees it.
+
+	  Hence: duration 0 (infinite - BuffClass.Tick only expires a buff while DurationMax > 0), the
+	  effect hung on onSelfBuffStack, and DronePatch.PrimeToggleBuffs keeping all thirteen present
+	  on the owner so that every click is a stack. Priming is inert precisely BECAUSE there is no
+	  onSelfBuffStart effect - adding one back would make the drone's own tick flip the player's
+	  switches. stack_type is stated explicitly for the same reason: only replace/duration/effect
+	  fire the event, and "ignore" would silently make every row dead.
+
 	  POLARITY IS DELIBERATE. The CVar means DISABLED, not enabled. EntityBuffs.GetCustomVar returns
 	  0 for a name it has never seen and EntityBuffs.Write skips any CVar sitting at 0, so "absent"
 	  and "zero" have to be the safe state - otherwise every existing player's modules would go dark
 	  on update, and switching one back on would leave nothing on disk to prove it.
 
 	  OPERATION IS ALWAYS "set". On a dedicated server a buff applied to a player can fire both
-	  onSelfBuffStart and onSelfBuffStack for one application, so any relative op (add/subtract)
-	  applies twice. "set" is idempotent, so the echo cannot corrupt the flag.
+	  onSelfBuffStart and onSelfBuffStack for one application, and the server's own re-apply echoes
+	  back to the client, so any relative op (add/subtract) applies more than once. "set" is
+	  idempotent, so no amount of echo can corrupt the flag.
 	-->
 	<append xpath="/buffs">
 
 		<!-- Auto-Loot -->
 		<buff name="buffDaLootDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daLootOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daLootOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaLootEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daLootOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daLootOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
 		<!-- Auto-Salvage -->
 		<buff name="buffDaSalvageDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaSalvageEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
 		<!-- Auto-Harvest -->
 		<buff name="buffDaHarvestDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaHarvestEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
 		<!-- Auto-Repair -->
 		<buff name="buffDaRepairDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daRepairOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daRepairOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaRepairEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daRepairOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daRepairOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
 		<!-- Auto-Plant -->
 		<buff name="buffDaPlantDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daPlantOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPlantOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaPlantEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daPlantOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPlantOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
 		<!-- Auto-Defense -->
 		<buff name="buffDaDefenseDisable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="1"/>
 			</effect_group>
 		</buff>
 		<buff name="buffDaDefenseEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 
-		<!-- One row that clears every switch. A player who has turned several modules off and lost
-		     track of which needs one click to get back to stock behaviour, and it doubles as the
-		     recovery path if a switch is ever left set by a mod update. -->
+		<!-- "Switch every module back on" - one row that clears all six flags at once. -->
 		<buff name="buffDaAllEnable" hidden="true">
-			<duration value=".1"/>
+			<stack_type value="replace"/>
+			<duration value="0"/>
 			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daLootOff"    operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daRepairOff"  operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daPlantOff"   operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStart" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daLootOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daRepairOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPlantOff" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 

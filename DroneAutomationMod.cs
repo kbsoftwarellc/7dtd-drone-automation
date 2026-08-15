@@ -44,6 +44,33 @@ namespace DroneAutomation
         public const string PlantOffCVar   = "daPlantOff";
         public const string DefenseOffCVar = "daDefenseOff";
 
+        /// <summary>
+        /// Every buff the talk menu can add, kept permanently on the owner by
+        /// <see cref="DronePatch.PrimeToggleBuffs"/>.
+        ///
+        /// They exist to be STACKED, not started. EntityBuffs.AddBuff fires nothing at all when it
+        /// adds a buff the entity does not already have - onSelfBuffStart is raised later, on the
+        /// buff's first tick - but the dialog rebuilds its row list once per click and evaluates each
+        /// row's requirement only during that rebuild. A CVar written on buff start therefore lands
+        /// after the only redraw, and every row shows the previous click's state. The stacking branch
+        /// of AddBuff instead calls FireEvent(onSelfBuffStack) inline, so a buff that is already
+        /// present writes its CVar before the menu redraws. Keeping all of these on the player is what
+        /// guarantees every click takes the stacking branch.
+        ///
+        /// Safe to re-add only because none of them has an onSelfBuffStart effect (see Config/buffs.xml);
+        /// the HasBuff guard in PrimeToggleBuffs is what keeps the drone's own tick from stacking them.
+        /// </summary>
+        public static readonly string[] ToggleBuffs =
+        {
+            "buffDaLootDisable",    "buffDaLootEnable",
+            "buffDaSalvageDisable", "buffDaSalvageEnable",
+            "buffDaHarvestDisable", "buffDaHarvestEnable",
+            "buffDaRepairDisable",  "buffDaRepairEnable",
+            "buffDaPlantDisable",   "buffDaPlantEnable",
+            "buffDaDefenseDisable", "buffDaDefenseEnable",
+            "buffDaAllEnable",
+        };
+
         public static string ModPath;
 
         /// <summary>When set, every module logs (throttled) why it is or isn't acting.</summary>

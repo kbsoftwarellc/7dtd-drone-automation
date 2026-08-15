@@ -21,12 +21,28 @@
 
   Each row is half of a matched pair guarded by opposite `CheckCVar` requirements, so exactly one is
   ever visible and the visible one is both the readout and the switch (`XUiC_DialogResponseEntry`
-  drops a row whose `requirementtype="Hide"` requirement fails). Clicking it adds a buff that lives
-  for a tenth of a second and writes one CVar — `AddBuff` is the only write the dialog system exposes
-  that isn't quest or trader plumbing. That buff net-syncs, so the client runs the effect immediately
-  (the row flips under the cursor) and `NetPackageAddRemoveBuff.ProcessPackage` re-applies it on the
-  server, where `DronePatch` reads the result. No polling, no custom network packet, nothing for a
-  vanilla client to be kicked over.
+  drops a row whose `requirementtype="Hide"` requirement fails). Clicking it adds a hidden permanent
+  buff that writes one CVar — `AddBuff` is the only write the dialog system exposes that isn't quest
+  or trader plumbing. That buff net-syncs, so the client runs the effect immediately (the row flips
+  under the cursor) and `NetPackageAddRemoveBuff.ProcessPackage` re-applies it on the server, where
+  `DronePatch` reads the result. No polling, no custom network packet, nothing for a vanilla client
+  to be kicked over.
+
+  The switch buffs are **permanent and fire on `onSelfBuffStack`, not `onSelfBuffStart`**, and
+  `DronePatch.PrimeToggleBuffs` keeps all thirteen seated on the owner. That is not tidiness, it is
+  the difference between the menu working and the menu appearing to eat every other click.
+  `EntityBuffs.AddBuff`, handed a buff the entity does not already have, only appends a `BuffValue`
+  and fires nothing — `onSelfBuffStart` is raised later, on the buff's first tick. But the dialog
+  redraws its rows exactly once per click (`XUiC_DialogResponseList.Update` rebuilds only while
+  `IsDirty`, and `OnPressResponse` is the only thing that sets it) and a row's requirement is
+  evaluated only during that rebuild. A CVar written on buff start therefore lands *after* the only
+  redraw, so every row shows the previous click's state: click a row and nothing happens, click again
+  and you see the first click's result — including on a different row, which is why switching Harvest
+  then Repair looked like Repair was ignored. `AddBuff`'s stacking branch instead calls
+  `FireEvent(onSelfBuffStack, …)` inline before returning, so a buff that is already present writes
+  its CVar before `Dialog.SelectResponse` switches the statement. Priming is safe only because these
+  buffs have no `onSelfBuffStart` effect at all; the `HasBuff` guard stops the drone tick from
+  stacking them, and a buff lost to death cleanup or an old save is re-seated on the next tick.
 
   Two limits worth knowing. The switches are **per player, not per drone** — nothing in the dialog
   carries the drone's entity id, so running two drones switches a function off on both. And every
