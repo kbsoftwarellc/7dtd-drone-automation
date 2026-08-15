@@ -32,6 +32,25 @@ A drone that is **following** you only works blocks while it's actually with you
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 
+## Switching a module off
+
+You don't have to pull a module out to stop it. Hold **E** on the drone, pick **Talk**, then
+**Automation modules…** — every automation function gets a row showing whether it is ON or OFF, and
+clicking the row flips it. The module stays in its slot and keeps its quality; it just stops acting
+until you switch it back on. There's a **Switch every module back on** row to clear the lot.
+
+The setting is remembered across relogs and server restarts, and it is **per player, not per drone**:
+if you run two drones, switching Auto-Harvest off switches it off on both. Every automation function
+is listed whether or not that drone has the module fitted — nothing in the dialog system can tell the
+menu which mods are in the drone you're standing at, so a row for a module you haven't installed
+simply does nothing.
+
+Why the talk menu and not a keybind or the radial wheel: both of those are client-side
+(`InitLocalActivationCommands` and key bindings never run on the server), so either would mean
+shipping a client DLL and ending this mod's "clients install nothing" rule. The wheel's own **Talk**
+entry opens an XML dialog, and the server pushes its patched `dialogs.xml` and `buffs.xml` to every
+vanilla client — so the menu is reachable from a server-side mod, one click deeper than the wheel.
+
 ## How it works
 
 Everything runs server-side via one Harmony postfix on `EntityDrone.OnUpdateEntity`. The drone already carries an `OwnerID`, a `Bag` and a lock, and `World.cs` exempts drones from the chunk-loaded check, so a module ticks wherever the drone follows you, with nothing new synced. Each target is paced off the owner's real action time and banked against a `MaxCatchupSeconds` cap so a reload cannot burst.

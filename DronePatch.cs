@@ -91,6 +91,29 @@ namespace DroneAutomation
             EntityPlayer owner = VacuumCore.ResolveOwner(world, __instance.OwnerID, out PersistentPlayerData ownerData);
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
+            // Keep the talk menu's switch buffs on the owner. This has to run before any of the
+            // early returns below, or a player who has switched everything off could never switch
+            // anything back on. See PrimeToggleBuffs for why the menu needs them pre-seated.
+            PrimeToggleBuffs(owner);
+
+            // A module the owner has switched off in the drone's talk menu is treated as absent for
+            // this pass: the mod stays in its slot, keeps its quality, and costs nothing to put back.
+            // Deliberately applied AFTER the hardware check above, so a drone whose every module is
+            // switched off still reports that it HAS modules - "switched off" and "none installed"
+            // are different problems and the debug log has to be able to tell them apart.
+            if (IsSwitchedOff(owner, DroneAutomationMod.LootOffCVar))    autoLoot    = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.SalvageOffCVar)) autoSalvage = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.HarvestOffCVar)) autoHarvest = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.RepairOffCVar))  autoRepair  = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.PlantOffCVar))   autoPlant   = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.DefenseOffCVar)) autoDefense = null;
+
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
+            {
+                Debug(__instance, "every installed module is switched off in the drone's talk menu");
+                return;
+            }
+
             DroneBoost boost = BuildBoost(overclock, antenna);
 
             bool didSomething = false;
@@ -207,6 +230,55 @@ namespace DroneAutomation
             float max = DroneAutomationMod.MaxOwnerDistance;
             if (max <= 0f) return true;
             return (_drone.position - _owner.position).sqrMagnitude <= max * max;
+        }
+
+        /// <summary>
+        /// True when the drone's owner has switched this module off from the talk menu.
+        ///
+        /// The menu writes the flag as a player CVar, because that is the only server-side state a
+        /// vanilla client can change: the dialog's AddBuff action net-syncs, the server re-applies the
+        /// buff (NetPackageAddRemoveBuff.ProcessPackage), and the buff's ModifyCVar effect runs on
+        /// both ends. So the client sees its menu row flip instantly and the server - here - reads the
+        /// same value a tick later, with no custom packet and nothing to install client-side.
+        /// </summary>
+        private static bool IsSwitchedOff(EntityPlayer _owner, string _cvar)
+        {
+            return _owner.Buffs != null && _owner.Buffs.GetCustomVar(_cvar) != 0f;
+        }
+
+        /// <summary>
+        /// Make sure every buff the talk menu can add is already sitting on the owner, so that a menu
+        /// click takes AddBuff's STACKING branch instead of its first-add branch.
+        ///
+        /// This is the fix for "the row only flips on the second click". EntityBuffs.AddBuff, given a
+        /// buff the entity does not have, appends a BuffValue and fires nothing; onSelfBuffStart is
+        /// raised later, when the buff first ticks. But the dialog redraws its rows exactly once per
+        /// click (XUiC_DialogResponseList.Update rebuilds only while IsDirty, and OnPressResponse is
+        /// the only thing that sets it) and a row's requirement is evaluated only during that rebuild,
+        /// in XUiC_DialogResponseEntry.CurrentResponse. So a CVar written on buff start arrives after
+        /// the only redraw and every row lags a click behind. When the buff is already present AddBuff
+        /// instead calls FireEvent(onSelfBuffStack) inline, before it returns, so the CVar is written
+        /// before Dialog.SelectResponse switches the statement and the rebuild sees the new value.
+        ///
+        /// Re-adding a buff that is already here would ALSO stack it - which would fire the effect and
+        /// flip the player's switch from under them - hence the HasBuff guard. And priming is only
+        /// harmless because these buffs deliberately have no onSelfBuffStart effect; adding one back to
+        /// Config/buffs.xml would turn this method into a switch-flipper.
+        ///
+        /// Server-side AddBuff net-syncs to the clients attached to the entity (EntityBuffs.AddBuffNetwork),
+        /// so the player's own client ends up holding the same buffs and its click stacks locally too.
+        /// A buff lost for any reason (death cleanup, an old save) is simply re-seated on the next tick.
+        /// </summary>
+        private static void PrimeToggleBuffs(EntityPlayer _owner)
+        {
+            EntityBuffs buffs = _owner.Buffs;
+            if (buffs == null) return;
+
+            string[] names = DroneAutomationMod.ToggleBuffs;
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (!buffs.HasBuff(names[i])) buffs.AddBuff(names[i]);
+            }
         }
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)

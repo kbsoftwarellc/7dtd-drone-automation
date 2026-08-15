@@ -1,5 +1,59 @@
 # Changelog
 
+## Unreleased
+
+- **Switch a module off without pulling it out of the drone.** Hold **E** on the drone → **Talk** →
+  **Automation modules…** and every automation function gets a row reading `Auto-Loot: ON - switch it
+  off` (or `OFF - switch it on`). Clicking it flips the switch; the module stays in its slot and keeps
+  its quality, it just stops acting. A **Switch every module back on** row clears the lot. The setting
+  survives relogs and server restarts.
+
+  Asked for as a hotkey, which this mod cannot do. Key bindings are client config and the radial wheel
+  is client code — `EntityDrone.InitLocalActivationCommands`, `AllowActivationCommand` and
+  `OnEntityActivated` all take an `EntityPlayerLocal` and only ever run on the machine holding the
+  camera. Either one would mean shipping a client DLL and ending the mod's "install it on the server,
+  players install nothing" rule.
+
+  The wheel's own **Talk** entry is the way in without breaking that rule. It opens the XML dialog
+  `junkDrone`, and `WorldStaticData` registers both `dialogs.xml` and `buffs.xml` with
+  `_sendToClients: true` — the server pushes its patched copies to every vanilla client, which parses
+  them locally. So a server-side modlet can put rows in that menu, one click deeper than the wheel.
+
+  Each row is half of a matched pair guarded by opposite `CheckCVar` requirements, so exactly one is
+  ever visible and the visible one is both the readout and the switch (`XUiC_DialogResponseEntry`
+  drops a row whose `requirementtype="Hide"` requirement fails). Clicking it adds a hidden permanent
+  buff that writes one CVar — `AddBuff` is the only write the dialog system exposes that isn't quest
+  or trader plumbing. That buff net-syncs, so the client runs the effect immediately (the row flips
+  under the cursor) and `NetPackageAddRemoveBuff.ProcessPackage` re-applies it on the server, where
+  `DronePatch` reads the result. No polling, no custom network packet, nothing for a vanilla client
+  to be kicked over.
+
+  The switch buffs are **permanent and fire on `onSelfBuffStack`, not `onSelfBuffStart`**, and
+  `DronePatch.PrimeToggleBuffs` keeps all thirteen seated on the owner. That is not tidiness, it is
+  the difference between the menu working and the menu appearing to eat every other click.
+  `EntityBuffs.AddBuff`, handed a buff the entity does not already have, only appends a `BuffValue`
+  and fires nothing — `onSelfBuffStart` is raised later, on the buff's first tick. But the dialog
+  redraws its rows exactly once per click (`XUiC_DialogResponseList.Update` rebuilds only while
+  `IsDirty`, and `OnPressResponse` is the only thing that sets it) and a row's requirement is
+  evaluated only during that rebuild. A CVar written on buff start therefore lands *after* the only
+  redraw, so every row shows the previous click's state: click a row and nothing happens, click again
+  and you see the first click's result — including on a different row, which is why switching Harvest
+  then Repair looked like Repair was ignored. `AddBuff`'s stacking branch instead calls
+  `FireEvent(onSelfBuffStack, …)` inline before returning, so a buff that is already present writes
+  its CVar before `Dialog.SelectResponse` switches the statement. Priming is safe only because these
+  buffs have no `onSelfBuffStart` effect at all; the `HasBuff` guard stops the drone tick from
+  stacking them, and a buff lost to death cleanup or an old save is re-seated on the next tick.
+
+  Two limits worth knowing. The switches are **per player, not per drone** — nothing in the dialog
+  carries the drone's entity id, so running two drones switches a function off on both. And every
+  automation function is listed whether or not the drone has that module fitted, because no dialog
+  requirement can see the drone's mod slots; a row for a module you never installed simply does
+  nothing.
+
+  The CVar means *disabled* rather than enabled on purpose: `EntityBuffs.GetCustomVar` returns 0 for a
+  name it has never seen and `EntityBuffs.Write` skips any CVar sitting at 0, so an "enabled" flag
+  would read as off for every existing player on update.
+
 ## 0.7.5 — 2026-08-14
 
 - **Fixed: Auto-Harvest minted a free seed every time it reaped a crop.** A crop's harvest drops
