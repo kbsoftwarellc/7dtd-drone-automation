@@ -1,4 +1,25 @@
-0.7.5
+0.8.0
+
+## 0.8.0
+
+- **Switch a module off without pulling it out of the drone.** Hold **E** on the drone, pick\
+  **Talk**, then **Automation modules...** — every automation function gets its own row saying\
+  whether it is running, and clicking the row flips it. The module stays in its slot and keeps its\
+  quality, so putting it back costs nothing. A **Switch every module back on** row clears the lot,\
+  and the setting survives relogs and server restarts.
+
+  A function with no module fitted reads **no module installed** instead of offering a switch, so\
+  the menu can't be mistaken for a settings screen — these are still modules you have to find the\
+  schematic for, craft and fit.
+
+  This was asked for as a hotkey. It couldn't be one: key bindings and the radial wheel are both\
+  client-side, so either would have meant shipping a client download and ending this mod's\
+  "clients install nothing" rule. The wheel's own **Talk** entry was the way in without breaking\
+  that — the menu works on a completely vanilla client, because the server pushes it.
+
+  One honest limit: the switches are **per player, not per drone**, so running two drones switches\
+  a function off on both. The "no module installed" rows are per drone — they describe whichever\
+  drone you're standing at.
 
 ## 0.7.5
 
