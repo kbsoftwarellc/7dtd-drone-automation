@@ -110,15 +110,22 @@ namespace DroneAutomation
         }
 
         /// <summary>
-        /// Finds the replant block among the crop's own Harvest drops: the drop whose item resolves
-        /// to a growing plant block (e.g. corn drops plantedCorn1 alongside its food). Food drops
-        /// resolve to no block, so they are ignored here.
+        /// Finds the replant block among the crop's own DESTROY drops: the drop whose item resolves
+        /// to a growing plant block (e.g. plantedCorn3Harvest lists plantedCorn1 there). Non-block
+        /// drops resolve to no block, so they are ignored here.
+        ///
+        /// The event matters, and getting it wrong is silent. A crop's Harvest drops are its
+        /// PRODUCE only - foodCropCorn, resourceCropCoffeeBeans - and never the young plant; the
+        /// young plant is listed under Destroy. Reading Harvest here therefore found a replant for
+        /// no crop in the game, and because the caller requires one before it will reap, Auto-Harvest
+        /// skipped every crop rather than harvesting without replanting. Verified identical across
+        /// game 3.0.0, 3.0.1, 3.1 and 3.1.0-b14, so this was never a regression - it never worked.
         /// </summary>
         private static bool TryGetReplant(Block _b, out BlockValue _young)
         {
             _young = default;
             if (_b.itemsToDrop == null) return false;
-            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> list) || list == null) return false;
+            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Destroy, out List<Block.SItemDropProb> list) || list == null) return false;
 
             for (int i = 0; i < list.Count; i++)
             {

@@ -1,5 +1,33 @@
 # Changelog
 
+## Unreleased
+
+- **Fixed: Auto-Harvest never harvested anything.** If you installed the Auto-Harvest module, parked
+  the drone in your claim over a field of grown crops and waited, nothing happened — no error, no log
+  line, no partial behaviour. It skipped every crop in the game, and it had done so in every release
+  that has ever shipped this module.
+
+  Auto-Harvest is a reap-*and-replant* module: it will not take a crop unless it can work out what to
+  put back in its place, so the replant lookup is ANDed into the same condition that decides whether
+  to harvest at all. That lookup read the crop's **Harvest** drop list looking for something that
+  resolves to a growing plant block. A crop's Harvest drops are its produce and nothing else —
+  `plantedCorn3Harvest` drops `foodCropCorn`, `plantedCoffee3Harvest` drops
+  `resourceCropCoffeeBeans` — while the young plant it should replant with, `plantedCorn1`, is listed
+  under the **Destroy** event. So the lookup found a replant for no crop, and one failed lookup meant
+  the crop was passed over entirely rather than harvested without replanting.
+
+  `TryGetReplant` now reads `EnumDropEvent.Destroy`. Harvesting itself still emits the Harvest drops,
+  which was always correct — only the replant lookup had the wrong event.
+
+  Checked against all 14 harvest-stage crop blocks: not one lists a plantable in its Harvest drops,
+  and every one lists its young plant under Destroy. The drop tables are identical in game 3.0.0,
+  3.0.1, 3.1 and 3.1.0-b14, so **this was never a regression — the module has not worked since it was
+  introduced.** The 0.7.4 playtest did not catch it because that pass ran on 3.0.0 and concentrated on
+  Auto-Loot.
+
+  Auto-Salvage uses `EnumDropEvent.Harvest` too and is *correct* — it looks for a Harvest drop tagged
+  `salvage`, which is exactly how the game marks wrenchable objects. Only the replant lookup was wrong.
+
 ## 0.7.4 — 2026-08-03
 
 - **Fixed: v0.7.3 could not run on game 3.0.0, which it claimed to support.** If you are on 3.0.0,
