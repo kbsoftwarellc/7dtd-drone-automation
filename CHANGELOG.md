@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.0 — 2026-08-15
 
 - **Switch a module off without pulling it out of the drone.** Hold **E** on the drone → **Talk** →
   **Automation modules…** and every automation function gets a row reading `Auto-Loot: ON - switch it
@@ -44,15 +44,32 @@
   buffs have no `onSelfBuffStart` effect at all; the `HasBuff` guard stops the drone tick from
   stacking them, and a buff lost to death cleanup or an old save is re-seated on the next tick.
 
-  Two limits worth knowing. The switches are **per player, not per drone** — nothing in the dialog
-  carries the drone's entity id, so running two drones switches a function off on both. And every
-  automation function is listed whether or not the drone has that module fitted, because no dialog
-  requirement can see the drone's mod slots; a row for a module you never installed simply does
-  nothing.
+  A function with no module fitted reads **`Auto-Loot: no module installed`** instead of offering a
+  switch. Without that the menu looks like a settings screen — six functions you can simply turn on —
+  when they are hardware you have to find the schematic for, craft and fit. No dialog requirement can
+  see an entity's mod slots (they only test *player* state, and nothing in the dialog even carries the
+  respondent's entity id), so the drone publishes what it is carrying onto its owner as a CVar and the
+  menu gates on that. The nearest drone within 8m claims the menu and keeps it until something is
+  strictly nearer, so parking a second drone next to the first can't make the rows flicker.
+
+  One limit worth knowing: the switches are **per player, not per drone** — `AddBuff` applies to the
+  talking player and CVars live on the player, so running two drones switches a function off on both.
+  The "no module installed" rows *are* per drone, since the server publishes them for whichever drone
+  you're standing at, so those rows and the switches answer subtly different questions.
 
   The CVar means *disabled* rather than enabled on purpose: `EntityBuffs.GetCustomVar` returns 0 for a
   name it has never seen and `EntityBuffs.Write` skips any CVar sitting at 0, so an "enabled" flag
   would read as off for every existing player on update.
+
+- **Internal: the drone publishes its fitted modules with `EntityAlive.SetCVar`, not
+  `EntityBuffs.SetCustomVar`.** `SetCustomVar` gained a fifth parameter (`_forceSendToClients`) in
+  V3.1, so a call compiled against 3.0.0 — which is what this mod builds against — emits a
+  four-argument signature that does not exist on 3.1 and would throw `MissingMethodException` every
+  tick there. `SetCVar` is a two-argument wrapper, identical in both, that forwards with the same
+  net-sync default. Worth recording because it runs *against* the usual rule: compiling against the
+  oldest supported version protects you from types that only exist later, but an added **optional
+  parameter** is source-compatible and *not* binary-compatible, so it breaks the old build on the new
+  game. `tools/check_game_versions.py` is what caught it.
 
 ## 0.7.5 — 2026-08-14
 

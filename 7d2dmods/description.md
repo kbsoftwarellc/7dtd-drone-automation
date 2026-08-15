@@ -7,7 +7,7 @@ Your junk drone already tags along everywhere — so put it to work. This is a p
 
 Each module does the work **as if you did it yourself** — your loot stage, your perks and your tool bonuses all apply, and each target takes about the time it would take you by hand. Nothing is free or instant; the drone just saves you the clicks.
 
-Every module is a separate craftable drone attachment, unlocked by a looted schematic (just like the vanilla drone mods), and carries a **Quality 1–6** level that scales its reach and speed. Crafting always makes the Quality 1 baseline — stronger, faster, longer-reach copies come from loot or the trader.
+Every module is a separate craftable drone attachment, unlocked by a looted schematic (just like the vanilla drone mods), and carries a **Quality 1–6** level that scales its reach and speed. Crafted quality follows your **Robotics** crafting skill — the Q1 baseline below Robotics 80, climbing to Q6 at 100 — and traders sell copies rolled by their own stage, so a high-stage trader can beat what you can build.
 
 Best of all, it is **100% server-side**. Install it on the server (or your single-player game) and every client connects with nothing to download.
 
@@ -16,6 +16,10 @@ Best of all, it is **100% server-side**. Install it on the server (or your singl
 **Automation modules** — the drone does the chore:
 
 **Enhancement modules** — no chore of their own; they **make the other modules better** (each takes one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design):
+
+**Switch a module off without pulling it out** — hold **E** on the drone, pick **Talk**, then **Automation modules…**. Every function gets a row saying whether it is running: *Auto-Loot: ON - switch it off*, *Auto-Loot: OFF - switch it on*, or *Auto-Loot: no module installed* when that function has no module fitted in the drone you're standing at. Clicking a row flips it — the module stays in its slot and keeps its quality, so putting it back costs nothing — and a **Switch every module back on** row clears the lot.
+
+The setting survives relogs and server restarts, and it works on a **vanilla client with nothing installed**, because the server pushes the menu itself. (A hotkey or a radial-wheel entry would have needed a client-side download, which this mod doesn't do.) The switches are per player rather than per drone, so running two drones switches a function off on both.
 
 **Built to be fair and safe:**
 

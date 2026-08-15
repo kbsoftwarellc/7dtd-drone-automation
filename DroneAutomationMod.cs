@@ -44,6 +44,22 @@ namespace DroneAutomation
         public const string PlantOffCVar   = "daPlantOff";
         public const string DefenseOffCVar = "daDefenseOff";
 
+        // Which modules the drone you are standing at actually has fitted, published by
+        // DronePatch.PublishFittedModules so the talk menu can say "no module installed" instead of
+        // offering a switch for hardware that isn't there. No dialog requirement type can see an
+        // entity's mod slots, so the only way the menu can know is for the server to tell it.
+        //
+        // Same polarity trap as the Off flags, mirrored: the flag means MISSING, so the value that
+        // survives EntityBuffs.Write dropping zeroes - and the value a player who has never been near
+        // a drone reads - is 0 = "fitted", which shows the ordinary switch rows. Naming it "Has"
+        // would make an unwritten flag read as "no module installed" and hide every switch.
+        public const string LootMissingCVar    = "daLootMissing";
+        public const string SalvageMissingCVar = "daSalvageMissing";
+        public const string HarvestMissingCVar = "daHarvestMissing";
+        public const string RepairMissingCVar  = "daRepairMissing";
+        public const string PlantMissingCVar   = "daPlantMissing";
+        public const string DefenseMissingCVar = "daDefenseMissing";
+
         /// <summary>
         /// Every buff the talk menu can add, kept permanently on the owner by
         /// <see cref="DronePatch.PrimeToggleBuffs"/>.

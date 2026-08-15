@@ -39,11 +39,15 @@ You don't have to pull a module out to stop it. Hold **E** on the drone, pick **
 clicking the row flips it. The module stays in its slot and keeps its quality; it just stops acting
 until you switch it back on. There's a **Switch every module back on** row to clear the lot.
 
-The setting is remembered across relogs and server restarts, and it is **per player, not per drone**:
-if you run two drones, switching Auto-Harvest off switches it off on both. Every automation function
-is listed whether or not that drone has the module fitted — nothing in the dialog system can tell the
-menu which mods are in the drone you're standing at, so a row for a module you haven't installed
-simply does nothing.
+A function whose module isn't fitted reads **`Auto-Loot: no module installed`** instead of offering a
+switch, so the menu can't be mistaken for a settings screen — these are still modules you have to find
+the schematic for, craft and fit. No dialog requirement can see an entity's mod slots, so the drone
+publishes what it's carrying onto its owner and the menu reads that; the nearest drone within 8m is
+the one describing itself.
+
+The switch is remembered across relogs and server restarts, and it is **per player, not per drone**:
+if you run two drones, switching Auto-Harvest off switches it off on both. (The "no module installed"
+rows *are* per drone — they describe whichever drone you're standing at.)
 
 Why the talk menu and not a keybind or the radial wheel: both of those are client-side
 (`InitLocalActivationCommands` and key bindings never run on the server), so either would mean

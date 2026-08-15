@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
@@ -30,6 +31,24 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, PlantCore>();
         private static readonly ConditionalWeakTable<EntityDrone, DefenseCore> defenseCores =
             new ConditionalWeakTable<EntityDrone, DefenseCore>();
+
+        /// <summary>How close the owner has to be for a drone to describe itself to the talk menu.</summary>
+        private const float MenuPublishRange = 8f;
+
+        /// <summary>Ticks before an unrefreshed menu claim is up for grabs again (~2s at 20 ticks/s).</summary>
+        private const ulong MenuClaimStaleTicks = 40UL;
+
+        /// <summary>Which drone currently speaks for an owner's talk menu. See PublishFittedModules.</summary>
+        private struct MenuClaim
+        {
+            public int DroneId;
+            public ulong Tick;
+            public float DistSq;
+        }
+
+        // Keyed by owner entity id, so it is bounded by player count rather than drone count. An entry
+        // for a player who logs off is a few bytes and is reused verbatim when they come back.
+        private static readonly Dictionary<int, MenuClaim> menuClaims = new Dictionary<int, MenuClaim>();
 
         private static ulong lastDebugTick;
         private static ulong lastErrorTick;
@@ -79,22 +98,25 @@ namespace DroneAutomation
             ItemValue overclock = GetModule(droneItem, DroneAutomationMod.OverclockModuleName);
             ItemValue antenna   = GetModule(droneItem, DroneAutomationMod.AntennaModuleName);
 
-            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
-            {
-                Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
-                return;
-            }
-
             World world = GameManager.Instance?.World;
             if (world == null) return;
 
             EntityPlayer owner = VacuumCore.ResolveOwner(world, __instance.OwnerID, out PersistentPlayerData ownerData);
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
-            // Keep the talk menu's switch buffs on the owner. This has to run before any of the
-            // early returns below, or a player who has switched everything off could never switch
-            // anything back on. See PrimeToggleBuffs for why the menu needs them pre-seated.
+            // Everything the talk menu needs is done up here, BEFORE the "no modules" early-out.
+            // That early-out used to sit above owner resolution, which is exactly the drone the menu
+            // most needs to describe: an empty drone is the one whose rows have to read "no module
+            // installed". A drone with nothing fitted still has a talk menu, so it still has to keep
+            // the menu's switch buffs seated and still has to publish what it is carrying.
             PrimeToggleBuffs(owner);
+            PublishFittedModules(owner, __instance, autoLoot, autoSalvage, autoHarvest, autoRepair, autoPlant, autoDefense);
+
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
+            {
+                Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
+                return;
+            }
 
             // A module the owner has switched off in the drone's talk menu is treated as absent for
             // this pass: the mod stays in its slot, keeps its quality, and costs nothing to put back.
@@ -279,6 +301,74 @@ namespace DroneAutomation
             {
                 if (!buffs.HasBuff(names[i])) buffs.AddBuff(names[i]);
             }
+        }
+
+        /// <summary>
+        /// Tell the owner's talk menu which modules the drone in front of them is actually carrying,
+        /// so a function with no module reads "no module installed" instead of offering a switch for
+        /// hardware that isn't there.
+        ///
+        /// The menu cannot work this out for itself: a dialog requirement can only test player state
+        /// (CVars, quests, skills), and nothing in the dialog even carries the respondent's entity id,
+        /// so the drone has to push the answer onto the player. Which is also why this is inherently
+        /// "the drone you are standing at" and not "this drone" - see the range and claim rules below.
+        ///
+        /// Free to call every tick. EntityBuffs.SetCustomVar compares before it stores and only sends
+        /// a NetPackageModifyCVar when the value actually CHANGES, so a drone whose loadout is stable
+        /// costs one dictionary lookup per flag and no network traffic at all. It reaches the client
+        /// because on a dedicated server a player entity is remote, which is what that method's
+        /// netSync gate tests. (Do not "fix" that with _forceSendToClients: true - it bypasses the
+        /// changed check and would put six packets per drone per tick on the wire. It is also not
+        /// callable here: see PublishOne.)
+        /// </summary>
+        private static void PublishFittedModules(EntityPlayer _owner, EntityDrone _drone,
+            ItemValue _loot, ItemValue _salvage, ItemValue _harvest,
+            ItemValue _repair, ItemValue _plant, ItemValue _defense)
+        {
+            // You have to be standing at a drone to hold E on it, so anything further away is not the
+            // drone whose menu is about to open and must not overwrite the flags.
+            float distSq = (_drone.position - _owner.position).sqrMagnitude;
+            if (distSq > MenuPublishRange * MenuPublishRange) return;
+
+            // With more than one drone in range the flags would otherwise ping-pong every tick - two
+            // drones with different loadouts each "correcting" the other, and every flip is a real
+            // packet because the value genuinely changed. So the nearest drone claims the owner's menu
+            // and keeps it until something is strictly nearer, or until it stops reporting (parked out
+            // of range, despawned, picked up) and the claim goes stale.
+            ulong now = GameTimer.Instance.ticks;
+            MenuClaim claim;
+            bool held = menuClaims.TryGetValue(_owner.entityId, out claim)
+                        && now >= claim.Tick && now - claim.Tick <= MenuClaimStaleTicks;
+            if (held && claim.DroneId != _drone.entityId && distSq >= claim.DistSq) return;
+
+            claim.DroneId = _drone.entityId;
+            claim.Tick    = now;
+            claim.DistSq  = distSq;
+            menuClaims[_owner.entityId] = claim;
+
+            PublishOne(_owner, DroneAutomationMod.LootMissingCVar,    _loot);
+            PublishOne(_owner, DroneAutomationMod.SalvageMissingCVar, _salvage);
+            PublishOne(_owner, DroneAutomationMod.HarvestMissingCVar, _harvest);
+            PublishOne(_owner, DroneAutomationMod.RepairMissingCVar,  _repair);
+            PublishOne(_owner, DroneAutomationMod.PlantMissingCVar,   _plant);
+            PublishOne(_owner, DroneAutomationMod.DefenseMissingCVar, _defense);
+        }
+
+        /// <summary>
+        /// Deliberately EntityAlive.SetCVar and not Buffs.SetCustomVar. SetCustomVar GAINED a fifth
+        /// parameter (_forceSendToClients) in V3.1, so a call compiled against 3.0.0 - which is what
+        /// this mod builds against, per BUILD.md - emits a four-argument signature that does not exist
+        /// on 3.1 and throws MissingMethodException every tick there. tools/check_game_versions.py
+        /// caught exactly that. SetCVar is a two-argument wrapper that is byte-identical in 3.0.0 and
+        /// 3.1, null-guards Buffs itself, and forwards with the same netSync default.
+        ///
+        /// Note this is the reverse of the usual compile-against-the-oldest rule: an added OPTIONAL
+        /// parameter is a source-compatible change that is NOT binary compatible, and it breaks the
+        /// old build on the NEW game.
+        /// </summary>
+        private static void PublishOne(EntityPlayer _owner, string _cvar, ItemValue _module)
+        {
+            _owner.SetCVar(_cvar, _module == null ? 1f : 0f);
         }
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)
