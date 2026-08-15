@@ -29,6 +29,21 @@ namespace DroneAutomation
         public const string OverclockModuleName   = "modRoboticDroneOverclockMod";
         public const string AntennaModuleName     = "modRoboticDroneAntennaMod";
 
+        // Per-player switches written by the drone's "Automation modules" talk menu (Config/dialogs.xml
+        // draws the menu, Config/buffs.xml does the writing). Non-zero means the player has switched
+        // that module OFF; the module stays installed and keeps its quality, it just stops acting.
+        //
+        // The flag has to mean DISABLED rather than enabled: EntityBuffs.GetCustomVar returns 0 for a
+        // name it has never seen, and EntityBuffs.Write skips any CVar sitting at 0, so an "enabled"
+        // flag would read as off for every player who has never opened the menu - and would leave
+        // nothing on disk once switched back on.
+        public const string LootOffCVar    = "daLootOff";
+        public const string SalvageOffCVar = "daSalvageOff";
+        public const string HarvestOffCVar = "daHarvestOff";
+        public const string RepairOffCVar  = "daRepairOff";
+        public const string PlantOffCVar   = "daPlantOff";
+        public const string DefenseOffCVar = "daDefenseOff";
+
         public static string ModPath;
 
         /// <summary>When set, every module logs (throttled) why it is or isn't acting.</summary>

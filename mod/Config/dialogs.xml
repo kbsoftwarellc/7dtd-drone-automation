@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!--
+	  Switch any automation module off without pulling the mod out of the drone.
+
+	  WHY THE TALK MENU AND NOT A HOTKEY OR THE RADIAL WHEEL. Both of those are client-side.
+	  EntityDrone.InitLocalActivationCommands, AllowActivationCommand and OnEntityActivated all take
+	  an EntityPlayerLocal and run only on the machine holding the camera, and key bindings are
+	  client config - so adding a wheel entry or a keybind would mean shipping a client DLL and
+	  ending this mod's "server installs it, players install nothing" contract.
+
+	  The wheel's existing "talk" entry is the way in. It opens the XML dialog junkDrone, and
+	  WorldStaticData registers both dialogs.xml and buffs.xml with _sendToClients: true - the server
+	  pushes its patched copy to every vanilla client, which parses it locally. So a server-side
+	  modlet can put rows in that menu, one click deeper than the wheel itself.
+
+	  HOW A ROW KNOWS ITS STATE. XUiC_DialogResponseEntry evaluates each response's requirements
+	  against the LOCAL player and, on a failed requirement marked requirementtype="Hide", drops the
+	  row entirely. So each module gets a matched pair of rows guarded by opposite CheckCVar values:
+	  exactly one is ever visible, and the visible one is both the status readout and the switch.
+	  Clicking it adds the one-shot buff that writes the CVar (see buffs.xml), and nextstatementid
+	  brings you straight back to this menu with the row already flipped.
+
+	  TEXT IS DELIBERATELY LITERAL, NOT A LOCALIZATION KEY. Localization.csv is NOT in the list of
+	  files pushed to clients, so a key would resolve on the server and render as raw
+	  "daLootDisableText" on every player's screen. Localization.Get returns an unknown key verbatim,
+	  so writing the English sentence in place of the key makes server and client agree.
+
+	  THE SWITCHES ARE PER PLAYER, NOT PER DRONE. DialogActionAddBuff applies to the talking player
+	  and CVars live on the player, and nothing in the dialog carries the drone's entity id, so a
+	  player running two drones switches a function off on both. That is the honest limit of the
+	  no-client-install route; per-drone state would need the server to guess which drone you meant.
+
+	  ROW BUDGET: windowResponses is a 10-row grid with no scrollbar. junkDrone's start statement
+	  shows 6-7 rows (its command pairs hide one of each), and this adds one. The submenu below shows
+	  6 module rows plus "switch everything on" plus "back" = 8. Both stay inside 10; anything added
+	  later has to be counted against that, because an eleventh row is silently invisible.
+	-->
+
+	<!-- Sits directly above "Never mind", so the vanilla drone commands keep their order. -->
+	<insertBefore xpath="/dialogs/dialog[@id='junkDrone']/statement[@id='start']/response_entry[@id='done']">
+		<response_entry id="daAutomation"/>
+	</insertBefore>
+
+	<append xpath="/dialogs/dialog[@id='junkDrone']">
+
+		<statement id="daAutomation" text="Which of my automation modules should be running?">
+			<response_entry id="daLootDisable"/>
+			<response_entry id="daLootEnable"/>
+			<response_entry id="daSalvageDisable"/>
+			<response_entry id="daSalvageEnable"/>
+			<response_entry id="daHarvestDisable"/>
+			<response_entry id="daHarvestEnable"/>
+			<response_entry id="daRepairDisable"/>
+			<response_entry id="daRepairEnable"/>
+			<response_entry id="daPlantDisable"/>
+			<response_entry id="daPlantEnable"/>
+			<response_entry id="daDefenseDisable"/>
+			<response_entry id="daDefenseEnable"/>
+			<response_entry id="daAllEnable"/>
+			<response_entry id="daBack"/>
+		</statement>
+
+		<response id="daAutomation" text="Automation modules..." nextstatementid="daAutomation"/>
+
+		<!-- Auto-Loot -->
+		<response id="daLootDisable" text="Auto-Loot: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daLootOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaLootDisable"/>
+		</response>
+		<response id="daLootEnable" text="Auto-Loot: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daLootOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaLootEnable"/>
+		</response>
+
+		<!-- Auto-Salvage -->
+		<response id="daSalvageDisable" text="Auto-Salvage: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daSalvageOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvageDisable"/>
+		</response>
+		<response id="daSalvageEnable" text="Auto-Salvage: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daSalvageOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvageEnable"/>
+		</response>
+
+		<!-- Auto-Harvest -->
+		<response id="daHarvestDisable" text="Auto-Harvest: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daHarvestOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaHarvestDisable"/>
+		</response>
+		<response id="daHarvestEnable" text="Auto-Harvest: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daHarvestOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaHarvestEnable"/>
+		</response>
+
+		<!-- Auto-Repair -->
+		<response id="daRepairDisable" text="Auto-Repair: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daRepairOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaRepairDisable"/>
+		</response>
+		<response id="daRepairEnable" text="Auto-Repair: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daRepairOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaRepairEnable"/>
+		</response>
+
+		<!-- Auto-Plant -->
+		<response id="daPlantDisable" text="Auto-Plant: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daPlantOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPlantDisable"/>
+		</response>
+		<response id="daPlantEnable" text="Auto-Plant: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daPlantOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPlantEnable"/>
+		</response>
+
+		<!-- Auto-Defense -->
+		<response id="daDefenseDisable" text="Auto-Defense: ON - switch it off" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daDefenseOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaDefenseDisable"/>
+		</response>
+		<response id="daDefenseEnable" text="Auto-Defense: OFF - switch it on" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daDefenseOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaDefenseEnable"/>
+		</response>
+
+		<response id="daAllEnable" text="Switch every module back on" nextstatementid="daAutomation">
+			<action type="AddBuff" id="buffDaAllEnable"/>
+		</response>
+
+		<response id="daBack" text="Back" nextstatementid="start"/>
+
+	</append>
+</config>

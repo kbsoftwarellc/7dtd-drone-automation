@@ -91,6 +91,24 @@ namespace DroneAutomation
             EntityPlayer owner = VacuumCore.ResolveOwner(world, __instance.OwnerID, out PersistentPlayerData ownerData);
             if (owner == null) { Debug(__instance, "owner not resolved from OwnerID=" + (__instance.OwnerID?.ReadablePlatformUserIdentifier ?? "null")); return; }
 
+            // A module the owner has switched off in the drone's talk menu is treated as absent for
+            // this pass: the mod stays in its slot, keeps its quality, and costs nothing to put back.
+            // Deliberately applied AFTER the hardware check above, so a drone whose every module is
+            // switched off still reports that it HAS modules - "switched off" and "none installed"
+            // are different problems and the debug log has to be able to tell them apart.
+            if (IsSwitchedOff(owner, DroneAutomationMod.LootOffCVar))    autoLoot    = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.SalvageOffCVar)) autoSalvage = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.HarvestOffCVar)) autoHarvest = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.RepairOffCVar))  autoRepair  = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.PlantOffCVar))   autoPlant   = null;
+            if (IsSwitchedOff(owner, DroneAutomationMod.DefenseOffCVar)) autoDefense = null;
+
+            if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
+            {
+                Debug(__instance, "every installed module is switched off in the drone's talk menu");
+                return;
+            }
+
             DroneBoost boost = BuildBoost(overclock, antenna);
 
             bool didSomething = false;
@@ -207,6 +225,20 @@ namespace DroneAutomation
             float max = DroneAutomationMod.MaxOwnerDistance;
             if (max <= 0f) return true;
             return (_drone.position - _owner.position).sqrMagnitude <= max * max;
+        }
+
+        /// <summary>
+        /// True when the drone's owner has switched this module off from the talk menu.
+        ///
+        /// The menu writes the flag as a player CVar, because that is the only server-side state a
+        /// vanilla client can change: the dialog's AddBuff action net-syncs, the server re-applies the
+        /// buff (NetPackageAddRemoveBuff.ProcessPackage), and the buff's ModifyCVar effect runs on
+        /// both ends. So the client sees its menu row flip instantly and the server - here - reads the
+        /// same value a tick later, with no custom packet and nothing to install client-side.
+        /// </summary>
+        private static bool IsSwitchedOff(EntityPlayer _owner, string _cvar)
+        {
+            return _owner.Buffs != null && _owner.Buffs.GetCustomVar(_cvar) != 0f;
         }
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)
