@@ -113,7 +113,8 @@ version without anyone noticing.
 | **v0.7.1** (repackage) | `b30f84485c04e385aeb98ccefa8326cf0a96174c` | V 3.0.0 (b259) | `4520775eb39fc43ef4e122da36f6fdd4b4fb38d93a3cfe72850e38bd91e9fd05` | `fe105f3c7b8a288390bdb305cc9d4d5faf2a652624eac69c7d041159abeb4047` |
 | **v0.7.2** | `f0499f273b2e8273e86bb4277f384c2246f33641` | V 3.0.0 (b259) | `cb02049596c6e7a0256aef5b150bb9384005302f31fd92d390aec58e0759127d` | `4b2bf33efb376aa0b94e9b404bd0aa5bb88f2f99a4cb0b8a56329e37c33c4f11` |
 | **v0.7.3** ⚠ withdrawn | `960d4d444b73f5299ac11dbd7908ae4766193492` | **3.0.1 or newer — not the documented 3.0.0** | `941f0fbc91f100c8fd73481a33bf792c532a203e4490c84d2bcfac9764942d8c` | `682bc107ffc8695f776f261143cfab76193197501405c4d5f09067e02043679e` |
-| **v0.7.4** | _(this release)_ | V 3.0.0 (b259) | _filled in at release_ | _filled in at release_ |
+| **v0.7.4** | `172e950f7ec0be28670492038a6035df07dc06df` | V 3.0.0 (b259) | _not recorded at release_ | _not recorded at release_ |
+| **v0.7.5** | _(this release)_ | V 3.0.0 (b259) | _filled in at release_ | _filled in at release_ |
 
 ⚠ **v0.7.3 does not rebuild from its own instructions.** Section 2 names V 3.0.0 (b259), but that
 DLL binds `AddItem` and `TryStackItem` on `InventoryBase`, a type 3.0.1 introduced — so it was built

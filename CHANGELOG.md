@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.5 — 2026-08-14
 
 - **Fixed: Auto-Harvest minted a free seed every time it reaped a crop.** A crop's harvest drops
   include its own young stage — `plantedCorn3HarvestPlayer` lists
