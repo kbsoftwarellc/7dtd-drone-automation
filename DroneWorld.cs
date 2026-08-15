@@ -93,12 +93,22 @@ namespace DroneAutomation
         /// <summary>
         /// Emits a block's drops for one event into the drone bag. name="*" means the block's own
         /// item. Anything that does not fit spills to the ground, exactly like an over-full loot.
+        ///
+        /// <paramref name="_payOne"/> withholds a single unit of one item from the payout, for a
+        /// caller that is about to spend it on the player's behalf. Auto-Harvest uses it so the
+        /// seed it replants with is the seed the crop just dropped, rather than a conjured extra:
+        /// a crop yields its seed AND gets replanted, so banking both would mint one free seed per
+        /// crop per cycle. Only ONE unit is withheld, so perk-boosted seed drops still pay out the
+        /// surplus.
         /// </summary>
         public static void EmitDrops(Block _b, EnumDropEvent _event, BlockValue _bv,
-                                     EntityPlayer _owner, EntityDrone _drone, System.Random _rand)
+                                     EntityPlayer _owner, EntityDrone _drone, System.Random _rand,
+                                     ItemValue _payOne = null)
         {
             if (_b.itemsToDrop == null) return;
             if (!_b.itemsToDrop.TryGetValue(_event, out List<Block.SItemDropProb> list) || list == null) return;
+
+            bool paid = false;
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -108,6 +118,13 @@ namespace DroneAutomation
 
                 ItemValue iv = drop.name == "*" ? _bv.ToItemValue() : ItemClass.GetItem(drop.name);
                 if (iv == null || iv.IsEmpty()) continue;
+
+                if (!paid && _payOne != null && iv.type == _payOne.type)
+                {
+                    paid = true;
+                    count--;
+                    if (count <= 0) continue;
+                }
 
                 Deposit(_drone, iv.Clone(), count);
             }

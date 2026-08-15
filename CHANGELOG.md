@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- **Fixed: Auto-Harvest minted a free seed every time it reaped a crop.** A crop's harvest drops
+  include its own young stage — `plantedCorn3HarvestPlayer` lists
+  `<drop event="Harvest" name="plantedCorn1" tag="farmerBonusSeed"/>` — and the module banked that
+  seed in the drone's bag *and* separately planted a fresh one in the empty plot. Two seeds where the
+  crop produced one.
+
+  That is not what harvesting by hand does. Vanilla leaves a reaped plot **bare**: crops ship with
+  `DowngradeBlock` commented out, and a block with no `DowngradeBlock` resolves to air
+  (`Block.cs:1789`, and the downgrade path at `Block.cs:2461` only runs when it is not air). The seed
+  the crop hands you is the one you are meant to spend putting the plot back. So a drone farm quietly
+  produced a spare seed per crop per cycle — on a 27-plot field, 27 seeds a cycle, compounding into
+  more plots.
+
+  Auto-Harvest now pays for the replant with the seed it just reaped. `EmitDrops` takes an optional
+  `_payOne`, withholding a **single unit** of that one item from the payout, so perk-boosted seed
+  drops still hand over the surplus — only the one seed the drone plants on your behalf is consumed.
+  Produce is untouched.
+
 - **Auto-Harvest now says why it reaped nothing.** With `Debug="1"` a pass that harvests nothing
   prints the numbers behind the decision instead of a flat "nothing in range":
 

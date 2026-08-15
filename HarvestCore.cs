@@ -81,6 +81,7 @@ namespace DroneAutomation
             DroneWorld.CollectParents(_world, _scanCenter, radius, vertical, buffer);
 
             int did = 0, crops = 0, outsideClaim = 0, noReplant = 0;
+            string firstNoReplant = null;
             for (int i = 0; i < buffer.Count; i++)
             {
                 if (pacer.Credit < secondsPerTarget) break;
@@ -97,11 +98,24 @@ namespace DroneAutomation
                 if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.Self) { outsideClaim++; continue; }
 
                 // Must know what to replant, or we leave the crop alone rather than destroy it.
-                if (!TryGetReplant(b, out BlockValue young)) { noReplant++; continue; }
+                if (!TryGetReplant(b, out BlockValue young))
+                {
+                    noReplant++;
+                    // Name it. The wild and player-grown variants of a crop share a display name,
+                    // so the in-game tooltip cannot tell you which one the module is refusing -
+                    // only the block name can (plantedCorn3Harvest vs plantedCorn3HarvestPlayer).
+                    if (firstNoReplant == null) firstNoReplant = b.GetBlockName();
+                    continue;
+                }
 
                 if (!pacer.TrySpend(secondsPerTarget)) break;
 
-                DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand);
+                // The crop drops its own seed on harvest, and that seed is what pays for the replant
+                // below - withhold one so the drone is not minting a free one every cycle. Vanilla
+                // leaves a harvested plot BARE (crops ship with DowngradeBlock commented out, and an
+                // absent DowngradeBlock resolves to air), so by hand you spend that seed replanting.
+                // Banking it AND replanting would hand back a spare seed per crop, per cycle.
+                DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand, young.ToItemValue());
 
                 // Replanting the young stage re-arms its growth schedule (BlockPlantGrowing.OnBlockAdded)
                 // and syncs to clients; it also stops this crop being reaped again until it regrows.
@@ -113,7 +127,10 @@ namespace DroneAutomation
             {
                 LastScan = $"anchor ({_scanCenter.x:0},{_scanCenter.y:0},{_scanCenter.z:0}) r={radius:0.0}/{vertical:0.0} q{_quality}: "
                          + $"{buffer.Count} blocks, {crops} grown crops"
-                         + (crops == 0 ? " -> none in reach" : $", {outsideClaim} outside your claim, {noReplant} with no replant");
+                         + (crops == 0
+                             ? " -> none in reach"
+                             : $", {outsideClaim} outside your claim, {noReplant} with no replant"
+                               + (firstNoReplant != null ? $" (e.g. {firstNoReplant})" : ""));
             }
 
             return did > 0;
