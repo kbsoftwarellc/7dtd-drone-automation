@@ -1,6 +1,6 @@
 Download
 
-File: **DroneAutomation_v0.8.0_gameV3.0.0-V3.1.zip**\
+File: **DroneAutomation_v0.8.1_gameV3.0.0-V3.1.zip**\
 Built and verified for **7 Days to Die V3.0.0, V3.0.1 and V3.1**.
 
 The zip contains one folder, `DroneAutomation`, holding `DroneAutomation.dll`, `ModInfo.xml`, `droneautomation.xml`, a `Config` folder, plus README, CHANGELOG and LICENSE.
@@ -34,9 +34,9 @@ Steps
 
    No line means the folder is nested one level too deep — or, if you are in single-player, that EAC is still on.
 
-**Updating:** delete the old `DroneAutomation` folder and drop the new one in. Keep your own settings in `droneautomation.local.xml` (see Usagthem.
+**Updating:** delete the old `DroneAutomation` folder and drop the new one in. Keep your own settings in `droneautomation.local.xml` (see Settings below) and an update never touches them.
 
-**Uninstalling:** delete the `DroneAutomation` folder and restart. Modules already fitted to a drone disappear with the mod; nothing else in y
+**Uninstalling:** delete the `DroneAutomation` folder and restart. Modules already fitted to a drone disappear with the mod; nothing else in your world is affected.
 
 Usage
 
@@ -46,18 +46,18 @@ Getting a module
 2. Craft the module at a **workbench**.
 3. Install it in a junk drone exactly like any other drone mod.
 
-Modules stack with each other and with the vanilla cargo mod, but the drone has a limited number of mod slots, so fitting one is a trade againlso sell the finished modules.
+Modules stack with each other and with the vanilla cargo mod, but the drone has a limited number of mod slots, so fitting one is a trade against the other mods you could have fitted. Traders also sell the finished modules.
 
 What each module does
 
 **Automation modules** — the drone does the chore, using the drone's own storage:
 
-- **Auto-Loot** — opens zombie loot bags and containers and picks up dropped items. Bags and dropped items within 15m, block containers withinhrow alone — a rock, a molotov, a grenade — while it is in the air, while it is burning or ticking, and for a few seconds after it lands, so athrown rock still works as a decoy.
-- **Auto-Salvage** — wrenches salvageable blocks (cars, sinks, machines) apart one step at a time. **Unclaimed ground only**, never inside anyrader area. Leaves workstations alone by default.
+- **Auto-Loot** — opens zombie loot bags and containers and picks up dropped items. Bags and dropped items within 15m, block containers within 8m. It leaves anything you throw alone — a rock, a molotov, a grenade — while it is in the air, while it is burning or ticking, and for a few seconds after it lands, so a thrown rock still works as a decoy.
+- **Auto-Salvage** — wrenches salvageable blocks (cars, sinks, machines) apart one step at a time. **Unclaimed ground only**, never inside anyone's land claim — yours included — and never inside a trader area. Leaves workstations alone by default, and never touches the switches, buttons, relays or pressure plates a POI needs to work.
 - **Auto-Harvest** — reaps grown crops in **your own land claim** and replants the seed. A crop is only reaped if it can be replanted, so a plot is never left empty.
-- **Auto-Repair** — repairs damaged blocks in **your own land claim**, paying the materials out of the drone's bag. Only repairs what it can p
+- **Auto-Repair** — repairs damaged blocks in **your own land claim**, paying the materials out of the drone's bag. Only repairs what it can pay for.
 - **Auto-Plant** — sows young crops from the drone's bag onto empty farm plots in **your own land claim**. Pairs with Auto-Harvest — what one reaps, the other sows — for a self-running farm.
-- **Auto-Defense** — turns the drone into a **bodyguard**. It fires its own machine gun at the nearest hostile while following you, or stands park it on. Kills are credited to you, and it never targets you, your allies, party members or traders.
+- **Auto-Defense** — turns the drone into a **bodyguard**. It fires its own machine gun at the nearest hostile while following you, or stands sentry over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders.
 
 **Enhancement modules** — no chore of their own, they improve the others:
 
@@ -71,15 +71,15 @@ Parking the drone
 Give the drone the vanilla **stay** command and the block modules work the ground around the spot you parked it on instead of around you. Park one in the farm and it keeps reaping and replanting while you are out looting; park one in the base and it keeps repairing. Send it back to following and it works around\
 you again. Auto-Loot always works around the drone itself.
 
-You still have to be online, but no longer nearby. A *following* drone only works blocks while it is actually with you (25m by default), so on't keep working from across the map.
+You still have to be online, but no longer nearby. A *following* drone only works blocks while it is actually with you (25m by default), so a drone left behind won't keep working from across the map.
 
-Auto-Defense ignores all of that on purpose — it fights whether the drone is following or parked, and even while you have its storage open. A nary turret.
+Auto-Defense ignores all of that on purpose — it fights whether the drone is following or parked, and even while you have its storage open. A parked drone with Auto-Defense fitted is a stationary turret.
 
 Module levels (Quality 1–6)
 
 Quality scales a module's reach and speed, and for the enhancement modules how big a boost they give. It comes from **two** places:
 
-- **Crafting** — follows your **Robotics crafting skill**. Below Robotics 80 you get the Quality 1 baseline; then Q2 at 80, Q3 at 85, Q4 at 90otics is a *crafting* skill, so it rises by reading **Tech Planet** magazines rather than by spending perk points — the Electrocutioner andTurrets perks both make those magazines drop more often.
+- **Crafting** — follows your **Robotics crafting skill**. Below Robotics 80 you get the Quality 1 baseline; then Q2 at 80, Q3 at 85, Q4 at 90, Q5 at 95 and Q6 at 100. Robotics is a *crafting* skill, so it rises by reading **Tech Planet** magazines rather than by spending perk points — the Electrocutioner and Turrets perks both make those magazines drop more often.
 - **Traders** — rolled by the trader's stage: Q2 from stage 45, up to Q6 from stage 65. Early game a trader only ever offers Quality 1.
 
 **Loot is not a source.** Drone mods cannot drop as loot in V3 — only the schematics do.
@@ -88,9 +88,9 @@ The ranges quoted above are the Quality 6 ceilings; a Quality 1 module reaches l
 
 Settings
 
-Every knob is in `droneautomation.xml` inside the mod folder: reach, action times, and the safety rules for each module. Each one is commented
+Every knob is in `droneautomation.xml` inside the mod folder: reach, action times, and the safety rules for each module. Each one is commented in place.
 
-To keep your tuning through updates, put your changes in `droneautomation.local.xml` in the same folder instead. List only the values you wanthipped ones and are never overwritten by an update:
+To keep your tuning through updates, put your changes in `droneautomation.local.xml` in the same folder instead. List only the values you want to change; they are read on top of the shipped ones and are never overwritten by an update:
 
 `<droneautomation MaxOwnerDistance="60">`\
 ` <autoLoot Radius="12" />`\
@@ -98,6 +98,6 @@ To keep your tuning through updates, put your changes in `droneautomation.local.
 
 Troubleshooting
 
-If a module isn't acting, set `Debug="1"` on the `<droneautomation>` line in `droneautomation.xml` and watch the log for \`\[DroneAutomation\]\[dr which check is stopping it.
+If a module isn't acting, set `Debug="1"` on the `<droneautomation>` line in `droneautomation.xml` and watch the log for the `[DroneAutomation][drone]` lines, which say what it scanned and which check stopped it.
 
-*Note for dedicated servers: localization text is not auto-synced, so clients may see raw key names on the new items until a client-side text unctions normally.*
+*Note for dedicated servers: localization text is not auto-synced, so clients may see raw key names on the new items until a client-side localization mod is installed. The mod itself functions normally.*
