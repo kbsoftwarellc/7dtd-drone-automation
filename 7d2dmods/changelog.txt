@@ -2,27 +2,13 @@
 
 ## 0.8.1
 
-- **Fixed: Auto-Salvage wrenched the switches that make a POI work.** The wall switch beside a\
-  garage door, a push button, a valve handle, a key rack, a wire or timer relay, a pressure plate, a\
-  quest generator — the game tags every one of them as salvage, exactly like a sink, so the module\
-  took them. You do not see it happen and you cannot undo it: none of those blocks can be crafted or\
-  looted, so the door that switch opened never opens again, for the life of the save, for every\
-  player who comes to that POI after you.
+- **Fixed: Auto-Salvage wrenched the switches that make a POI work.** The wall switch beside a garage door, a push button, a valve handle, a key rack, a wire or timer relay, a pressure plate, a quest generator — the game tags every one of them as salvage, exactly like a sink, so the module took them. You do not see it happen and you cannot undo it: none of those blocks can be crafted or looted, so the door that switch opened never opens again, for the life of the save, for every player who comes to that POI after you.
 
-  Auto-Salvage now leaves switches, buttons, relays, pressure plates, quest triggers and powered\
-  doors, lights and traps alone. It matches on what the block *is* rather than a list of names, so a\
-  modded switch is covered too. Set `SalvageSwitches="1"` if you want the old behaviour back.
+Auto-Salvage now leaves switches, buttons, relays, pressure plates, quest triggers and powered doors, lights and traps alone. It matches on what the block *is* rather than a list of names, so a modded switch is covered too. Set `SalvageSwitches="1"` if you want the old behaviour back.
 
-- **Fixed: the no-salvaging-in-a-land-claim rule had three ways to quietly not apply.** Auto-Salvage\
-  has always been meant to work unclaimed ground only, and it asked the game the obvious question —\
-  but the game answers "unclaimed" for claimed ground in three cases: the claim block sits in a\
-  chunk nobody has loaded, it is not that player's main claim block, or its owner has been offline\
-  longer than the server's land claim expiry. On a server the last one is the one that bites: go\
-  away for a week and a drone could strip your base with your claim block still standing in it.
+- **Fixed: the no-salvaging-in-a-land-claim rule had three ways to quietly not apply.** Auto-Salvage has always been meant to work unclaimed ground only, and it asked the game the obvious question — but the game answers "unclaimed" for claimed ground in three cases: the claim block sits in a chunk nobody has loaded, it is not that player's main claim block, or its owner has been offline longer than the server's land claim expiry. On a server the last one is the one that bites: go away for a week and a drone could strip your base with your claim block still standing in it.
 
-  The module now reads the claim list directly, which has none of those holes. A claim block that\
-  exists protects its ground, whoever owns it and whenever they last logged in. There is no setting\
-  for this one, and there should not be.
+The module now reads the claim list directly, which has none of those holes. A claim block that exists protects its ground, whoever owns it and whenever they last logged in. There is no setting for this one, and there should not be.
 
 ## 0.8.0
 
