@@ -27,6 +27,10 @@ namespace DroneAutomation
         /// point. Server ops who want POIs left intact can turn it off.
         public bool SalvageInPOIs = true;
 
+        /// Off by default: a switch, button, relay or pressure plate is what makes a POI work, and
+        /// wrenching one leaves a door that can never be opened again. See SalvageGuards.
+        public bool SalvageSwitches = false;
+
         /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
         public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
 
@@ -47,8 +51,9 @@ namespace DroneAutomation
     /// Destructive, so it is deliberately conservative: it only touches blocks whose Harvest drops
     /// are tagged as salvage (which excludes terrain, ore, wood, plants and normal loot), only on
     /// UNCLAIMED ground - never inside anyone's land claim, so it cannot wreck your base or a
-    /// neighbour's - and never a container that still holds loot the player hasn't collected. One
-    /// downgrade step per tick means a car visibly comes apart over several seconds.
+    /// neighbour's - never a switch, button or relay a POI needs to work, and never a container that
+    /// still holds loot the player hasn't collected. One downgrade step per tick means a car visibly
+    /// comes apart over several seconds.
     ///
     /// A land claim alone is NOT enough protection, which is why the guards below exist. The game's
     /// World.GetLandClaimOwner returns EnumLandClaimOwner.None for a trader area - the very value
@@ -91,6 +96,9 @@ namespace DroneAutomation
             // position, otherwise the owner (the drone drifts as it hovers beside you).
             DroneWorld.CollectParents(_world, _scanCenter, radius, vertical, buffer);
 
+            // Collect the land claims that reach into this bubble once, before walking the blocks.
+            SalvageGuards.BeginTick(_scanCenter, radius);
+
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
@@ -103,8 +111,18 @@ namespace DroneAutomation
                 Block b = bv.Block;
                 if (b == null || !IsSalvageable(b)) continue;
 
-                // Unclaimed ground only - protects your own base and everyone else's.
+                // Unclaimed ground only - protects your own base and everyone else's. Asked twice on
+                // purpose: the vanilla call is the one that knows about allies and game modes, and
+                // the claim-map scan is the one that still says "claimed" when the claim's chunk is
+                // unloaded, the claim block is not the owner's primary, or the owner has been away
+                // long enough for land protection to lapse.
                 if (DroneWorld.Claim(_world, _ownerData, pos) != EnumLandClaimOwner.None) continue;
+                if (SalvageGuards.InsideClaim(pos)) continue;
+
+                // Never wrench a switch, button, relay or pressure plate. They are salvage-tagged
+                // like any other metal fitting, but they are what opens a POI's doors, and the block
+                // cannot be crafted or looted back - so one wrench swing breaks that POI forever.
+                if (!settings.SalvageSwitches && SalvageGuards.IsTriggerBlock(b)) continue;
 
                 // A trader area also reports as unclaimed, so the check above WAVES IT THROUGH. It
                 // has to be rejected on its own, or the drone strips the trader's workstations.
