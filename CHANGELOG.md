@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.8.1 — 2026-08-16
+
+- **Fixed: Auto-Salvage wrenched the switches that make a POI work.** A `powerSwitch01` on the wall
+  next to a garage door, a push button, a valve handle, a key rack, a wire or timer relay, a pressure
+  plate, a quest generator — every one of them is tagged as salvage in the game's own block data, so
+  the module took them exactly the way it takes a sink. The damage is invisible at the time and
+  permanent afterwards: none of those blocks is craftable or in a loot list, so the door they opened
+  never opens again, for the life of the save, for every player who comes to that POI after you.
+
+  Auto-Salvage now leaves switches, buttons, relays, pressure plates, quest triggers and powered
+  doors, lights and traps alone. It is matched on the block's class rather than a list of names, so a
+  modded switch that derives from one of them is covered too. `SalvageSwitches="1"` in
+  `droneautomation.xml` puts the old behaviour back for anyone who wants it.
+
+- **Fixed: the land-claim rule had three ways to quietly not apply.** Auto-Salvage has always been
+  meant to work unclaimed ground only, and it asked the game the obvious question — but
+  `World.GetLandClaimOwner` answers "unclaimed" for claimed ground in three cases: the claim block's
+  chunk is not loaded, the claim block is not the owner's *primary* one, or the owner has been away
+  long enough for land protection to lapse (`IsLandProtectionValidForPlayer`). On a server, the third
+  is the one that bites: go on holiday for longer than the server's land claim expiry and a drone can
+  strip your base while the claim block is still standing in it.
+
+  The module now also reads the persistent claim map directly, which has none of those holes: a claim
+  block that exists protects its ground, whoever owns it and whenever they last logged in. There is
+  no setting for this one, and there should not be.
+
 ## 0.8.0 — 2026-08-15
 
 - **Switch a module off without pulling it out of the drone.** Hold **E** on the drone → **Talk** →

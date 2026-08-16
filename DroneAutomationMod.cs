@@ -322,6 +322,7 @@ namespace DroneAutomation
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
             ReadBool(_node, "SalvageWorkstations", ref _settings.SalvageWorkstations);
             ReadBool(_node, "SalvageInPOIs", ref _settings.SalvageInPOIs);
+            ReadBool(_node, "SalvageSwitches", ref _settings.SalvageSwitches);
 
             // <exclude block="..."/> children: blocks the drone must never wrench.
             _settings.ExcludedBlocks.Clear();

@@ -53,7 +53,8 @@
 
 	<!--
 	  Auto-Salvage: wrench salvageable blocks (cars, sinks, machines) into the drone's bag.
-	  Destructive, so it only touches UNCLAIMED ground - never inside anyone's land claim.
+	  Destructive, so it only touches UNCLAIMED ground - never inside anyone's land claim, yours
+	  included, and that rule has no setting because there is no safe way to switch it off.
 	  Trader areas are ALWAYS off limits and cannot be enabled (the game reports a trader area as
 	  unclaimed, so the land-claim rule alone would happily let the drone strip the trader).
 	    Radius / VerticalRadius   reach. Kept small by default because it destroys blocks.
@@ -64,6 +65,11 @@
 	    SalvageInPOIs             0 = never wrench anything inside a POI's footprint. On by default,
 	                              because stripping cars and sinks as you clear a building is the
 	                              whole point of the module.
+	    SalvageSwitches           1 = also scrap switches, buttons, valve handles, key racks, wire
+	                              and timer relays, pressure plates, quest generators and powered
+	                              doors, lights and traps. Off by default, and leave it off: these
+	                              are what open a POI's doors, they cannot be crafted or looted
+	                              back, and wrenching one breaks that POI for the life of the save.
 	    <exclude block="..."/>    any block the drone must never wrench. Add as many as you like.
 	-->
 	<autoSalvage Radius="4"
@@ -73,7 +79,8 @@
 	             LowQualityReach="0.55"
 	             LowQualityTimeMult="2"
 	             SalvageWorkstations="0"
-	             SalvageInPOIs="1">
+	             SalvageInPOIs="1"
+	             SalvageSwitches="0">
 		<!-- Examples. Workstations are already covered by SalvageWorkstations="0"; use these for
 		     anything else you want left standing. -->
 		<!-- <exclude block="cntVendingMachine"/> -->
