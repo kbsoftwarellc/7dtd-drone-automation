@@ -141,6 +141,7 @@ version without anyone noticing.
 | **v0.7.5** | `4c83cc5` | V 3.0.0 (b259) | `020f1359ff3415461c4e428f44da96ffc0f0945058a181f6c3ea9372e29c38db` | `e0b062f1a41af5728895c5e28cc31959c5bf694f07c107a4586b4cbb629351f0` |
 | **v0.8.0** | `219e896` | V 3.0.0 (b259) **dedicated server** — see 5b | `a469d3f23ff80f8391eed07c682cedad4a7390fddc594d7b6e68fc82fd93a815` | `ece85d8790a4a128f887204ed344bed7787bd30154e10c2f730b493a0f365597` |
 | **v0.8.1** | `b57a88d` | V 3.0.0 (b259) **dedicated server** — see 5b | `492a0412114d322eaf03df1209a274f2511a3d149a48e261b980e9d8443f4ec9` | `6cf9a96b683ba8e09f0a97793ede28fc6f42449669a834137c9a8ef29e8f0d45` |
+| **v0.8.2** | `f79dd6b` | V 3.0.0 (b259) **dedicated server** — see 5b | `7ec080e09e3a3b61b98e54e2ec4bac3b70bde6479e1bd9e1e3635160c78f70f2` | `dc1ea472caa914f43514938034ef1d6325f6fea238824eda9c6929257e39ec20` |
 
 ⚠ **v0.7.3 does not rebuild from its own instructions.** Section 2 names V 3.0.0 (b259), but that
 DLL binds `AddItem` and `TryStackItem` on `InventoryBase`, a type 3.0.1 introduced — so it was built
