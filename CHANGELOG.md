@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.2 — 2026-08-30
+
+- **Fixed: the in-game mod list told dedicated-server owners to turn EasyAntiCheat off.** The
+  description in `ModInfo.xml` still ended "Requires launching the server with EAC off (DLL mod)" —
+  wrong for this mod's only supported install, and the copy players actually read. A dedicated
+  server keeps EAC on and loads mod DLLs anyway: `Mod.LoadAssemblies` only runs the anti-cheat check
+  when `GameManager.IsDedicatedServer` is false. Only single-player and player-hosted games have to
+  launch with EAC off, because there the server runs inside your own game process. The README and
+  the mod pages were corrected back in 0.7.4 (`172e950`); `ModInfo.xml` was missed.
+
+No code changed. If you are already on 0.8.1 and your server starts, there is nothing here for you
+but a correction to what the mod told you.
+
 ## 0.8.1 — 2026-08-16
 
 - **Fixed: Auto-Salvage wrenched the switches that make a POI work.** A `powerSwitch01` on the wall
