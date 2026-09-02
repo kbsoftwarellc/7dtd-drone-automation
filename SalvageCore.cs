@@ -170,9 +170,10 @@ namespace DroneAutomation
                 // Yield this stage's salvage, then knock it down one downgrade step. The downgraded
                 // stage is picked up on a later pass, so a car comes apart stage by stage, exactly
                 // like wrenching it by hand.
-                // Count as holding a wrench while the drops are worked out, so the bonuses vanilla
-                // gates on holding one reach the drone too. Armed one call wide, released in the
-                // finally - see SalvageToolContext.
+                //
+                // The drone counts as holding a wrench while the drops are worked out, so the
+                // bonuses vanilla gates on holding one reach it too. Armed one call wide, released
+                // in the finally - see SalvageToolContext.
                 if (settings.CountAsHoldingSalvageTool) SalvageToolContext.Arm(settings.SalvageToolTags);
                 try
                 {
