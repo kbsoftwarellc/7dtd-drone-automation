@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,7 +50,23 @@ namespace DroneAutomation
         public string SalvageToolTags = SalvageToolContext.DefaultToolTags;
 
         /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
+        /// Merged into SalvageRules at load, where the rules added in game with /das also live.
         public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
+
+        /// The chat command players use to see and change those rules.
+        public string ChatPrefix = "/das";
+
+        /// What to do with a block family this save has never salvaged before: "allow" wrenches it
+        /// and says so once, "ask" leaves it standing until someone permits it. Allow by default,
+        /// because a drone that silently does nothing on a fresh install reads as broken.
+        public string NewTargetPolicy = "allow";
+
+        /// Say something the first time a new kind of thing is taken (or held back). Once per
+        /// family per save - the point is to teach, not to fill chat.
+        public bool AnnounceNewTargets = true;
+
+        public bool NewTargetPolicyAllows =>
+            !string.Equals(NewTargetPolicy, "ask", StringComparison.OrdinalIgnoreCase);
 
         public void Clamp()
         {
@@ -127,7 +144,7 @@ namespace DroneAutomation
                 if (bv.isair) continue;
 
                 Block b = bv.Block;
-                if (b == null || !IsSalvageable(b)) continue;
+                if (b == null || !SalvageCatalog.IsSalvageable(b)) continue;
 
                 // Unclaimed ground only - protects your own base and everyone else's. Asked twice on
                 // purpose: the vanilla call is the one that knows about allies and game modes, and
@@ -155,7 +172,16 @@ namespace DroneAutomation
                 // still hold their materials.
                 if (!settings.SalvageWorkstations && IsWorkstation(_world, pos)) continue;
 
-                if (settings.ExcludedBlocks.Count > 0 && settings.ExcludedBlocks.Contains(b.GetBlockName())) continue;
+                // The player's own rules: names and wildcards from droneautomation.xml and from
+                // /das, plus the new-target policy for a family this save has not met. See
+                // SalvageRules.
+                string blockName = b.GetBlockName();
+                if (!SalvageRules.MaySalvage(blockName, settings.NewTargetPolicyAllows, out string _))
+                {
+                    if (!settings.NewTargetPolicyAllows && settings.AnnounceNewTargets)
+                        SalvageVoice.HeldBack(_owner, blockName, settings.ChatPrefix);
+                    continue;
+                }
 
                 if (!settings.SalvageInPOIs && IsInsidePOI(_world, pos)) continue;
 
@@ -190,6 +216,14 @@ namespace DroneAutomation
                 // heat that breaking this stage by hand would have made is added explicitly - see
                 // Heat. Without it the drone strips a POI without ever drawing a screamer.
                 Heat.BlockBroken(_world, b, pos, settings.HeatMultiplier);
+
+                // Remember what it took, so "/das last" can offer it back as a line to exclude -
+                // by the time anyone notices, the block itself is gone. First one of its kind gets
+                // said out loud.
+                if (_owner != null) SalvageLedger.Record(_owner.entityId, blockName, pos);
+                bool firstOfKind = SalvageRules.MarkSeen(blockName);
+                if (firstOfKind && settings.AnnounceNewTargets)
+                    SalvageVoice.FirstTake(_owner, blockName, settings.ChatPrefix);
                 did++;
             }
 
@@ -237,22 +271,5 @@ namespace DroneAutomation
             return decorator != null && decorator.GetPrefabAtPosition(_pos.ToVector3()) != null;
         }
 
-        /// <summary>
-        /// Salvageable = has a Harvest-event drop tagged as salvage. That tag is what marks
-        /// wrenchable objects (cars, sinks, safes, machines) apart from terrain, ore and plants,
-        /// which use other drop events/tags.
-        /// </summary>
-        private static bool IsSalvageable(Block _b)
-        {
-            if (_b.itemsToDrop == null) return false;
-            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> list) || list == null) return false;
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                string tag = list[i].tag;
-                if (!string.IsNullOrEmpty(tag) && tag.Contains("salvage")) return true;
-            }
-            return false;
-        }
     }
 }
