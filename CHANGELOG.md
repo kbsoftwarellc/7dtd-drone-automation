@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.9.0 — 2026-09-01
+
+- **Auto-Salvage now makes heat, like wrenching does.** Stripping a POI with an impact driver calls
+  a screamer in a couple of minutes; the drone doing the same work called nothing at all, which made
+  it strictly better than doing it yourself rather than faster. It was not a missing call: the
+  game's own destroy sound *is* emitted server-side for the drone's block damage, and the AI
+  director then throws it away, because `EntityDrone.IsIgnoredByAI()` returns true — every drone
+  noise is invisible to it by design. Each broken stage now notifies the director with exactly the
+  heat that block's own destroy sound carries in `sounds.xml`, which is the same value your own
+  swing would have added. Wrenching a car park with the drone draws a screamer on roughly the same
+  clock as wrenching it by hand.
+
+  `HeatMultiplier="0"` in `droneautomation.xml` restores the silent behaviour of 0.8.x; values above
+  1 make the drone louder than a player.
+
+- **Auto-Salvage now counts as holding a wrench when it works out what a block pays.** Vanilla
+  splits the salvage bonuses in two: the Salvage Operations perk raises your yield unconditionally,
+  so the drone always had it, but Hacker's candy (+20%) and the Scavenger Gloves (a tier-scaled
+  chance of an extra drop) hang theirs off `<requirement name="HoldingItemHasTags"/>` — which reads
+  *your* held item. So the drone got them only in the accident where you happened to have your
+  wrench out when its tick landed, and never while you were holding a gun.
+
+  That check is now satisfied for the drone, in a window one call wide: armed immediately before it
+  banks a block's salvage, released in a `finally` straight after. The game does its own maths with
+  its own numbers, so the candy, the gloves, anything TFP adds later and anything an overhaul
+  defines all reach the drone without this mod knowing they exist. An inverted requirement ("while
+  NOT holding one") is left alone, and the requirement's tags have to be ones a salvage tool
+  actually carries, so a bonus gated on an axe or a mining tool cannot ride along.
+
+  `CountAsHoldingSalvageTool="0"` turns the whole thing off; `SalvageToolTags` renames the tags for
+  an overhaul that uses different ones.
+
+- **Fixed: Auto-Salvage wrenched working vending machines.** Not the broken shells — the machines
+  you (and everyone else on the server) can still buy from, and the ones a player can rent and
+  stock. Nothing stopped it: a working machine inherits the same `salvageHarvest` drops as its
+  broken shell, its tile entity is a trader rather than a container so the unlooted-contents guard
+  never sees it, and outside a trader's own area it stands on unclaimed ground. Working machines are
+  now left standing, matched on the block's class so modded ones are covered; broken shells stay
+  salvageable. `SalvageVendingMachines="1"` puts the old behaviour back.
+
 ## 0.8.2 — 2026-08-30
 
 - **Fixed: the in-game mod list told dedicated-server owners to turn EasyAntiCheat off.** The

@@ -323,6 +323,10 @@ namespace DroneAutomation
             ReadBool(_node, "SalvageWorkstations", ref _settings.SalvageWorkstations);
             ReadBool(_node, "SalvageInPOIs", ref _settings.SalvageInPOIs);
             ReadBool(_node, "SalvageSwitches", ref _settings.SalvageSwitches);
+            ReadBool(_node, "SalvageVendingMachines", ref _settings.SalvageVendingMachines);
+            ReadFloat(_node, "HeatMultiplier", ref _settings.HeatMultiplier);
+            ReadBool(_node, "CountAsHoldingSalvageTool", ref _settings.CountAsHoldingSalvageTool);
+            ReadString(_node, "SalvageToolTags", ref _settings.SalvageToolTags);
 
             // <exclude block="..."/> children: blocks the drone must never wrench.
             _settings.ExcludedBlocks.Clear();
@@ -407,6 +411,12 @@ namespace DroneAutomation
         {
             string raw = _node.Attributes[_attr]?.Value;
             if (!string.IsNullOrEmpty(raw) && StringParsers.TryParseFloat(raw, out float parsed)) _value = parsed;
+        }
+
+        internal static void ReadString(XmlNode _node, string _attr, ref string _value)
+        {
+            string raw = _node.Attributes[_attr]?.Value;
+            if (!string.IsNullOrEmpty(raw)) _value = raw;
         }
 
         internal static void ReadBool(XmlNode _node, string _attr, ref bool _value)
