@@ -40,6 +40,14 @@ namespace DroneAutomation
         /// hand would make. 1 = parity with wrenching it yourself, 0 = silent as before.
         public float HeatMultiplier = 1f;
 
+        /// On by default: count the drone as holding a salvage tool while it works out what a block
+        /// pays, so the bonuses vanilla gates on holding one - Hacker's candy, the Scavenger Gloves -
+        /// reach it like they reach you. See SalvageToolContext.
+        public bool CountAsHoldingSalvageTool = true;
+
+        /// The tags that pretence claims. Only worth changing under an overhaul that renames them.
+        public string SalvageToolTags = SalvageToolContext.DefaultToolTags;
+
         /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
         public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
 
@@ -162,7 +170,19 @@ namespace DroneAutomation
                 // Yield this stage's salvage, then knock it down one downgrade step. The downgraded
                 // stage is picked up on a later pass, so a car comes apart stage by stage, exactly
                 // like wrenching it by hand.
-                DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand);
+                // Count as holding a wrench while the drops are worked out, so the bonuses vanilla
+                // gates on holding one reach the drone too. Armed one call wide, released in the
+                // finally - see SalvageToolContext.
+                if (settings.CountAsHoldingSalvageTool) SalvageToolContext.Arm(settings.SalvageToolTags);
+                try
+                {
+                    DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand);
+                }
+                finally
+                {
+                    SalvageToolContext.Disarm();
+                }
+
                 b.DamageBlock(_world, pos, bv, b.MaxDamage, _drone.entityId, null, _bUseHarvestTool: true);
 
                 // Wrenching is loud. The drone's own noise is invisible to the AI director, so the
