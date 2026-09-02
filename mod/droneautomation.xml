@@ -65,6 +65,14 @@
 	    SalvageInPOIs             0 = never wrench anything inside a POI's footprint. On by default,
 	                              because stripping cars and sinks as you clear a building is the
 	                              whole point of the module.
+	    SalvageVendingMachines    1 = also scrap WORKING vending machines - the ones you can still
+	                              buy from, and the ones a player can rent and stock. Off by default:
+	                              a working machine is a shop, not scrap. Their broken shells stay
+	                              salvageable whatever this is set to.
+	    HeatMultiplier            heat (screamer) made per broken stage, as a multiple of what
+	                              breaking that stage by hand makes. 1 = the same heat as wrenching
+	                              it yourself, so the drone draws screamers like you do; 0 = silent,
+	                              the way versions before 0.9.0 were.
 	    SalvageSwitches           1 = also scrap switches, buttons, valve handles, key racks, wire
 	                              and timer relays, pressure plates, quest generators and powered
 	                              doors, lights and traps. Off by default, and leave it off: these
@@ -80,10 +88,12 @@
 	             LowQualityTimeMult="2"
 	             SalvageWorkstations="0"
 	             SalvageInPOIs="1"
-	             SalvageSwitches="0">
-		<!-- Examples. Workstations are already covered by SalvageWorkstations="0"; use these for
-		     anything else you want left standing. -->
-		<!-- <exclude block="cntVendingMachine"/> -->
+	             SalvageSwitches="0"
+	             SalvageVendingMachines="0"
+	             HeatMultiplier="1">
+		<!-- Examples. Workstations and working vending machines are already covered by
+		     SalvageWorkstations="0" and SalvageVendingMachines="0"; use these for anything else you
+		     want left standing. -->
 		<!-- <exclude block="cntBackpack"/> -->
 	</autoSalvage>
 

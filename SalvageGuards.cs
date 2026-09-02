@@ -83,10 +83,6 @@ namespace DroneAutomation
         /// the damage does not show up until a player walks the POI and finds the door that opens it
         /// is gone. A wrenched powerSwitch01 cannot be replaced - the block is not craftable and not
         /// in the loot pool, so the POI stays broken for the life of the save.
-        ///
-        /// Matched by type NAME up the inheritance chain rather than with `is`, on purpose. It costs
-        /// nothing, it catches a modded block that derives from any of these, and it does not bind
-        /// the DLL to types that may not exist in the oldest game build this mod claims to support.
         /// </summary>
         private static readonly HashSet<string> TriggerBlockTypes = new HashSet<string>
         {
@@ -113,9 +109,46 @@ namespace DroneAutomation
         /// </summary>
         public static bool IsTriggerBlock(Block _b)
         {
+            return DerivesFrom(_b, TriggerBlockTypes);
+        }
+
+        /// <summary>
+        /// The block class behind every vending machine you can actually buy from - the roadside
+        /// ones, the trader's, and any a player has rented and stocked.
+        ///
+        /// It has to be named here, because nothing above this guard says "leave it alone": a
+        /// working machine carries the same salvageHarvest drops as its broken shell (it inherits
+        /// them from cntVendingMachine2Broken), its tile entity is a trader rather than a container
+        /// so the unlooted-contents guard never sees it, and outside a trader's own area it stands
+        /// on perfectly unclaimed ground. So the drone wrenched working shops apart.
+        /// </summary>
+        private static readonly HashSet<string> VendingMachineTypes = new HashSet<string>
+        {
+            // cntVendingMachine, cntVendingMachine2, the snack/energy/water machines, the trader's.
+            "BlockVendingMachine",
+        };
+
+        /// <summary>
+        /// True for a working vending machine - one that can still be bought from or rented. The
+        /// broken shells (cntVendingMachine2Broken and friends) are a plain block, not this class,
+        /// so they stay salvageable. See <see cref="VendingMachineTypes"/>.
+        /// </summary>
+        public static bool IsWorkingVendingMachine(Block _b)
+        {
+            return DerivesFrom(_b, VendingMachineTypes);
+        }
+
+        /// <summary>
+        /// Walks the block's class chain looking for one of <paramref name="_types"/>. Matched by
+        /// type NAME rather than with `is`, on purpose: it costs nothing, it catches a modded block
+        /// that derives from any of them, and it does not bind the DLL to types that may not exist
+        /// in the oldest game build this mod claims to support.
+        /// </summary>
+        private static bool DerivesFrom(Block _b, HashSet<string> _types)
+        {
             for (Type t = _b?.GetType(); t != null; t = t.BaseType)
             {
-                if (TriggerBlockTypes.Contains(t.Name)) return true;
+                if (_types.Contains(t.Name)) return true;
                 if (t.Name == "Block") break;
             }
             return false;

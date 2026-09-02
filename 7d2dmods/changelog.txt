@@ -1,4 +1,10 @@
-0.8.1
+0.9.0
+
+## 0.9.0
+
+- **Auto-Salvage now makes heat, like wrenching does.** Stripping a POI with an impact driver calls a screamer in a couple of minutes; the drone doing the same work called nothing at all — which made it strictly better than doing it yourself, not just faster. The game's own destroy sound *is* played for the drone's work, and the AI director throws it away, because a drone is invisible to it by design. Each broken stage now adds exactly the heat that block's destroy sound carries, the same value your own swing adds. Set `HeatMultiplier="0"` in `droneautomation.xml` for the silent 0.8.x behaviour.
+
+- **Fixed: Auto-Salvage wrenched working vending machines.** Not the broken shells — the machines you and everyone else on the server can still buy from, and the ones a player can rent and stock. A working machine carries the same salvage drops as its broken shell, its tile entity is a trader rather than a container, and outside a trader's own area it stands on unclaimed ground, so nothing stopped the drone taking it. Working machines are left standing now, matched on what the block *is* so modded ones are covered. Set `SalvageVendingMachines="1"` for the old behaviour.
 
 ## 0.8.1
 

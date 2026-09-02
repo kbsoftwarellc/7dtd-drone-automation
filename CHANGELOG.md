@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.9.0 — 2026-09-01
+
+- **Auto-Salvage now makes heat, like wrenching does.** Stripping a POI with an impact driver calls
+  a screamer in a couple of minutes; the drone doing the same work called nothing at all, which made
+  it strictly better than doing it yourself rather than faster. It was not a missing call: the
+  game's own destroy sound *is* emitted server-side for the drone's block damage, and the AI
+  director then throws it away, because `EntityDrone.IsIgnoredByAI()` returns true — every drone
+  noise is invisible to it by design. Each broken stage now notifies the director with exactly the
+  heat that block's own destroy sound carries in `sounds.xml`, which is the same value your own
+  swing would have added. Wrenching a car park with the drone draws a screamer on roughly the same
+  clock as wrenching it by hand.
+
+  `HeatMultiplier="0"` in `droneautomation.xml` restores the silent behaviour of 0.8.x; values above
+  1 make the drone louder than a player.
+
+- **Fixed: Auto-Salvage wrenched working vending machines.** Not the broken shells — the machines
+  you (and everyone else on the server) can still buy from, and the ones a player can rent and
+  stock. Nothing stopped it: a working machine inherits the same `salvageHarvest` drops as its
+  broken shell, its tile entity is a trader rather than a container so the unlooted-contents guard
+  never sees it, and outside a trader's own area it stands on unclaimed ground. Working machines are
+  now left standing, matched on the block's class so modded ones are covered; broken shells stay
+  salvageable. `SalvageVendingMachines="1"` puts the old behaviour back.
+
 ## 0.8.2 — 2026-08-30
 
 - **Fixed: the in-game mod list told dedicated-server owners to turn EasyAntiCheat off.** The

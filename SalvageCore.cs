@@ -31,6 +31,15 @@ namespace DroneAutomation
         /// wrenching one leaves a door that can never be opened again. See SalvageGuards.
         public bool SalvageSwitches = false;
 
+        /// Off by default: a working vending machine is one you (and everyone else on the server)
+        /// can still buy from, and one you can rent and stock yourself. Its broken shells stay
+        /// salvageable either way. See SalvageGuards.IsWorkingVendingMachine.
+        public bool SalvageVendingMachines = false;
+
+        /// Heat (screamer) generated per broken stage, as a multiple of what breaking that stage by
+        /// hand would make. 1 = parity with wrenching it yourself, 0 = silent as before.
+        public float HeatMultiplier = 1f;
+
         /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
         public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
 
@@ -40,6 +49,7 @@ namespace DroneAutomation
             if (VerticalRadius < 0f) VerticalRadius = 0f;
             if (SecondsPerStep < 0.05f) SecondsPerStep = 0.05f;
             if (MaxCatchupSeconds < 0f) MaxCatchupSeconds = 0f;
+            if (HeatMultiplier < 0f) HeatMultiplier = 0f;
             QualityScale.ClampKnobs(ref LowQualityReach, ref LowQualityTimeMult);
         }
     }
@@ -128,6 +138,11 @@ namespace DroneAutomation
                 // has to be rejected on its own, or the drone strips the trader's workstations.
                 if (_world.IsWithinTraderArea(pos)) continue;
 
+                // Never scrap a working vending machine by default: it is a shop the whole server
+                // can still buy from, and one a player can rent and stock. Its broken shells are a
+                // different block and stay salvageable.
+                if (!settings.SalvageVendingMachines && SalvageGuards.IsWorkingVendingMachine(b)) continue;
+
                 // Never scrap a workstation by default: it's a thing the player uses, and it may
                 // still hold their materials.
                 if (!settings.SalvageWorkstations && IsWorkstation(_world, pos)) continue;
@@ -149,6 +164,11 @@ namespace DroneAutomation
                 // like wrenching it by hand.
                 DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand);
                 b.DamageBlock(_world, pos, bv, b.MaxDamage, _drone.entityId, null, _bUseHarvestTool: true);
+
+                // Wrenching is loud. The drone's own noise is invisible to the AI director, so the
+                // heat that breaking this stage by hand would have made is added explicitly - see
+                // Heat. Without it the drone strips a POI without ever drawing a screamer.
+                Heat.BlockBroken(_world, b, pos, settings.HeatMultiplier);
                 did++;
             }
 
