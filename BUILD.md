@@ -28,7 +28,7 @@ Relevant to a security review:
 | Process / registry | **None.** No `Process`, `ProcessStartInfo`, or `Registry`. |
 | Cryptography, encoding | **None.** No `System.Security.Cryptography`, no `FromBase64String`. |
 | Dynamic code | **None.** No `Reflection.Emit`, no `Assembly.Load`. The only reflection is `Assembly.GetExecutingAssembly()` passed to `harmony.PatchAll()` — the standard Harmony entry point. |
-| Filesystem | **Read-only, two files, inside the mod's own folder.** `File.Exists` + `XmlDocument.Load` on `droneautomation.xml` and the optional `droneautomation.local.xml` (`DroneAutomationMod.cs:124` and `:198`). The mod writes no files and deletes none. |
+| Filesystem | **Two files read inside the mod's own folder, one file written inside the save.** `File.Exists` + `XmlDocument.Load` on `droneautomation.xml` and the optional `droneautomation.local.xml`. Since 0.10.0 it also reads and writes `droneautomation-salvage.xml` under `GameIO.GetSaveGameDir()` (`SalvageRules.cs`) — the salvage rules players set with `/das`, which belong to a world rather than to the mod folder. It deletes no files. |
 
 The complete set of `using` directives across all source files is: `HarmonyLib`, `System`,
 `System.Collections.Generic`, `System.IO`, `System.Reflection`, `System.Runtime.CompilerServices`,

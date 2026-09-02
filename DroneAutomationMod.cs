@@ -145,6 +145,10 @@ namespace DroneAutomation
                 ModPath = _modInstance.Path;
                 LoadSettings();
 
+                // The /das command, through the game's own hook rather than a Harmony patch, so an
+                // unmodified client can type into it. See DroneChat.
+                ModEvents.ChatMessage.RegisterHandler(DroneChat.OnChat);
+
                 Harmony harmony = new Harmony(HarmonyId);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
@@ -327,14 +331,22 @@ namespace DroneAutomation
             ReadFloat(_node, "HeatMultiplier", ref _settings.HeatMultiplier);
             ReadBool(_node, "CountAsHoldingSalvageTool", ref _settings.CountAsHoldingSalvageTool);
             ReadString(_node, "SalvageToolTags", ref _settings.SalvageToolTags);
+            ReadString(_node, "ChatPrefix", ref _settings.ChatPrefix);
+            ReadString(_node, "NewTargetPolicy", ref _settings.NewTargetPolicy);
+            ReadBool(_node, "AnnounceNewTargets", ref _settings.AnnounceNewTargets);
 
-            // <exclude block="..."/> children: blocks the drone must never wrench.
+            // <exclude block="..."/> children: blocks the drone must never wrench. Names take * as
+            // a wildcard, and they are handed to SalvageRules, which merges them with whatever
+            // players have added in game with /das.
             _settings.ExcludedBlocks.Clear();
+            SalvageRules.ConfigDeny.Clear();
             foreach (XmlNode child in _node.ChildNodes)
             {
                 if (child.Name != "exclude") continue;
                 string block = child.Attributes?["block"]?.Value;
-                if (!string.IsNullOrEmpty(block)) _settings.ExcludedBlocks.Add(block);
+                if (string.IsNullOrEmpty(block)) continue;
+                _settings.ExcludedBlocks.Add(block);
+                SalvageRules.ConfigDeny.Add(block);
             }
         }
 
