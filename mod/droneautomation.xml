@@ -87,7 +87,18 @@
 	                              doors, lights and traps. Off by default, and leave it off: these
 	                              are what open a POI's doors, they cannot be crafted or looted
 	                              back, and wrenching one breaks that POI for the life of the save.
+	    ChatPrefix                the chat command players use to see and change the rules below.
+	    NewTargetPolicy           what to do with a kind of block this world has never salvaged:
+	                              "allow" wrenches it and says so once, "ask" leaves it standing
+	                              until someone runs /das allow. Allow by default - a drone that
+	                              silently does nothing on a fresh install reads as broken.
+	    AnnounceNewTargets        0 = never speak up. Left on, this is what teaches players the
+	                              command exists, once per kind of block per world.
 	    <exclude block="..."/>    any block the drone must never wrench. Add as many as you like.
+	                              Names take * as a wildcard: cntVendingMachine* is every vending
+	                              machine. Rules players add in game with /das are kept in the SAVE
+	                              (droneautomation-salvage.xml) so a mod update cannot lose them,
+	                              and these are merged in on top.
 	-->
 	<autoSalvage Radius="4"
 	             VerticalRadius="4"
@@ -100,6 +111,9 @@
 	             SalvageSwitches="0"
 	             SalvageVendingMachines="0"
 	             HeatMultiplier="1"
+	             ChatPrefix="/das"
+	             NewTargetPolicy="allow"
+	             AnnounceNewTargets="1"
 	             CountAsHoldingSalvageTool="1"
 	             SalvageToolTags="perkSalvageOperations,salvagingSkill,salvageTool">
 		<!-- Examples. Workstations and working vending machines are already covered by

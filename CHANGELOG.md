@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.10.0 — 2026-09-02
+
+- **You can tell Auto-Salvage what to leave alone, in game, without looking anything up.** The
+  obvious design — point at the thing and exclude it — does not work, because by the time anyone
+  notices the drone ate the working vending machine, there is nothing left to point at. So the
+  interface starts from what it just did:
+
+  - `/das last` — the last 20 things it salvaged, newest first.
+  - `/das skip 3` — never take that kind of thing again. A log line means the whole family by
+    default (one wrecked sedan means every sedan), `/das skip 3 exact` for the one block.
+  - `/das allow <name>` — undo a skip, or permit something held back.
+  - `/das list *vending*` — every salvageable block on **this** server matching a pattern, read
+    from the running game, so it covers whatever overhaul or POI mod is installed.
+  - `/das what` — name the block you are looking at, before it is taken.
+  - `/das rules` — what is in force. Allow beats skip, so "none of this family except that one" is
+    sayable: skip `cnt*`, allow `cntToilet*`.
+
+  Every rule reports what it actually covers when you add it (`7 block(s): cntVendingMachine, ...`),
+  because a wildcard is easy to type and easy to get wrong.
+
+- **The drone says the first time it takes a new kind of thing**, once per kind per world, with the
+  command to stop it. That is the moment a player finds out this is configurable at all.
+  `AnnounceNewTargets="0"` silences it.
+
+- **`NewTargetPolicy="ask"`** for servers that want nothing touched without consent: an unfamiliar
+  block family is left standing and reported instead of salvaged, until someone allows it. Default
+  stays `"allow"` — today's behaviour — so no existing server changes on update.
+
+- Exclusions now take `*` as a wildcard, in `droneautomation.xml` and in `/das` alike.
+
+- Rules set in game are stored in the **save** (`droneautomation-salvage.xml`), not the mod folder,
+  so they survive a mod update and belong to the world they were made for. The config file's own
+  `<exclude>` entries are merged in on top at load, so a server op can still ship a baseline.
+
 ## 0.9.0 — 2026-09-01
 
 - **Auto-Salvage now makes heat, like wrenching does.** Stripping a POI with an impact driver calls

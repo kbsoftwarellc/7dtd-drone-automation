@@ -1,4 +1,16 @@
-0.9.0
+0.10.0
+
+## 0.10.0
+
+- **You can now tell Auto-Salvage what to leave alone, in game, without looking up a single block name.** Pointing at the thing you want spared does not work — by the time you notice the drone ate the working vending machine, there is nothing left to point at. So it starts from what it just did: `/das last` lists the last 20 things it salvaged, and `/das skip 3` means never take that kind again. A log line means the whole family by default (one wrecked sedan means every sedan); add `exact` for just that block. `/das allow <name>` undoes it, `/das rules` shows what is in force, and every rule tells you what it actually covers as you add it, because a wildcard is easy to get wrong.
+
+- **`/das list *vending*` names every salvageable block on YOUR server**, read from the running game — so it is right whether you play vanilla, an overhaul, or a pile of POI mods. `/das what` names the block you are looking at, before it is taken.
+
+- **The drone speaks up the first time it takes a new kind of thing**, once per kind per world, with the command to stop it. That is how players find out any of this exists. `AnnounceNewTargets="0"` silences it.
+
+- **`NewTargetPolicy="ask"`** for servers that want nothing touched without consent: an unfamiliar kind of block is left standing and reported instead of salvaged. Default stays `"allow"`, so nothing changes on update unless you ask for it.
+
+- Rules set in game are saved with the WORLD, so a mod update cannot lose them, and `<exclude>` entries in the config are merged in on top.
 
 ## 0.9.0
 
