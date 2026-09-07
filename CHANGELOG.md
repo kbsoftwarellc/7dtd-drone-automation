@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.10.1 — 2026-09-07
+
+- **Claims game 3.2.0.** No code changed. Every external member the DLL binds to was checked against
+  a 3.2.0 build with `refcheck.py` and all of them resolve, so the range widens from `V3.0.0-V3.1` to
+  `V3.0.0-V3.2.0` on evidence rather than on hope. The old label meant "the newest version anyone had
+  got round to checking", not that 3.2 was known bad — players on 3.2 were being told to stay away
+  from a build that already worked.
+
+- **The mod page no longer states the game range in prose.** It now uses the `{{GAME_RANGE}}` and
+  `{{GAME_LIST}}` placeholders that `nexus_sync.py` fills in from `GAME_VERSIONS`, so the next
+  widening reaches the page by itself. The page had said "V3.0 and V3.1" in two places, and both
+  would have gone stale the moment this release landed.
+
 ## 0.10.0 — 2026-09-02
 
 - **You can tell Auto-Salvage what to leave alone, in game, without looking anything up.** The
