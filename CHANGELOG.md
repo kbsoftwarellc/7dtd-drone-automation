@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.10.2 — 2026-10-05
+
+- **Works on game 3.3.** Game 3.3 rebuilt how bags, containers and item stacks are stored, and made a
+  drone's mod slots private. On 3.3 that left 0.10.1 unable to read any of them: every module failed
+  on each pass, logged an error and did nothing. All eight modules now read and write them in a way
+  that works on every game version from 3.0.0 to 3.3.0, from one download.
+- If a later game update moves them again, the mod says so once in the log at startup
+  (`[DroneAutomation] switched off: ...`) and stops there, instead of logging an error on every
+  drone pass.
+- Nothing else changed: modules, schematics, `/das` rules and settings carry over.
+
 ## 0.10.1 — 2026-09-07
 
 - **Claims game 3.2.0.** No code changed. Every external member the DLL binds to was checked against

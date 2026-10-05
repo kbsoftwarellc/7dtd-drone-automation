@@ -1,3 +1,4 @@
 # Versions actually loaded and checked, newest first. One line per release.
 # <version>  <YYYY-MM-DD>  <what you checked>
+0.10.2  2026-10-05  dedicated servers V3.0.0 b259, V3.0.1 b4, V3.1.0 b14, V3.2.0 b10, V3.3.0 b18: loads, 'InitMod complete — 2 method(s) patched' on each, no switch-off, no mod errors; released DLL has 0 unresolved references and 0 un-JIT-able methods on all five. LOAD-verified only: no drone was run, so looting, salvage, harvest, repair, planting and defense on game 3.3 are unexercised.
 0.10.1  2026-09-08  game V3.2.0 b10 client: loads, 'InitMod complete — 2 method(s) patched, server-side only', no exceptions. LOAD-verified only; drone salvage/loot behaviour not exercised.
