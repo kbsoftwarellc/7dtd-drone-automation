@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TehAon.Compat;
 
 namespace DroneAutomation
 {
@@ -119,27 +120,29 @@ namespace DroneAutomation
         {
             plantables.Clear();
 
-            ItemStack[] slots = _bag.GetSlots();
+            ItemStack[] slots = StorageCompat.BagSlots(_bag);
             for (int i = 0; i < slots.Length; i++)
             {
                 ItemStack stack = slots[i];
                 if (stack == null || stack.IsEmpty()) continue;
 
-                ItemValue iv = stack.itemValue;
+                ItemValue iv = ItemCompat.Value(stack);
                 if (iv == null || iv.IsEmpty()) continue;
                 if (AlreadyListed(iv)) continue;
 
                 BlockValue candidate = iv.ToBlockValue();
                 if (candidate.isair || !(candidate.Block is BlockPlantGrowing)) continue;
 
-                plantables.Add(new Plantable { item = iv, young = candidate });
+                // A copy, not the slot's own value: from game 3.3 a slot that empties clears its ItemValue in
+                // place, which would blank this entry the moment the last seedling was planted.
+                plantables.Add(new Plantable { item = iv.Clone(), young = candidate });
             }
         }
 
         private bool AlreadyListed(ItemValue _iv)
         {
             for (int i = 0; i < plantables.Count; i++)
-                if (plantables[i].item.type == _iv.type) return true;
+                if (ItemCompat.Type(plantables[i].item) == ItemCompat.Type(_iv)) return true;
             return false;
         }
 

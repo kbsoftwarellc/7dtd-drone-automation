@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TehAon.Compat;
 
 namespace DroneAutomation
 {
@@ -119,7 +120,7 @@ namespace DroneAutomation
                 ItemValue iv = drop.name == "*" ? _bv.ToItemValue() : ItemClass.GetItem(drop.name);
                 if (iv == null || iv.IsEmpty()) continue;
 
-                if (!paid && _payOne != null && iv.type == _payOne.type)
+                if (!paid && _payOne != null && ItemCompat.Type(iv) == ItemCompat.Type(_payOne))
                 {
                     paid = true;
                     count--;

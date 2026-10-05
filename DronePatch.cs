@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
 using UnityEngine;
+using TehAon.Compat;
 
 namespace DroneAutomation
 {
@@ -149,7 +150,7 @@ namespace DroneAutomation
             if (autoDefense != null)
             {
                 DefenseCore core = defenseCores.GetValue(__instance, _ => new DefenseCore(DroneAutomationMod.DefenseSettings));
-                didSomething |= core.Tick(__instance, autoDefense.Quality, boost);
+                didSomething |= core.Tick(__instance, ItemCompat.Quality(autoDefense), boost);
             }
 
             // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
@@ -187,7 +188,7 @@ namespace DroneAutomation
             if (autoLoot != null)
             {
                 VacuumCore core = autoLootCores.GetValue(__instance, _ => new VacuumCore(DroneAutomationMod.AutoLootSettings));
-                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, autoLoot.Quality, boost);
+                didSomething |= core.Tick(world, owner, ownerData, __instance.OwnerID, new BagSink(__instance.bag), __instance.position, ItemCompat.Quality(autoLoot), boost);
             }
 
             if (!mayWorkBlocks)
@@ -199,26 +200,26 @@ namespace DroneAutomation
                 if (autoSalvage != null)
                 {
                     SalvageCore core = salvageCores.GetValue(__instance, _ => new SalvageCore(DroneAutomationMod.SalvageSettings));
-                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoSalvage.Quality, boost);
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, ItemCompat.Quality(autoSalvage), boost);
                 }
 
                 if (autoHarvest != null)
                 {
                     HarvestCore core = harvestCores.GetValue(__instance, _ => new HarvestCore(DroneAutomationMod.HarvestSettings));
-                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoHarvest.Quality, boost);
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, ItemCompat.Quality(autoHarvest), boost);
                     harvestDetail = core.LastScan;
                 }
 
                 if (autoRepair != null)
                 {
                     RepairCore core = repairCores.GetValue(__instance, _ => new RepairCore(DroneAutomationMod.RepairSettings));
-                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoRepair.Quality, boost);
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, ItemCompat.Quality(autoRepair), boost);
                 }
 
                 if (autoPlant != null)
                 {
                     PlantCore core = plantCores.GetValue(__instance, _ => new PlantCore(DroneAutomationMod.PlantSettings));
-                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, autoPlant.Quality, boost);
+                    didSomething |= core.Tick(world, owner, ownerData, __instance, scanCenter, ItemCompat.Quality(autoPlant), boost);
                 }
             }
 
@@ -236,8 +237,8 @@ namespace DroneAutomation
         {
             if (_overclock == null && _antenna == null) return DroneBoost.None;
 
-            float speed = _overclock != null ? DroneAutomationMod.OverclockSettings.SpeedMult(_overclock.Quality) : 1f;
-            float reach = _antenna != null ? DroneAutomationMod.AntennaSettings.ReachMult(_antenna.Quality) : 1f;
+            float speed = _overclock != null ? DroneAutomationMod.OverclockSettings.SpeedMult(ItemCompat.Quality(_overclock)) : 1f;
+            float reach = _antenna != null ? DroneAutomationMod.AntennaSettings.ReachMult(ItemCompat.Quality(_antenna)) : 1f;
             return new DroneBoost(speed, reach);
         }
 
@@ -373,12 +374,12 @@ namespace DroneAutomation
 
         private static ItemValue GetModule(ItemValue _droneItem, string _moduleName)
         {
-            ItemValue[] mods = _droneItem?.Modifications;
-            if (mods == null) return null;
+            if (_droneItem == null) return null;
 
-            for (int i = 0; i < mods.Length; i++)
+            int count = ModSlots.Count(_droneItem);
+            for (int i = 0; i < count; i++)
             {
-                ItemValue mod = mods[i];
+                ItemValue mod = ModSlots.At(_droneItem, i);
                 if (mod == null || mod.IsEmpty() || mod.ItemClass == null) continue;
                 if (mod.ItemClass.Name == _moduleName) return mod;
             }
@@ -387,13 +388,13 @@ namespace DroneAutomation
 
         private static string DescribeMods(ItemValue _droneItem)
         {
-            ItemValue[] mods = _droneItem?.Modifications;
-            if (mods == null) return "null";
+            if (_droneItem == null) return "null";
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < mods.Length; i++)
+            int count = ModSlots.Count(_droneItem);
+            for (int i = 0; i < count; i++)
             {
-                ItemValue mod = mods[i];
+                ItemValue mod = ModSlots.At(_droneItem, i);
                 if (mod == null || mod.IsEmpty()) continue;
                 if (sb.Length > 0) sb.Append(", ");
                 sb.Append(mod.ItemClass?.Name ?? "?");

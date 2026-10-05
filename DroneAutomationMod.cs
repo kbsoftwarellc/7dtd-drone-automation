@@ -145,6 +145,17 @@ namespace DroneAutomation
                 ModPath = _modInstance.Path;
                 LoadSettings();
 
+                // Bags, containers, item stacks and a drone's mod slots are reached by name (their shape
+                // changed in game 3.3). If a later game moves them again, say so once and patch nothing,
+                // rather than fail on every drone tick.
+                string moved = MovedMembers();
+                if (moved.Length > 0)
+                {
+                    Log.Error("[DroneAutomation] switched off: this game build has moved " + moved
+                            + ". Installed modules do nothing; drones otherwise behave as normal. Get a build for your game version.");
+                    return;
+                }
+
                 // The /das command, through the game's own hook rather than a Harmony patch, so an
                 // unmodified client can type into it. See DroneChat.
                 ModEvents.ChatMessage.RegisterHandler(DroneChat.OnChat);
@@ -162,6 +173,31 @@ namespace DroneAutomation
             {
                 Log.Error("[DroneAutomation] InitMod failed: " + e);
             }
+        }
+
+        /// <summary>The by-name accessors THIS mod calls that the running game could not supply. Only these:
+        /// the shared shims carry accessors for other mods too, and one of those missing on some build
+        /// is no reason to stop a drone.</summary>
+        private static string MovedMembers()
+        {
+            var moved = new System.Collections.Generic.List<string>();
+            foreach (string label in new[]
+            {
+                "TEFeatureStorage.items", "TEFeatureStorage.bPlayerStorage", "TEFeatureStorage.bTouched",
+                "TEFeatureStorage.bTouched (write)", "LootManager.LootContainerOpened()",
+                "Bag slots", "Bag.Touched", "Bag.Touched (write)", "Bag.SetSlot()",
+            })
+                if (TehAon.Compat.StorageCompat.IsMissing(label)) moved.Add(label);
+
+            string items = ", " + TehAon.Compat.ItemCompat.Missing + ",";
+            foreach (string label in new[]
+            {
+                "ItemStack.count", "ItemStack.count (write)", "ItemStack.itemValue", "ItemValue.type", "ItemValue.Quality",
+            })
+                if (items.Contains(", " + label + ",")) moved.Add(label);
+
+            if (ModSlots.Missing.Length > 0) moved.Add(ModSlots.Missing);
+            return string.Join(", ", moved);
         }
 
         /// <summary>

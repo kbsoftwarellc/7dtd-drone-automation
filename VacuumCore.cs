@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TehAon.Compat;
 
 namespace DroneAutomation
 {
@@ -60,9 +61,9 @@ namespace DroneAutomation
         private readonly Bag bag;
         public BagSink(Bag _bag) { bag = _bag; }
 
-        public ItemStack[] Items => bag.items;
+        public ItemStack[] Items => StorageCompat.BagSlots(bag);
         public (bool anyMoved, bool allMoved) TryStackItem(int _startIndex, ItemStack _stack) => bag.TryStackItem(_startIndex, _stack);
-        public void SetSlot(int _index, ItemStack _stack) => bag.SetSlot(_index, _stack.Clone());
+        public void SetSlot(int _index, ItemStack _stack) => StorageCompat.SetBagSlot(bag, _index, _stack.Clone());
         public void MarkChanged() => bag.onBackpackChanged();
     }
 
@@ -239,19 +240,20 @@ namespace DroneAutomation
                 Bag bag = bagEntity.bag;
 
                 // An already-opened bag costs nothing to rifle through, same as vanilla.
-                float cost = Cost(bag.Touched ? MinOpenSeconds : OpenSeconds(_owner, bagEntity.GetLootList()));
+                bool bagTouched = StorageCompat.BagTouched(bag);
+                float cost = Cost(bagTouched ? MinOpenSeconds : OpenSeconds(_owner, bagEntity.GetLootList()));
                 if (!TrySpend(cost)) break;
 
-                if (!bag.Touched && bag.IsEmpty())
+                if (!bagTouched && bag.IsEmpty())
                 {
                     GameManager.Instance.lootManager.LootBagOpened(bag, bagEntity, _owner.entityId);
                 }
 
-                MoveSlots(_sink, bag.GetSlots());
+                MoveBagSlots(_sink, bag);
 
                 // EntityLootContainer.OnUpdateEntity removes itself once the bag is touched, empty
                 // and unlocked - the same path a player emptying it takes, so clients stay in sync.
-                bag.Touched = true;
+                StorageCompat.TouchBag(bag);
             }
 
             entityBuffer.Clear();
@@ -265,14 +267,16 @@ namespace DroneAutomation
             for (int i = 0; i < tileEntityBuffer.Count; i++)
             {
                 TileEntity te = tileEntityBuffer[i];
-                if (!te.TryGetSelfOrFeature(out ITileEntityLootable loot)) continue;
+                // TEFeatureStorage, not the ITileEntityLootable interface: game 3.3 removed the interface, and
+                // TEFeatureStorage was its only implementer on every earlier build.
+                if (!te.TryGetSelfOrFeature(out TEFeatureStorage loot)) continue;
 
                 Vector3i pos = te.ToWorldPos();
                 if (!InRange(_center, te.ToWorldCenterPos(), effContainerRadius)) continue;
 
                 // bPlayerStorage is true for anything with an Owner, which covers every
                 // player-placed chest - and the loot vacuum block's own storage.
-                if (loot.bPlayerStorage) continue;
+                if (StorageCompat.PlayerStorage(loot)) continue;
                 if (LockManager.Instance.IsLockedServer(loot)) continue;
 
                 if (te.TryGetSelfOrFeature(out TEFeatureLockable lockable)
@@ -287,7 +291,7 @@ namespace DroneAutomation
                 if (EffectManager.GetValue(PassiveEffects.DisableLoot, null, 0f, _owner, null, block.Block.Tags) > 0f) continue;
 
                 bool empty = loot.IsEmpty();
-                bool touched = loot.bTouched;
+                bool touched = StorageCompat.Touched(loot);
 
                 // Untouched but already holding items means quest/POI-staged loot. Opening it
                 // would flag it touched, generate nothing, and let us steal the staged items.
@@ -299,8 +303,8 @@ namespace DroneAutomation
 
                 if (!touched)
                 {
-                    GameManager.Instance.lootManager.LootContainerOpened(loot, _owner.entityId, block.Block.Tags);
-                    loot.bTouched = true;
+                    StorageCompat.LootContainerOpened(GameManager.Instance.lootManager, loot, _owner.entityId, block.Block.Tags);
+                    StorageCompat.Touch(loot);
                 }
 
                 if (!MoveFromLootable(_sink, loot)) continue;
@@ -336,7 +340,7 @@ namespace DroneAutomation
                 if (!TrySpend(Cost(effItemPickupSeconds))) break;
 
                 ItemStack moving = item.itemStack.Clone();
-                if (!Absorb(_sink, moving, moving.count) || moving.count > 0) continue;
+                if (!Absorb(_sink, moving, ItemCompat.Count(moving)) || ItemCompat.Count(moving) > 0) continue;
 
                 _world.RemoveEntity(item.entityId, EnumRemoveEntityReason.Killed);
             }
@@ -455,36 +459,42 @@ namespace DroneAutomation
         }
 
         /// <summary>Moves what fits, leaving any remainder in the source slot.</summary>
-        private static bool MoveSlots(IVacuumSink _sink, ItemStack[] _slots)
+        private static bool MoveBagSlots(IVacuumSink _sink, Bag _bag)
         {
             bool moved = false;
-            for (int i = 0; i < _slots.Length; i++)
+            ItemStack[] slots = StorageCompat.BagSlots(_bag);
+            for (int i = 0; i < slots.Length; i++)
             {
-                ItemStack source = _slots[i];
+                ItemStack source = slots[i];
                 if (source == null || source.IsEmpty()) continue;
 
                 ItemStack moving = source.Clone();
-                if (!Absorb(_sink, moving, source.count)) continue;
+                if (!Absorb(_sink, moving, ItemCompat.Count(source))) continue;
 
-                _slots[i] = moving.count == 0 ? ItemStack.Empty : moving.Clone();
+                ItemStack left = ItemCompat.Count(moving) == 0 ? ItemStack.Empty : moving.Clone();
+                // From game 3.3 a bag's slots are permanent stacks owned by its grid and are written
+                // through Bag.SetSlot. Before that a bag is a plain array and the drone wrote it
+                // directly, with no change event - kept exactly so on those builds.
+                if (StorageCompat.Grids) StorageCompat.SetBagSlot(_bag, i, left);
+                else slots[i] = left;
                 moved = true;
             }
             return moved;
         }
 
-        private static bool MoveFromLootable(IVacuumSink _sink, ITileEntityLootable _source)
+        private static bool MoveFromLootable(IVacuumSink _sink, TEFeatureStorage _source)
         {
             bool moved = false;
-            ItemStack[] items = _source.items;
+            ItemStack[] items = StorageCompat.Items(_source);
             for (int i = 0; i < items.Length; i++)
             {
                 ItemStack source = items[i];
                 if (source == null || source.IsEmpty()) continue;
 
                 ItemStack moving = source.Clone();
-                if (!Absorb(_sink, moving, source.count)) continue;
+                if (!Absorb(_sink, moving, ItemCompat.Count(source))) continue;
 
-                _source.UpdateSlot(i, moving.count == 0 ? ItemStack.Empty : moving);
+                _source.UpdateSlot(i, ItemCompat.Count(moving) == 0 ? ItemStack.Empty : moving);
                 moved = true;
             }
             return moved;
@@ -495,17 +505,17 @@ namespace DroneAutomation
         {
             _sink.TryStackItem(0, _moving);
 
-            if (_moving.count > 0)
+            if (ItemCompat.Count(_moving) > 0)
             {
                 int free = FirstFreeSlot(_sink);
                 if (free >= 0)
                 {
                     _sink.SetSlot(free, _moving);
-                    _moving.count = 0;
+                    ItemCompat.SetCount(_moving, 0);
                 }
             }
 
-            bool moved = _moving.count != _originalCount;
+            bool moved = ItemCompat.Count(_moving) != _originalCount;
             if (moved) _sink.MarkChanged();
             return moved;
         }

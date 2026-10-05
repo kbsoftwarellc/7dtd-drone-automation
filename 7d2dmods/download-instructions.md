@@ -1,7 +1,7 @@
 Download
 
-File: `DroneAutomation_v0.10.1_gameV3.0.0-V3.2.0.zip`\
-Built and verified for **7 Days to Die V3.0.0, V3.0.1, V3.1 and V3.2.0**.
+File: `DroneAutomation_v0.10.2_gameV3.0.0-V3.3.0.zip`\
+Built and verified for **7 Days to Die V3.0.0, V3.0.1, V3.1, V3.2.0 and V3.3.0**.
 
 The zip contains one folder, `DroneAutomation`, holding `DroneAutomation.dll`, `ModInfo.xml`, `droneautomation.xml`, a `Config` folder, plus README, CHANGELOG and LICENSE.
 
@@ -11,7 +11,7 @@ Install
 
 Requirements
 
-- **7 Days to Die V3.0.0 through V3.1**
+- **7 Days to Die V3.0.0 through V3.3.0**
 - **A dedicated server keeps EasyAntiCheat ON.** A dedicated server does not gate mod DLLs on anti-cheat, so both it and its clients stay protected. Only single-player and client-hosted games need EAC off, because there the server runs inside your own EAC-protected game process.
 - No other mods needed. It uses the Harmony that The Fun Pimps ship with the game in `Mods/0_TFP_Harmony`, which loads before every other mod automatically.
 

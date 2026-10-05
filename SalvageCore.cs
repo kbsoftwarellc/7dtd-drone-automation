@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TehAon.Compat;
 
 namespace DroneAutomation
 {
@@ -241,10 +242,12 @@ namespace DroneAutomation
         {
             TileEntity te = _world.GetTileEntity(_pos);
             if (te == null) return false;
-            if (!te.TryGetSelfOrFeature(out ITileEntityLootable loot)) return false;
+            // TEFeatureStorage, not ITileEntityLootable: game 3.3 removed the interface, and TEFeatureStorage
+            // was its only implementer on every earlier build.
+            if (!te.TryGetSelfOrFeature(out TEFeatureStorage loot)) return false;
 
-            if (loot.bPlayerStorage) return true;
-            if (!loot.bTouched) return true;
+            if (StorageCompat.PlayerStorage(loot)) return true;
+            if (!StorageCompat.Touched(loot)) return true;
             if (!loot.IsEmpty()) return true;
             return false;
         }
