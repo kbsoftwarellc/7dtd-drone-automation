@@ -1,37 +1,59 @@
-Key,File,Type,UsedInMainMenu,NoTranslate,english
-modRoboticDroneAutoLootMod,item_modifiers,Item,,,Drone Auto-Loot Module
-modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through zombie loot bags and containers and picks up dropped items as it follows you, opening them with your own loot stage and Lucky Looter. Loot goes into the drone's storage. Higher-quality modules reach farther and act faster."
-modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic
-modRoboticDroneAutoLootModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Loot Module at a workbench."
-modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module
-modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. Higher-quality modules reach farther and act faster."
-modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic
-modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Salvage Module at a workbench."
-modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module
-modRoboticDroneAutoHarvestModDesc,item_modifiers,Item,,,"Your drone reaps grown crops in your land claim and replants them as it follows you, into its own storage. Only works your own claim, and leaves the seed replanted so the plot keeps producing. Higher-quality modules reach farther and act faster."
-modRoboticDroneAutoHarvestModSchematic,items,Item,,,Drone Auto-Harvest Module Schematic
-modRoboticDroneAutoHarvestModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Harvest Module at a workbench."
-modRoboticDroneAutoRepairMod,item_modifiers,Item,,,Drone Auto-Repair Module
-modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full. Higher-quality modules reach farther and act faster."
-modRoboticDroneAutoRepairModSchematic,items,Item,,,Drone Auto-Repair Module Schematic
-modRoboticDroneAutoRepairModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Repair Module at a workbench."
-modRoboticDroneAutoPlantMod,item_modifiers,Item,,,Drone Auto-Plant Module
-modRoboticDroneAutoPlantModDesc,item_modifiers,Item,,,"Your drone sows young crops from its own storage onto empty farm plots in your land claim as it follows you. Pairs with the Auto-Harvest Module, which deposits the seed crops it needs, for a self-running farm. Only plants on your own claim, never on invalid ground. Higher-quality modules reach farther and act faster."
-modRoboticDroneAutoPlantModSchematic,items,Item,,,Drone Auto-Plant Module Schematic
-modRoboticDroneAutoPlantModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Plant Module at a workbench."
-modRoboticDroneAutoDefenseMod,item_modifiers,Item,,,Drone Auto-Defense Module
-modRoboticDroneAutoDefenseModDesc,item_modifiers,Item,,,"Turns your drone into a bodyguard: it fires its built-in machine gun at nearby zombies and other hostiles as it follows you, or stands sentry over the spot where you park it. Kills are credited to you, and it never targets you, your allies, party members or traders. Higher-quality modules fire faster and reach farther."
-modRoboticDroneAutoDefenseModSchematic,items,Item,,,Drone Auto-Defense Module Schematic
-modRoboticDroneAutoDefenseModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Defense Module at a workbench."
-modRoboticDroneOverclockMod,item_modifiers,Item,,,Drone Overclock Module
-modRoboticDroneOverclockModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but speeds up every other automation module installed in the drone, so each chore takes less time. Higher-quality Overclock modules speed things up more. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
-modRoboticDroneOverclockModSchematic,items,Item,,,Drone Overclock Module Schematic
-modRoboticDroneOverclockModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Overclock Module at a workbench."
-modRoboticDroneAntennaMod,item_modifiers,Item,,,Drone Wide-Band Antenna Module
-modRoboticDroneAntennaModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but widens the working range of every other automation module installed in the drone. Higher-quality Antenna modules reach farther. Uses one of the drone's limited mod slots, so it trades against fitting another automation module."
-modRoboticDroneAntennaModSchematic,items,Item,,,Drone Wide-Band Antenna Module Schematic
-modRoboticDroneAntennaModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Wide-Band Antenna Module at a workbench."
-statDroneModuleRange,ui_display,Item,,,Working Range
-statDroneModuleSpeed,ui_display,Item,,,Action Speed
-statDroneBoostTime,ui_display,Item,,,Module Action Time
-statDroneBoostRange,ui_display,Item,,,Module Reach
+Key,File,Type,UsedInMainMenu,NoTranslate,english,schinese
+modRoboticDroneAutoLootMod,item_modifiers,Item,,,Drone Auto-Loot Module,无人机自动拾取模块
+modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through zombie loot bags and containers and picks up dropped items as it follows you, opening them with your own loot stage and Lucky Looter. Loot goes into the drone's storage. Higher-quality modules reach farther and act faster.","你的无人机跟随你时，会翻找僵尸掉落袋和容器，并拾取掉落物；开启容器时使用你自己的搜刮阶段和“幸运掠夺者”技能。战利品会存入无人机自带的储物空间。品质越高的模块作用距离越远，动作也越快。"
+modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic,无人机自动拾取模块设计图
+modRoboticDroneAutoLootModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Loot Module at a workbench.","阅读后可在工作台学习制作无人机自动拾取模块。"
+modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module,无人机自动拆解模块
+modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. Higher-quality modules reach farther and act faster.","你的无人机跟随你时，会用扳手拆解附近可回收的对象（汽车、水槽、还能运转的机器等），并把材料存入自带的储物空间。它只处理无主土地，绝不会碰任何人的领地声明，因此不会破坏你的基地。品质越高的模块作用距离越远，动作也越快。"
+modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic,无人机自动拆解模块设计图
+modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Salvage Module at a workbench.","阅读后可在工作台学习制作无人机自动拆解模块。"
+modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module,无人机自动收割模块
+modRoboticDroneAutoHarvestModDesc,item_modifiers,Item,,,"Your drone reaps grown crops in your land claim and replants them as it follows you, into its own storage. Only works your own claim, and leaves the seed replanted so the plot keeps producing. Higher-quality modules reach farther and act faster.","你的无人机跟随你时，会收割你领地声明内已成熟的作物，并重新种下，收获物存入自带的储物空间。它只在你自己的领地内工作，并会留下补种的种子，让地块持续产出。品质越高的模块作用距离越远，动作也越快。"
+modRoboticDroneAutoHarvestModSchematic,items,Item,,,Drone Auto-Harvest Module Schematic,无人机自动收割模块设计图
+modRoboticDroneAutoHarvestModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Harvest Module at a workbench.","阅读后可在工作台学习制作无人机自动收割模块。"
+modRoboticDroneAutoRepairMod,item_modifiers,Item,,,Drone Auto-Repair Module,无人机自动维修模块
+modRoboticDroneAutoRepairModDesc,item_modifiers,Item,,,"Your drone repairs damaged blocks in your land claim as it follows you, paying the repair materials out of its own storage. Only works your own claim, and only repairs a block if it can pay in full. Higher-quality modules reach farther and act faster.","你的无人机跟随你时，会维修你领地声明内受损的方块，并从自带的储物空间中扣除维修材料。它只在你自己的领地内工作，且只有在材料足够全额支付时才会维修该方块。品质越高的模块作用距离越远，动作也越快。"
+modRoboticDroneAutoRepairModSchematic,items,Item,,,Drone Auto-Repair Module Schematic,无人机自动维修模块设计图
+modRoboticDroneAutoRepairModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Repair Module at a workbench.","阅读后可在工作台学习制作无人机自动维修模块。"
+modRoboticDroneAutoPlantMod,item_modifiers,Item,,,Drone Auto-Plant Module,无人机自动种植模块
+modRoboticDroneAutoPlantModDesc,item_modifiers,Item,,,"Your drone sows young crops from its own storage onto empty farm plots in your land claim as it follows you. Pairs with the Auto-Harvest Module, which deposits the seed crops it needs, for a self-running farm. Only plants on your own claim, never on invalid ground. Higher-quality modules reach farther and act faster.","你的无人机跟随你时，会从自带的储物空间中取出幼苗，种到你领地声明内的空农田地块上。与自动收割模块搭配使用，后者会存入它所需的种子作物，从而让农场自动运转。它只在你自己的领地内种植，绝不会种在无效地面上。品质越高的模块作用距离越远，动作也越快。"
+modRoboticDroneAutoPlantModSchematic,items,Item,,,Drone Auto-Plant Module Schematic,无人机自动种植模块设计图
+modRoboticDroneAutoPlantModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Plant Module at a workbench.","阅读后可在工作台学习制作无人机自动种植模块。"
+modRoboticDroneAutoDefenseMod,item_modifiers,Item,,,Drone Auto-Defense Module,无人机自动防御模块
+modRoboticDroneAutoDefenseModDesc,item_modifiers,Item,,,"Turns your drone into a bodyguard: it fires its built-in machine gun at nearby zombies and other hostiles as it follows you, or stands sentry over the spot where you park it. Kills are credited to you, and it never targets you, your allies, party members or traders. Higher-quality modules fire faster and reach farther.","把你的无人机变成保镖：它跟随你时，会用内置机枪射击附近的僵尸和其他敌对目标；你也可以把它停在某处，让它在那里站岗。击杀会计入你的名下，且它绝不会以你、你的盟友、队友或商人为目标。品质越高的模块射速越快，作用距离也越远。"
+modRoboticDroneAutoDefenseModSchematic,items,Item,,,Drone Auto-Defense Module Schematic,无人机自动防御模块设计图
+modRoboticDroneAutoDefenseModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Auto-Defense Module at a workbench.","阅读后可在工作台学习制作无人机自动防御模块。"
+modRoboticDroneOverclockMod,item_modifiers,Item,,,Drone Overclock Module,无人机超频模块
+modRoboticDroneOverclockModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but speeds up every other automation module installed in the drone, so each chore takes less time. Higher-quality Overclock modules speed things up more. Uses one of the drone's limited mod slots, so it trades against fitting another automation module.","增强模块：它本身不执行任何工作，但会加快无人机中安装的所有其他自动化模块的速度，让每项任务耗时更短。品质越高的超频模块加速效果越强。它会占用无人机有限的改装槽之一，因此需要与其他自动化模块的装配进行取舍。"
+modRoboticDroneOverclockModSchematic,items,Item,,,Drone Overclock Module Schematic,无人机超频模块设计图
+modRoboticDroneOverclockModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Overclock Module at a workbench.","阅读后可在工作台学习制作无人机超频模块。"
+modRoboticDroneAntennaMod,item_modifiers,Item,,,Drone Wide-Band Antenna Module,无人机宽频天线模块
+modRoboticDroneAntennaModDesc,item_modifiers,Item,,,"An enhancement module: it does no work of its own, but widens the working range of every other automation module installed in the drone. Higher-quality Antenna modules reach farther. Uses one of the drone's limited mod slots, so it trades against fitting another automation module.","增强模块：它本身不执行任何工作，但会扩大无人机中安装的所有其他自动化模块的工作范围。品质越高的天线模块作用距离越远。它会占用无人机有限的改装槽之一，因此需要与其他自动化模块的装配进行取舍。"
+modRoboticDroneAntennaModSchematic,items,Item,,,Drone Wide-Band Antenna Module Schematic,无人机宽频天线模块设计图
+modRoboticDroneAntennaModSchematicDesc,items,Item,,,"Read to learn to craft the Drone Wide-Band Antenna Module at a workbench.","阅读后可在工作台学习制作无人机宽频天线模块。"
+statDroneModuleRange,ui_display,Item,,,Working Range,工作范围
+statDroneModuleSpeed,ui_display,Item,,,Action Speed,动作速度
+statDroneBoostTime,ui_display,Item,,,Module Action Time,模块动作时间
+statDroneBoostRange,ui_display,Item,,,Module Reach,模块作用范围
+daDialogOpen,dialogs,Dialog,,,Automation modules...,自动化模块…
+daDialogPrompt,dialogs,Dialog,,,Which of my automation modules should be running?,我的哪些自动化模块需要保持运行？
+daDialogLootOn,dialogs,Dialog,,,Auto-Loot: ON - switch it off,自动拾取：已开启 - 点击关闭
+daDialogLootOff,dialogs,Dialog,,,Auto-Loot: OFF - switch it on,自动拾取：已关闭 - 点击开启
+daDialogLootMissing,dialogs,Dialog,,,Auto-Loot: no module installed,自动拾取：未安装模块
+daDialogSalvageOn,dialogs,Dialog,,,Auto-Salvage: ON - switch it off,自动拆解：已开启 - 点击关闭
+daDialogSalvageOff,dialogs,Dialog,,,Auto-Salvage: OFF - switch it on,自动拆解：已关闭 - 点击开启
+daDialogSalvageMissing,dialogs,Dialog,,,Auto-Salvage: no module installed,自动拆解：未安装模块
+daDialogHarvestOn,dialogs,Dialog,,,Auto-Harvest: ON - switch it off,自动收割：已开启 - 点击关闭
+daDialogHarvestOff,dialogs,Dialog,,,Auto-Harvest: OFF - switch it on,自动收割：已关闭 - 点击开启
+daDialogHarvestMissing,dialogs,Dialog,,,Auto-Harvest: no module installed,自动收割：未安装模块
+daDialogRepairOn,dialogs,Dialog,,,Auto-Repair: ON - switch it off,自动维修：已开启 - 点击关闭
+daDialogRepairOff,dialogs,Dialog,,,Auto-Repair: OFF - switch it on,自动维修：已关闭 - 点击开启
+daDialogRepairMissing,dialogs,Dialog,,,Auto-Repair: no module installed,自动维修：未安装模块
+daDialogPlantOn,dialogs,Dialog,,,Auto-Plant: ON - switch it off,自动种植：已开启 - 点击关闭
+daDialogPlantOff,dialogs,Dialog,,,Auto-Plant: OFF - switch it on,自动种植：已关闭 - 点击开启
+daDialogPlantMissing,dialogs,Dialog,,,Auto-Plant: no module installed,自动种植：未安装模块
+daDialogDefenseOn,dialogs,Dialog,,,Auto-Defense: ON - switch it off,自动防御：已开启 - 点击关闭
+daDialogDefenseOff,dialogs,Dialog,,,Auto-Defense: OFF - switch it on,自动防御：已关闭 - 点击开启
+daDialogDefenseMissing,dialogs,Dialog,,,Auto-Defense: no module installed,自动防御：未安装模块
+daDialogAllOn,dialogs,Dialog,,,Switch every module back on,重新开启所有模块
+daDialogBack,dialogs,Dialog,,,Back,返回

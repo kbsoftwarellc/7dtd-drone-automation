@@ -39,10 +39,15 @@
 	  running", which is what a player sees before the drone has ever reported in. A "daXxxHas" flag
 	  would invert that and hide every switch until the server got a word in.
 
-	  TEXT IS DELIBERATELY LITERAL, NOT A LOCALIZATION KEY. Localization.csv is NOT in the list of
-	  files pushed to clients, so a key would resolve on the server and render as raw
-	  "daLootDisableText" on every player's screen. Localization.Get returns an unknown key verbatim,
-	  so writing the English sentence in place of the key makes server and client agree.
+	  TEXT IS A LOCALIZATION KEY (daDialog*), AND THE ROWS LIVE IN Config/Localization.csv. Until
+	  0.10.4 the English sentence was written here in place of a key, on the reasoning that
+	  Localization.csv is not in the list of files pushed to clients. That is true and beside the
+	  point: it is not an XML and travels on its own channel. GameManager.RequestToEnterGame sends
+	  NetPackageLocalization - every mod-added row, every language column - immediately BEFORE
+	  WorldStaticData.SendXmlsToClient, and DialogFromXml resolves text="..." through
+	  Localization.Get when the client parses this file, so the keys exist by then. A language with
+	  an empty cell falls back to the english column. Add a language by adding a column to the CSV;
+	  nothing here changes.
 
 	  THE SWITCHES ARE PER PLAYER, NOT PER DRONE. DialogActionAddBuff applies to the talking player
 	  and CVars live on the player, and nothing in the dialog carries the drone's entity id, so a
@@ -65,7 +70,7 @@
 
 	<append xpath="/dialogs/dialog[@id='junkDrone']">
 
-		<statement id="daAutomation" text="Which of my automation modules should be running?">
+		<statement id="daAutomation" text="daDialogPrompt">
 			<response_entry id="daLootDisable"/>
 			<response_entry id="daLootEnable"/>
 			<response_entry id="daLootMissing"/>
@@ -88,103 +93,103 @@
 			<response_entry id="daBack"/>
 		</statement>
 
-		<response id="daAutomation" text="Automation modules..." nextstatementid="daAutomation"/>
+		<response id="daAutomation" text="daDialogOpen" nextstatementid="daAutomation"/>
 
 		<!-- Auto-Loot -->
-		<response id="daLootDisable" text="Auto-Loot: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daLootDisable" text="daDialogLootOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daLootOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaLootDisable"/>
 		</response>
-		<response id="daLootEnable" text="Auto-Loot: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daLootEnable" text="daDialogLootOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daLootOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaLootEnable"/>
 		</response>
-		<response id="daLootMissing" text="Auto-Loot: no module installed" nextstatementid="daAutomation">
+		<response id="daLootMissing" text="daDialogLootMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daLootMissing" value="1" requirementtype="Hide"/>
 		</response>
 
 		<!-- Auto-Salvage -->
-		<response id="daSalvageDisable" text="Auto-Salvage: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daSalvageDisable" text="daDialogSalvageOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daSalvageOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaSalvageDisable"/>
 		</response>
-		<response id="daSalvageEnable" text="Auto-Salvage: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daSalvageEnable" text="daDialogSalvageOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daSalvageOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaSalvageEnable"/>
 		</response>
-		<response id="daSalvageMissing" text="Auto-Salvage: no module installed" nextstatementid="daAutomation">
+		<response id="daSalvageMissing" text="daDialogSalvageMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="1" requirementtype="Hide"/>
 		</response>
 
 		<!-- Auto-Harvest -->
-		<response id="daHarvestDisable" text="Auto-Harvest: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daHarvestDisable" text="daDialogHarvestOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daHarvestOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaHarvestDisable"/>
 		</response>
-		<response id="daHarvestEnable" text="Auto-Harvest: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daHarvestEnable" text="daDialogHarvestOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daHarvestOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaHarvestEnable"/>
 		</response>
-		<response id="daHarvestMissing" text="Auto-Harvest: no module installed" nextstatementid="daAutomation">
+		<response id="daHarvestMissing" text="daDialogHarvestMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="1" requirementtype="Hide"/>
 		</response>
 
 		<!-- Auto-Repair -->
-		<response id="daRepairDisable" text="Auto-Repair: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daRepairDisable" text="daDialogRepairOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daRepairOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaRepairDisable"/>
 		</response>
-		<response id="daRepairEnable" text="Auto-Repair: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daRepairEnable" text="daDialogRepairOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daRepairOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaRepairEnable"/>
 		</response>
-		<response id="daRepairMissing" text="Auto-Repair: no module installed" nextstatementid="daAutomation">
+		<response id="daRepairMissing" text="daDialogRepairMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daRepairMissing" value="1" requirementtype="Hide"/>
 		</response>
 
 		<!-- Auto-Plant -->
-		<response id="daPlantDisable" text="Auto-Plant: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daPlantDisable" text="daDialogPlantOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daPlantOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaPlantDisable"/>
 		</response>
-		<response id="daPlantEnable" text="Auto-Plant: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daPlantEnable" text="daDialogPlantOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daPlantOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaPlantEnable"/>
 		</response>
-		<response id="daPlantMissing" text="Auto-Plant: no module installed" nextstatementid="daAutomation">
+		<response id="daPlantMissing" text="daDialogPlantMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daPlantMissing" value="1" requirementtype="Hide"/>
 		</response>
 
 		<!-- Auto-Defense -->
-		<response id="daDefenseDisable" text="Auto-Defense: ON - switch it off" nextstatementid="daAutomation">
+		<response id="daDefenseDisable" text="daDialogDefenseOn" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daDefenseOff" value="0" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaDefenseDisable"/>
 		</response>
-		<response id="daDefenseEnable" text="Auto-Defense: OFF - switch it on" nextstatementid="daAutomation">
+		<response id="daDefenseEnable" text="daDialogDefenseOff" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daDefenseOff" value="1" requirementtype="Hide"/>
 			<action type="AddBuff" id="buffDaDefenseEnable"/>
 		</response>
-		<response id="daDefenseMissing" text="Auto-Defense: no module installed" nextstatementid="daAutomation">
+		<response id="daDefenseMissing" text="daDialogDefenseMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="1" requirementtype="Hide"/>
 		</response>
 
-		<response id="daAllEnable" text="Switch every module back on" nextstatementid="daAutomation">
+		<response id="daAllEnable" text="daDialogAllOn" nextstatementid="daAutomation">
 			<action type="AddBuff" id="buffDaAllEnable"/>
 		</response>
 
-		<response id="daBack" text="Back" nextstatementid="start"/>
+		<response id="daBack" text="daDialogBack" nextstatementid="start"/>
 
 	</append>
 </config>
