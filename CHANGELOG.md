@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.4 — 2026-10-09
+
+- **Simplified Chinese.** Every module, schematic and stat label now has a Simplified Chinese name
+  and description, contributed by a player. A few terms were adjusted to match the game's own
+  Chinese, so the Lucky Looter perk and the schematics read the same as they do everywhere else.
+- **The drone's "Automation modules" menu can now be translated**, and comes in Simplified Chinese
+  too. Its rows used to be fixed English text. English players see exactly the wording they saw
+  before.
+- Players on a dedicated server still install nothing: the server sends the text to each player in
+  that player's own language.
+- To add another language, add a column to `Config/Localization.csv` named the way the game names
+  it (`tchinese`, `german`, `japanese` and so on). A language with no column keeps showing English.
+- The `/das` chat replies are still English only.
+- Nothing about how the modules work changed.
+
 ## 0.10.3 — 2026-10-08
 
 - **Auto-Harvest now works with self-seeding crops.** Mods that make a crop grow back on its own

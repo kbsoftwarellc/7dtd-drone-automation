@@ -90,6 +90,16 @@ Single-player and hosted games install it the same way, but must launch with **E
 
 One wart, inherited from Loot Vacuum: `Localization.csv` is not synced, so on a dedicated server clients see raw key names until a client-side, XML-only CSV modlet is added.
 
+## Languages
+
+English and Simplified Chinese. Item names, descriptions, stat labels and the **Automation modules…**
+menu all come from `mod/Config/Localization.csv`; the `/das` chat replies are English only.
+
+To add a language, add a column to that file named the way the game names it — `schinese`,
+`tchinese`, `german`, `japanese`, `koreana`, `russian` and so on, exactly as in the header of the
+game's own `Data/Config/Localization.csv`. A column under any other name is ignored, and a language
+with no column shows English.
+
 ## Config
 
 `mod/droneautomation.xml`, one section per module. Same pacing knobs as the Loot Vacuum block.
