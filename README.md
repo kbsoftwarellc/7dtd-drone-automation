@@ -92,7 +92,7 @@ Names and menu text reach joining players too: the server sends its `Localizatio
 
 ## Languages
 
-English and Simplified Chinese. Item names, descriptions, stat labels and the **Automation modules…**
+English and Simplified Chinese (translation by [catgodcx](https://forums.nexusmods.com/profile/194393089-catgodcx/)). Item names, descriptions, stat labels and the **Automation modules…**
 menu all come from `mod/Config/Localization.csv`; the `/das` chat replies are English only.
 
 To add a language, add a column to that file named the way the game names it — `schinese`,
