@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.10.3 — 2026-10-08
+
+- **Auto-Harvest now works with self-seeding crops.** Mods that make a crop grow back on its own
+  after you harvest it — Self Seed Farming is the common one, and Ghoulette's Wasteland Pantry
+  offers a patch built on it — take away the seed a vanilla crop drops and have the game put a
+  seedling back instead. Auto-Harvest looked for that seed to know what to replant, found none, and
+  left every vanilla crop standing, while modded crops that still dropped a seed were reaped. It
+  now reaps those crops too, and puts back the same seedling the game would.
+- Vanilla's radiated mushrooms grow back the same way, so the drone now picks those as well when
+  they are inside your land claim.
+- Nothing else changed: a crop that drops a seed is replanted from that seed exactly as before, and
+  wild crops are still left alone.
+
 ## 0.10.2 — 2026-10-05
 
 - **Works on game 3.3.** Game 3.3 rebuilt how bags, containers and item stacks are stored, and made a

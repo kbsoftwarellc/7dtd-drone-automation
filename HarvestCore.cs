@@ -33,9 +33,10 @@ namespace DroneAutomation
     ///
     /// It only acts on your OWN claim (never a neighbour's farm), and only on the grown stage - the
     /// growing stages are BlockPlantGrowing and carry no Harvest drops, so they are skipped. A crop
-    /// is only reaped if its replant (young) stage can be resolved from its own drops; otherwise it
-    /// is left untouched, so a detection miss can never destroy a plot. Replanting is also what stops
-    /// the same crop being reaped every pass.
+    /// is only reaped if its replant (young) stage can be resolved from its own drops, or from its
+    /// DowngradeBlock when it is a self-seeding one; otherwise it is left untouched, so a detection
+    /// miss can never destroy a plot. Replanting is also what stops the same crop being reaped every
+    /// pass.
     /// </summary>
     public sealed class HarvestCore
     {
@@ -115,6 +116,7 @@ namespace DroneAutomation
                 // leaves a harvested plot BARE (crops ship with DowngradeBlock commented out, and an
                 // absent DowngradeBlock resolves to air), so by hand you spend that seed replanting.
                 // Banking it AND replanting would hand back a spare seed per crop, per cycle.
+                // A self-seeding crop drops no seed, so there is nothing to withhold and it pays nothing.
                 DroneWorld.EmitDrops(b, EnumDropEvent.Harvest, bv, _owner, _drone, rand, young.ToItemValue());
 
                 // Replanting the young stage re-arms its growth schedule (BlockPlantGrowing.OnBlockAdded)
@@ -164,28 +166,51 @@ namespace DroneAutomation
         /// reaped into a bare plot. If you are testing this by hand, spawn the *Player* variant or
         /// grow one from `plantedCorn1`; spawning `plantedCorn3Harvest` reproduces a "does nothing"
         /// that is the module behaving correctly.
+        ///
+        /// SELF-SEEDING CROPS list no seed at all. Mods that make a crop regrow on its own (Self Seed
+        /// Farming is the common one) delete that Harvest drop and set the crop's DowngradeBlock to
+        /// the young stage instead, so the game itself swaps the reaped crop back to a seedling:
+        ///
+        ///     &lt;property name="DowngradeBlock" value="plantedCorn1" /&gt;
+        ///
+        /// With no seed in the drops the drop search finds nothing, and every vanilla crop on such a
+        /// server used to be left standing while modded crops that kept their seed drop were reaped.
+        /// So when the drops name no young stage, the DowngradeBlock is the replant - the same block
+        /// the game would put there for a player. Vanilla's own radiated mushrooms are built this way
+        /// too. It is only the fallback: a crop that lists a seed is still replanted from that seed.
         /// </summary>
         private static bool TryGetReplant(Block _b, out BlockValue _young)
         {
             _young = default;
-            if (_b.itemsToDrop == null) return false;
-            if (!_b.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> list) || list == null) return false;
 
-            for (int i = 0; i < list.Count; i++)
+            if (_b.itemsToDrop != null
+                && _b.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> list) && list != null)
             {
-                string name = list[i].name;
-                if (string.IsNullOrEmpty(name) || name == "*") continue;
-
-                ItemValue iv = ItemClass.GetItem(name);
-                if (iv == null || iv.IsEmpty()) continue;
-
-                BlockValue candidate = iv.ToBlockValue();
-                if (!candidate.isair && candidate.Block is BlockPlantGrowing)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    _young = candidate;
-                    return true;
+                    string name = list[i].name;
+                    if (string.IsNullOrEmpty(name) || name == "*") continue;
+
+                    ItemValue iv = ItemClass.GetItem(name);
+                    if (iv == null || iv.IsEmpty()) continue;
+
+                    BlockValue candidate = iv.ToBlockValue();
+                    if (!candidate.isair && candidate.Block is BlockPlantGrowing)
+                    {
+                        _young = candidate;
+                        return true;
+                    }
                 }
             }
+
+            // An unset DowngradeBlock is air, so an ordinary crop falls straight through to "no replant".
+            BlockValue downgrade = _b.DowngradeBlock;
+            if (!downgrade.isair && downgrade.Block is BlockPlantGrowing)
+            {
+                _young = downgrade;
+                return true;
+            }
+
             return false;
         }
     }
