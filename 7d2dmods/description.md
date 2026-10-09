@@ -51,6 +51,8 @@ Everything runs server-side through a single Harmony patch on the drone's update
 
 **Credits**
 
+Simplified Chinese translation by [catgodcx](https://forums.nexusmods.com/profile/194393089-catgodcx/).
+
 **Bugs, help & updates**\
 Hit a bug or want update news? Post it on the **Bugs** tab here, or join the tehAon modding Discord — the hub for all my 7 Days to Die mods:\
 [**discord.gg/DYCzCPSvwa**](https://discord.gg/DYCzCPSvwa)

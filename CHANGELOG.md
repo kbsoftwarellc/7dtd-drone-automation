@@ -3,7 +3,7 @@
 ## 0.10.4 — 2026-10-09
 
 - **Simplified Chinese.** Every module, schematic and stat label now has a Simplified Chinese name
-  and description, contributed by a player. A few terms were adjusted to match the game's own
+  and description, contributed by catgodcx. A few terms were adjusted to match the game's own
   Chinese, so the Lucky Looter perk and the schematics read the same as they do everywhere else.
 - **The drone's "Automation modules" menu can now be translated**, and comes in Simplified Chinese
   too. Its rows used to be fixed English text. English players see exactly the wording they saw
