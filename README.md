@@ -88,7 +88,7 @@ If a module is not acting, set `Debug="1"` on the `<droneautomation>` line in `m
 
 Single-player and hosted games install it the same way, but must launch with **EAC off**: there the server runs inside your own EAC-protected game process.
 
-One wart, inherited from Loot Vacuum: `Localization.csv` is not synced, so on a dedicated server clients see raw key names until a client-side, XML-only CSV modlet is added.
+Names and menu text reach joining players too: the server sends its `Localization.csv` to each client as it connects, so nobody sees raw key names and nobody installs a text modlet. (Earlier versions of this page said the opposite. Checked on game 3.2.0 with a client that had no copy of the mod.)
 
 ## Languages
 
