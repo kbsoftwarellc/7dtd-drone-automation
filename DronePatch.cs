@@ -142,20 +142,23 @@ namespace DroneAutomation
             bool didSomething = false;
             string harvestDetail = null;
 
+            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
+            bool bagLocked = LockManager.Instance.IsLockedServer(__instance);
+
             // Auto-Defense fires the drone's own machine gun at nearby hostiles. It works around the
-            // drone itself and never touches the bag, so it runs BEFORE the bag-lock check below - the
-            // drone keeps laying down covering fire while you have its storage open - and independently
-            // of the parked / near-owner gates that bound the block modules: a parked drone stands
-            // sentry, a following one guards you.
+            // drone itself and fires from a magazine, so it runs BEFORE the bag-lock check below - the
+            // drone keeps laying down covering fire while you have its storage open, and only refills
+            // the magazine from the bag once you close it - and independently of the parked /
+            // near-owner gates that bound the block modules: a parked drone stands sentry, a following
+            // one guards you.
             if (autoDefense != null)
             {
                 DefenseCore core = defenseCores.GetValue(__instance, _ => new DefenseCore(DroneAutomationMod.DefenseSettings));
-                didSomething |= core.Tick(__instance, ItemCompat.Quality(autoDefense), boost);
+                didSomething |= core.Tick(__instance, owner, ItemCompat.Quality(autoDefense), boost, bagLocked);
             }
 
-            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
-            // Every module below reads or writes it, so pause them all while its owner has it open.
-            if (LockManager.Instance.IsLockedServer(__instance))
+            // Every module below reads or writes the bag, so pause them all while its owner has it open.
+            if (bagLocked)
             {
                 Debug(__instance, didSomething ? "acted this pass" : "bag locked (owner has it open)");
                 return;
@@ -353,6 +356,11 @@ namespace DroneAutomation
             PublishOne(_owner, DroneAutomationMod.RepairMissingCVar,  _repair);
             PublishOne(_owner, DroneAutomationMod.PlantMissingCVar,   _plant);
             PublishOne(_owner, DroneAutomationMod.DefenseMissingCVar, _defense);
+
+            // The ammo row: 0 hides it, so a drone without Auto-Defense, or a server with ammo
+            // switched off, shows the menu exactly as it was. Same changed-only network cost as above.
+            int ammo = _defense == null ? DefenseCore.AmmoNoRow : DefenseCore.AmmoState(_drone, DroneAutomationMod.DefenseSettings);
+            _owner.SetCVar(DroneAutomationMod.DefenseAmmoCVar, ammo);
         }
 
         /// <summary>

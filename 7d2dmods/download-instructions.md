@@ -57,7 +57,7 @@ What each module does
 - **Auto-Harvest** — reaps grown crops in **your own land claim** and replants the seed. A crop is only reaped if it can be replanted, so a plot is never left empty.
 - **Auto-Repair** — repairs damaged blocks in **your own land claim**, paying the materials out of the drone's bag. Only repairs what it can pay for.
 - **Auto-Plant** — sows young crops from the drone's bag onto empty farm plots in **your own land claim**. Pairs with Auto-Harvest — what one reaps, the other sows — for a self-running farm.
-- **Auto-Defense** — turns the drone into a **bodyguard**. It fires its own machine gun at the nearest hostile while following you, or stands sentry over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders.
+- **Auto-Defense** — turns the drone into a **bodyguard**. It fires its own machine gun at the nearest hostile while following you, or stands sentry over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders. It loads **Robotic Turret Ammo** from the drone's bag into its own magazine (62–92 rounds), tops up between fights and tells you in chat when it runs low or dry; its shots draw screamers like a turret's. `RequireAmmo="0"` in the config restores the free gun.
 
 **Enhancement modules** — no chore of their own, they improve the others:
 
@@ -73,7 +73,7 @@ you again. Auto-Loot always works around the drone itself.
 
 You still have to be online, but no longer nearby. A *following* drone only works blocks while it is actually with you (25m by default), so a drone left behind won't keep working from across the map.
 
-Auto-Defense ignores all of that on purpose — it fights whether the drone is following or parked, and even while you have its storage open. A parked drone with Auto-Defense fitted is a stationary turret.
+Auto-Defense ignores all of that on purpose — it fights whether the drone is following or parked, and even while you have its storage open (it fires from its magazine then, and reloads once you close it). A parked drone with Auto-Defense fitted is a stationary turret.
 
 Module levels (Quality 1–6)
 

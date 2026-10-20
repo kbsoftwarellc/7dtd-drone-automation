@@ -3,7 +3,7 @@ using UnityEngine;
 namespace DroneAutomation
 {
     /// <summary>
-    /// Heat map (screamer) parity for the modules that break blocks.
+    /// Heat map (screamer) parity for the modules that break blocks, and for the drone's gun.
     ///
     /// A drone breaking a block generates NO heat in vanilla, and not because the mod skips a call:
     /// the game's own destroy sound IS emitted server-side for our Block.DamageBlock (Block ->
@@ -55,6 +55,39 @@ namespace DroneAutomation
             if (strength <= 0f) return;
 
             _world.aiDirector.NotifyActivity(EnumAIDirectorChunkEvent.Sound, _pos, strength * _mult, EventDuration);
+        }
+
+        /// <summary>The sounds.xml node a vanilla auto turret's shot plays, and so its heat.</summary>
+        private const string GunSound = "turret_fire";
+
+        /// <summary>What the drone gun's muzzle-flash particle actually asks to play.</summary>
+        private const string GunSoundAsPlayed = "Electricity/Turret/turret_fire";
+
+        /// <summary>turret_fire's heat_map_strength in vanilla sounds.xml, for a server that never parsed it.</summary>
+        private const float GunFallbackStrength = 0.65f;
+
+        /// <summary>
+        /// Adds the heat one drone gunshot should make: a vanilla auto turret's shot, times
+        /// <paramref name="_mult"/> (Auto-Defense's HeatMultiplier).
+        ///
+        /// Vanilla makes none. The shot's sound rides on the muzzle-flash particle, which
+        /// DroneWeapons.SpawnParticleEffect only plays server-side on a host that is also a client;
+        /// a dedicated server just forwards it to the clients, so the AI director never hears it.
+        /// Where it does play (single player, a listen server) it is played as
+        /// "Electricity/Turret/turret_fire", while the noise table is keyed by the sounds.xml node
+        /// name, "turret_fire". If some build ever does resolve that name, that host already counts
+        /// the shot itself, and this adds nothing rather than double it.
+        /// </summary>
+        public static void GunFired(World _world, Vector3 _pos, float _mult)
+        {
+            if (_mult <= 0f || _world?.aiDirector == null) return;
+            if (!GameManager.IsDedicatedServer && AIDirectorData.FindNoise(GunSoundAsPlayed, out _)) return;
+
+            float strength = GunFallbackStrength;
+            if (AIDirectorData.FindNoise(GunSound, out AIDirectorData.Noise noise)) strength = noise.heatMapStrength;
+            if (strength <= 0f) return;
+
+            _world.aiDirector.NotifyActivity(EnumAIDirectorChunkEvent.Sound, World.worldToBlockPos(_pos), strength * _mult, EventDuration);
         }
     }
 }

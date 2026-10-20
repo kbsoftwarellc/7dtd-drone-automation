@@ -61,6 +61,13 @@ namespace DroneAutomation
         public const string DefenseMissingCVar = "daDefenseMissing";
 
         /// <summary>
+        /// Auto-Defense's ammo, for the talk menu: 0 = no row, 1 = plenty, 2 = low, 3 = empty (see
+        /// DefenseCore.AmmoState). Same reasoning as the Missing flags - 0, what an unwritten CVar
+        /// reads as, is the value that leaves the menu exactly as it was before the row existed.
+        /// </summary>
+        public const string DefenseAmmoCVar = "daDefenseAmmo";
+
+        /// <summary>
         /// Every buff the talk menu can add, kept permanently on the owner by
         /// <see cref="DronePatch.PrimeToggleBuffs"/>.
         ///
@@ -437,6 +444,13 @@ namespace DroneAutomation
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
             ReadBool(_node, "RequireLineOfSight", ref _settings.RequireLineOfSight);
+            ReadBool(_node, "RequireAmmo", ref _settings.RequireAmmo);
+            ReadString(_node, "AmmoItems", ref _settings.AmmoItems);
+            float magazine = _settings.MagazineSize;
+            ReadFloat(_node, "MagazineSize", ref magazine);
+            _settings.MagazineSize = UnityEngine.Mathf.RoundToInt(magazine);
+            ReadFloat(_node, "ReloadSeconds", ref _settings.ReloadSeconds);
+            ReadFloat(_node, "HeatMultiplier", ref _settings.HeatMultiplier);
         }
 
         private static void ReadOverclock(XmlNode _node, OverclockSettings _settings)
