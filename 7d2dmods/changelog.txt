@@ -18,7 +18,7 @@
 - Russian. Every item, description, stat and talk-menu row now has a Russian translation, in the game's own Russian terms.
 
 
-- To keep the free gun, set RequireAmmo="0" on the autoDefense line of droneautomation.xml, or in a droneautomation.local.xml so an update never overwrites it. HeatMultiplier="0" makes the gun silent to the AI director again. New settings, all on the autoDefense line: RequireAmmo, AmmoItems, MagazineSize, ReloadSeconds, HeatMultiplier.
+- To keep the free gun, set RequireAmmo="0" on the autoDefense line of `droneautomation.xml`, or in a `droneautomation.local.xml` so an update never overwrites it. HeatMultiplier="0" makes the gun silent to the AI director again. New settings, all on the autoDefense line: RequireAmmo, AmmoItems, MagazineSize, ReloadSeconds, HeatMultiplier.
 
 
 - After updating, a drone that is already out starts with an empty magazine, so it holds fire until you put ammo in its bag. It says so the first time a zombie comes into range.
