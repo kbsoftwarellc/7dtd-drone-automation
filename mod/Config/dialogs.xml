@@ -89,6 +89,9 @@
 			<response_entry id="daDefenseDisable"/>
 			<response_entry id="daDefenseEnable"/>
 			<response_entry id="daDefenseMissing"/>
+			<response_entry id="daDefenseAmmoPlenty"/>
+			<response_entry id="daDefenseAmmoLow"/>
+			<response_entry id="daDefenseAmmoEmpty"/>
 			<response_entry id="daAllEnable"/>
 			<response_entry id="daBack"/>
 		</statement>
@@ -183,6 +186,17 @@
 		</response>
 		<response id="daDefenseMissing" text="daDialogDefenseMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="1" requirementtype="Hide"/>
+		</response>
+		<!-- Ammo, published by the drone as daDefenseAmmo: 1 plenty, 2 low, 3 empty. 0 (ammo off,
+		     or no module) shows none of them. Picking one just redraws the menu. -->
+		<response id="daDefenseAmmoPlenty" text="daDialogDefenseAmmoPlenty" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="1" requirementtype="Hide"/>
+		</response>
+		<response id="daDefenseAmmoLow" text="daDialogDefenseAmmoLow" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="2" requirementtype="Hide"/>
+		</response>
+		<response id="daDefenseAmmoEmpty" text="daDialogDefenseAmmoEmpty" nextstatementid="daAutomation">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="3" requirementtype="Hide"/>
 		</response>
 
 		<response id="daAllEnable" text="daDialogAllOn" nextstatementid="daAutomation">

@@ -171,14 +171,35 @@
 	    MaxCatchupSeconds   ceiling on banked shots, so it can't unload a stored burst on the first
 	                        enemy to wander up. Kept small for that reason.
 	    RequireLineOfSight  1 = only fire on a clear shot (the drone gun does no block damage, so this
-	                        only saves wasted shots into cover; 0 fires the instant an enemy is in range).
+	                        only saves wasted ammo into cover; 0 fires the instant an enemy is in range).
+	    RequireAmmo         1 = every shot spends one round, loaded from the drone's own bag (on from
+	                        0.11.0). 0 = the free gun of earlier versions. The drone fires from a
+	                        magazine and refills it from the bag only while the bag is closed, so it
+	                        keeps shooting while you have its storage open. It says in chat when it
+	                        loads its last magazine and when it runs dry; the talk menu shows plenty /
+	                        low / empty, and /das ammo gives exact counts.
+	    AmmoItems           what it loads, spent in this order. These are the three vanilla's own drone
+	                        gun was written to take (Robotic Turret Ammo, Shells and AP); every kind
+	                        fires the same round, so the cheap one goes first.
+	    MagazineSize        rounds per magazine. 0 = the drone's own (62 on a Q1 drone, up to 92 on Q6).
+	    ReloadSeconds       how long a reload takes. The gun falls silent this long when the magazine
+	                        runs dry mid-fight; between fights it tops up once nothing has been in its
+	                        sights for this long.
+	    HeatMultiplier      heat (screamer) per shot, as a multiple of a vanilla auto turret's shot.
+	                        1 = the same heat as a turret, 0 = silent, the way versions before 0.11.0
+	                        were (the AI director never heard the drone gun at all).
 	-->
 	<autoDefense Range="15"
 	             SecondsPerShot="0.4"
 	             MaxCatchupSeconds="2"
 	             LowQualityReach="0.6"
 	             LowQualityTimeMult="2"
-	             RequireLineOfSight="1" />
+	             RequireLineOfSight="1"
+	             RequireAmmo="1"
+	             AmmoItems="ammoJunkTurretRegular,ammoJunkTurretShell,ammoJunkTurretAP"
+	             MagazineSize="0"
+	             ReloadSeconds="3.9"
+	             HeatMultiplier="1" />
 
 	<!--
 	  Enhancement meta-modules: no automation of their own, they scale EVERY installed core.

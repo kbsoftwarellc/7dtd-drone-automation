@@ -5,7 +5,8 @@ using UnityEngine;
 namespace DroneAutomation
 {
     /// <summary>
-    /// The /das chat command - how a player tells Auto-Salvage what to leave alone.
+    /// The /das chat command - how a player tells Auto-Salvage what to leave alone, and asks how
+    /// much ammo Auto-Defense has left.
     ///
     /// Chat, rather than a menu or pointing at the block, for two reasons. A server-side mod cannot
     /// draw a window (see Msg), and the thing a player wants to exclude is usually already gone -
@@ -67,6 +68,7 @@ namespace DroneAutomation
                 case "rules": Rules(_who, _prefix); break;
                 case "list": List(_who, arg, _prefix); break;
                 case "what": What(_who); break;
+                case "ammo": Ammo(_who); break;
                 default: Help(_who, _prefix); break;
             }
         }
@@ -85,7 +87,29 @@ namespace DroneAutomation
                 $"  {p} forget <rule>   drop a rule",
                 $"  {p} what            name the block you are looking at",
                 "Names take * as a wildcard: cntVendingMachine* is every vending machine.",
+                "Auto-Defense:",
+                $"  {p} ammo            rounds left in each of your drones",
             });
+        }
+
+        /// <summary>Exact rounds per drone. The talk menu can only say plenty / low / empty.</summary>
+        private static void Ammo(int _who)
+        {
+            DefenseSettings settings = DroneAutomationMod.DefenseSettings;
+            if (!DefenseCore.NeedsAmmo(settings))
+            {
+                Msg.Tell(_who, "Auto-Defense needs no ammo on this server.");
+                return;
+            }
+
+            List<string> lines = DefenseCore.Report(_who, settings);
+            if (lines.Count == 0)
+            {
+                Msg.Tell(_who, "Auto-Defense: none of your drones with the module is out right now.");
+                return;
+            }
+            lines.Insert(0, "Auto-Defense ammo (Robotic Turret Ammo, loaded from the drone's bag):");
+            Msg.TellAll(_who, lines);
         }
 
         private static void Last(int _who, string _arg, string _prefix)

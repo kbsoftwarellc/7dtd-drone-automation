@@ -1,3 +1,32 @@
+0.11.0
+
+- Auto-Defense now needs ammo. Every shot spends one round of Robotic Turret Ammo, loaded from the drone's own bag. A player asked for it because the free gun felt too strong, and the game agrees: the junk drone's own gun, which The Fun Pimps left unused, was written to load exactly this ammo - Robotic Turret Ammo, Shells and AP - and every other module already pays its way. The cheap regular rounds are spent first, then Shells, then AP; every kind hits the same.
+
+
+- It fires from a magazine - the drone's own, 62 rounds on a Quality 1 drone and up to 92 on Quality 6. It tops the magazine up from the bag between fights, and when it runs dry mid-fight the gun falls silent for about four seconds to reload. The magazine stays with the drone when you pick it up.
+
+
+- It keeps firing while you have its storage open, from the magazine, and reloads once you close it. While it is open the bag belongs to your game, and rounds taken out of it then would be put back when you close it.
+
+
+- It tells you. The drone says in chat when it loads its last magazine and when it runs dry. The talk menu (hold E, Talk, Automation modules) has a new row: ammo plenty, low or empty. /das ammo gives the exact count for each of your drones.
+
+
+- Drone gunfire now makes heat, the same as a vanilla auto turret's shot. Before this the AI director never heard the drone gun at all, so a sentry drone could fight all night without ever drawing a screamer. Same idea as Auto-Salvage's heat in 0.9.0.
+
+
+- Russian. Every item, description, stat and talk-menu row now has a Russian translation, in the game's own Russian terms.
+
+
+- To keep the free gun, set RequireAmmo="0" under <autoDefense> in droneautomation.xml, or in a droneautomation.local.xml so an update never overwrites it. HeatMultiplier="0" makes the gun silent to the AI director again. New settings, all under <autoDefense>: RequireAmmo, AmmoItems, MagazineSize, ReloadSeconds, HeatMultiplier.
+
+
+- After updating, a drone that is already out starts with an empty magazine, so it holds fire until you put ammo in its bag. It says so the first time a zombie comes into range.
+
+
+- Still server-side only: players on a dedicated server install nothing.
+
+
 0.10.4
 
 - Simplified Chinese. Every module, schematic and stat label now has a Simplified Chinese name and description, contributed by catgodcx. A few terms were adjusted to match the game's own Chinese, so the Lucky Looter perk and the schematics read the same as they do everywhere else.
