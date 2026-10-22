@@ -4,7 +4,7 @@ modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through 
 modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic,Схема: модуль дрона «Автосбор»,无人机自动拾取模块设计图
 modRoboticDroneAutoLootModSchematicDesc,items,Item,,,Read to learn to craft the Drone Auto-Loot Module at a workbench.,"Прочитайте, чтобы научиться изготавливать модуль дрона «Автосбор» на верстаке.",阅读后可在工作台学习制作无人机自动拾取模块。
 modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module,Модуль дрона «Авторазборка»,无人机自动拆解模块
-modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. Higher-quality modules reach farther and act faster.","Следуя за вами, дрон разбирает гаечным ключом ближайшие объекты, пригодные для разборки (машины, раковины, рабочие механизмы), и складывает материалы в своё хранилище. Работает только на ничейной земле и никогда не трогает чужую или вашу зону присвоения земли, так что базу он не разрушит. Модули более высокого качества дотягиваются дальше и работают быстрее.",你的无人机跟随你时，会用扳手拆解附近可回收的对象（汽车、水槽、还能运转的机器等），并把材料存入自带的储物空间。它只处理无主土地，绝不会碰任何人的领地声明，因此不会破坏你的基地。品质越高的模块作用距离越远，动作也越快。
+modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. It takes nothing until you choose what: talk to the drone, then Automation modules, Auto-Salvage targets. Higher-quality modules reach farther and act faster.","Следуя за вами, дрон разбирает гаечным ключом ближайшие объекты, пригодные для разборки (машины, раковины, рабочие механизмы), и складывает материалы в своё хранилище. Работает только на ничейной земле и никогда не трогает чужую или вашу зону присвоения земли, так что базу он не разрушит. Пока вы не выберете, что разбирать, он ничего не трогает: поговорите с дроном и откройте «Модули автоматизации» → «Цели авторазборки». Модули более высокого качества дотягиваются дальше и работают быстрее.",你的无人机跟随你时，会用扳手拆解附近可回收的对象（汽车、水槽、还能运转的机器等），并把材料存入自带的储物空间。它只处理无主土地，绝不会碰任何人的领地声明，因此不会破坏你的基地。在你选择目标之前它不会拆解任何东西：与无人机对话，打开“自动化模块”→“自动拆解目标”。品质越高的模块作用距离越远，动作也越快。
 modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic,Схема: модуль дрона «Авторазборка»,无人机自动拆解模块设计图
 modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,Read to learn to craft the Drone Auto-Salvage Module at a workbench.,"Прочитайте, чтобы научиться изготавливать модуль дрона «Авторазборка» на верстаке.",阅读后可在工作台学习制作无人机自动拆解模块。
 modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module,Модуль дрона «Автоурожай»,无人机自动收割模块
@@ -60,3 +60,21 @@ daDialogDefenseAmmoLow,dialogs,Dialog,,,Auto-Defense ammo: low - put Robotic Tur
 daDialogDefenseAmmoEmpty,dialogs,Dialog,,,Auto-Defense ammo: EMPTY - put Robotic Turret Ammo in my bag,Боеприпасы автозащиты: НЕТ — нужны боеприпасы для роботизированной пушки,自动防御弹药：已耗尽 - 请往我的储物空间放入机器人炮塔弹药
 daDialogAllOn,dialogs,Dialog,,,Switch every module back on,Снова включить все модули,重新开启所有模块
 daDialogBack,dialogs,Dialog,,,Back,Назад,返回
+daDialogSalvOpen,dialogs,Dialog,,,Auto-Salvage targets...,Цели авторазборки…,自动拆解目标…
+daDialogSalvPrompt,dialogs,Dialog,,,What should Auto-Salvage take? Anything switched off is left standing.,Что должна разбирать авторазборка? Всё выключенное останется на месте.,自动拆解应该拆什么？已关闭的类别会原样保留。
+daDialogSalvVehiclesOn,dialogs,Dialog,,,Vehicles: ON - leave them alone,Транспорт: ВКЛ. — не трогать,车辆：已开启 - 点击不再拆解
+daDialogSalvVehiclesOff,dialogs,Dialog,,,Vehicles: OFF - salvage them,Транспорт: ВЫКЛ. — разбирать,车辆：已关闭 - 点击开始拆解
+daDialogSalvAppliancesOn,dialogs,Dialog,,,Appliances and electrics: ON - leave them alone,Бытовая техника и электрика: ВКЛ. — не трогать,家电与电器：已开启 - 点击不再拆解
+daDialogSalvAppliancesOff,dialogs,Dialog,,,Appliances and electrics: OFF - salvage them,Бытовая техника и электрика: ВЫКЛ. — разбирать,家电与电器：已关闭 - 点击开始拆解
+daDialogSalvLightsOn,dialogs,Dialog,,,Lights: ON - leave them alone,Светильники: ВКЛ. — не трогать,灯具：已开启 - 点击不再拆解
+daDialogSalvLightsOff,dialogs,Dialog,,,Lights: OFF - salvage them,Светильники: ВЫКЛ. — разбирать,灯具：已关闭 - 点击开始拆解
+daDialogSalvPlumbingOn,dialogs,Dialog,,,"Sinks, toilets and pipes: ON - leave them alone","Раковины, унитазы и трубы: ВКЛ. — не трогать",水槽、马桶与管道：已开启 - 点击不再拆解
+daDialogSalvPlumbingOff,dialogs,Dialog,,,"Sinks, toilets and pipes: OFF - salvage them","Раковины, унитазы и трубы: ВЫКЛ. — разбирать",水槽、马桶与管道：已关闭 - 点击开始拆解
+daDialogSalvFurnitureOn,dialogs,Dialog,,,"Furniture, decor and signs: ON - leave them alone","Мебель, декор и вывески: ВКЛ. — не трогать",家具、装饰与招牌：已开启 - 点击不再拆解
+daDialogSalvFurnitureOff,dialogs,Dialog,,,"Furniture, decor and signs: OFF - salvage them","Мебель, декор и вывески: ВЫКЛ. — разбирать",家具、装饰与招牌：已关闭 - 点击开始拆解
+daDialogSalvContainersOn,dialogs,Dialog,,,Emptied containers: ON - leave them alone,Опустошённые контейнеры: ВКЛ. — не трогать,已搜空的容器：已开启 - 点击不再拆解
+daDialogSalvContainersOff,dialogs,Dialog,,,Emptied containers: OFF - salvage them,Опустошённые контейнеры: ВЫКЛ. — разбирать,已搜空的容器：已关闭 - 点击开始拆解
+daDialogSalvOtherOn,dialogs,Dialog,,,Everything else: ON - leave them alone,Всё остальное: ВКЛ. — не трогать,其他所有物品：已开启 - 点击不再拆解
+daDialogSalvOtherOff,dialogs,Dialog,,,Everything else: OFF - salvage them,Всё остальное: ВЫКЛ. — разбирать,其他所有物品：已关闭 - 点击开始拆解
+daDialogSalvAllOn,dialogs,Dialog,,,Salvage all of it,Разбирать всё,全部拆解
+daDialogSalvAllOff,dialogs,Dialog,,,Salvage nothing,Ничего не разбирать,什么都不拆
