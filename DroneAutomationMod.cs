@@ -92,6 +92,17 @@ namespace DroneAutomation
             "buffDaPlantDisable",   "buffDaPlantEnable",
             "buffDaDefenseDisable", "buffDaDefenseEnable",
             "buffDaAllEnable",
+
+            // The "Salvage targets" submenu: a take/leave pair per SalvageCategories group, plus
+            // take-everything and take-nothing.
+            "buffDaSalvVehiclesTake",   "buffDaSalvVehiclesLeave",
+            "buffDaSalvAppliancesTake", "buffDaSalvAppliancesLeave",
+            "buffDaSalvLightsTake",     "buffDaSalvLightsLeave",
+            "buffDaSalvPlumbingTake",   "buffDaSalvPlumbingLeave",
+            "buffDaSalvFurnitureTake",  "buffDaSalvFurnitureLeave",
+            "buffDaSalvContainersTake", "buffDaSalvContainersLeave",
+            "buffDaSalvOtherTake",      "buffDaSalvOtherLeave",
+            "buffDaSalvAllTake",        "buffDaSalvAllLeave",
         };
 
         public static string ModPath;
@@ -376,11 +387,12 @@ namespace DroneAutomation
             ReadString(_node, "SalvageToolTags", ref _settings.SalvageToolTags);
             ReadString(_node, "ChatPrefix", ref _settings.ChatPrefix);
             ReadString(_node, "NewTargetPolicy", ref _settings.NewTargetPolicy);
+            ReadString(_node, "StartTargets", ref _settings.StartTargets);
             ReadBool(_node, "AnnounceNewTargets", ref _settings.AnnounceNewTargets);
 
             // <exclude block="..."/> children: blocks the drone must never wrench. Names take * as
-            // a wildcard, and they are handed to SalvageRules, which merges them with whatever
-            // players have added in game with /das.
+            // a wildcard, and they are handed to SalvageRules, where they bind every player ahead
+            // of whatever each has added in game with /das.
             _settings.ExcludedBlocks.Clear();
             SalvageRules.ConfigDeny.Clear();
             foreach (XmlNode child in _node.ChildNodes)

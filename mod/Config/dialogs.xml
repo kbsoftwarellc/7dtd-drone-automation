@@ -57,10 +57,11 @@
 	  drone you are standing at - so those rows and the switches answer subtly different questions.
 
 	  ROW BUDGET: windowResponses is a 10-row grid with no scrollbar. junkDrone's start statement
-	  shows 6-7 rows (its command pairs hide one of each), and this adds one. The submenu below shows
-	  6 module rows plus "switch everything on" plus "back" = 8, because the three rows per module are
-	  mutually exclusive. Both stay inside 10; anything added later has to be counted against that,
-	  because an eleventh row is silently invisible.
+	  shows 6-7 rows (its command pairs hide one of each), and this adds one. The Automation modules
+	  menu shows 6 module rows (the three rows per module are mutually exclusive), at most one ammo
+	  row, "Auto-Salvage targets..." (only with the module fitted), "switch everything on" and "back"
+	  = 10: FULL. The Salvage targets menu is full too (see its own comment). Anything added later has
+	  to be counted against that, because an eleventh row is silently invisible.
 	-->
 
 	<!-- Sits directly above "Never mind", so the vanilla drone commands keep their order. -->
@@ -77,6 +78,7 @@
 			<response_entry id="daSalvageDisable"/>
 			<response_entry id="daSalvageEnable"/>
 			<response_entry id="daSalvageMissing"/>
+			<response_entry id="daSalvTargets"/>
 			<response_entry id="daHarvestDisable"/>
 			<response_entry id="daHarvestEnable"/>
 			<response_entry id="daHarvestMissing"/>
@@ -204,6 +206,99 @@
 		</response>
 
 		<response id="daBack" text="daDialogBack" nextstatementid="start"/>
+
+		<!-- Salvage targets: which kinds of thing Auto-Salvage may take (SalvageCategories). One
+		     CVar per group, 1 = take, so an unwritten CVar - every player on update - reads as
+		     "leave it": the module starts empty. Each group is a pair of rows guarded by opposite
+		     values and exactly one shows. ROW BUDGET: 7 groups + all + nothing + back = 10, the
+		     whole grid. An eighth group needs a second page. -->
+		<statement id="daSalvTargets" text="daDialogSalvPrompt">
+			<response_entry id="daSalvVehiclesLeave"/>
+			<response_entry id="daSalvVehiclesTake"/>
+			<response_entry id="daSalvAppliancesLeave"/>
+			<response_entry id="daSalvAppliancesTake"/>
+			<response_entry id="daSalvLightsLeave"/>
+			<response_entry id="daSalvLightsTake"/>
+			<response_entry id="daSalvPlumbingLeave"/>
+			<response_entry id="daSalvPlumbingTake"/>
+			<response_entry id="daSalvFurnitureLeave"/>
+			<response_entry id="daSalvFurnitureTake"/>
+			<response_entry id="daSalvContainersLeave"/>
+			<response_entry id="daSalvContainersTake"/>
+			<response_entry id="daSalvOtherLeave"/>
+			<response_entry id="daSalvOtherTake"/>
+			<response_entry id="daSalvAllTake"/>
+			<response_entry id="daSalvAllLeave"/>
+			<response_entry id="daSalvBack"/>
+		</statement>
+
+		<response id="daSalvTargets" text="daDialogSalvOpen" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
+		</response>
+
+		<response id="daSalvVehiclesLeave" text="daDialogSalvVehiclesOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvVehicles" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvVehiclesLeave"/>
+		</response>
+		<response id="daSalvVehiclesTake" text="daDialogSalvVehiclesOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvVehicles" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvVehiclesTake"/>
+		</response>
+		<response id="daSalvAppliancesLeave" text="daDialogSalvAppliancesOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvAppliances" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvAppliancesLeave"/>
+		</response>
+		<response id="daSalvAppliancesTake" text="daDialogSalvAppliancesOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvAppliances" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvAppliancesTake"/>
+		</response>
+		<response id="daSalvLightsLeave" text="daDialogSalvLightsOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvLights" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvLightsLeave"/>
+		</response>
+		<response id="daSalvLightsTake" text="daDialogSalvLightsOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvLights" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvLightsTake"/>
+		</response>
+		<response id="daSalvPlumbingLeave" text="daDialogSalvPlumbingOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvPlumbing" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvPlumbingLeave"/>
+		</response>
+		<response id="daSalvPlumbingTake" text="daDialogSalvPlumbingOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvPlumbing" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvPlumbingTake"/>
+		</response>
+		<response id="daSalvFurnitureLeave" text="daDialogSalvFurnitureOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvFurniture" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvFurnitureLeave"/>
+		</response>
+		<response id="daSalvFurnitureTake" text="daDialogSalvFurnitureOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvFurniture" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvFurnitureTake"/>
+		</response>
+		<response id="daSalvContainersLeave" text="daDialogSalvContainersOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvContainers" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvContainersLeave"/>
+		</response>
+		<response id="daSalvContainersTake" text="daDialogSalvContainersOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvContainers" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvContainersTake"/>
+		</response>
+		<response id="daSalvOtherLeave" text="daDialogSalvOtherOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvOther" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvOtherLeave"/>
+		</response>
+		<response id="daSalvOtherTake" text="daDialogSalvOtherOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvOther" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvOtherTake"/>
+		</response>
+		<response id="daSalvAllTake" text="daDialogSalvAllOn" nextstatementid="daSalvTargets">
+			<action type="AddBuff" id="buffDaSalvAllTake"/>
+		</response>
+		<response id="daSalvAllLeave" text="daDialogSalvAllOff" nextstatementid="daSalvTargets">
+			<action type="AddBuff" id="buffDaSalvAllLeave"/>
+		</response>
+		<response id="daSalvBack" text="daDialogBack" nextstatementid="daAutomation"/>
 
 	</append>
 </config>

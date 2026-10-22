@@ -33,7 +33,7 @@
 	  by the time SelectResponse switches the statement, and the rebuild that follows sees it.
 
 	  Hence: duration 0 (infinite - BuffClass.Tick only expires a buff while DurationMax > 0), the
-	  effect hung on onSelfBuffStack, and DronePatch.PrimeToggleBuffs keeping all thirteen present
+	  effect hung on onSelfBuffStack, and DronePatch.PrimeToggleBuffs keeping every one of them present
 	  on the owner so that every click is a stack. Priming is inert precisely BECAUSE there is no
 	  onSelfBuffStart effect - adding one back would make the drone's own tick flip the player's
 	  switches. stack_type is stated explicitly for the same reason: only replace/duration/effect
@@ -158,6 +158,136 @@
 				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daRepairOff" operation="set" value="0"/>
 				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPlantOff" operation="set" value="0"/>
 				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+
+		<!-- Salvage targets (the submenu under Automation modules). The CVar means TAKE, the
+		     opposite polarity to the module switches above, because here the safe default IS
+		     zero: unwritten = leave it standing, so Auto-Salvage starts empty. -->
+		<buff name="buffDaSalvVehiclesTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvVehicles" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvVehiclesLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvVehicles" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvAppliancesTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvAppliances" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvAppliancesLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvAppliances" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvLightsTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvLights" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvLightsLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvLights" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvPlumbingTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvPlumbing" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvPlumbingLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvPlumbing" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvFurnitureTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvFurniture" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvFurnitureLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvFurniture" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvContainersTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvContainers" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvContainersLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvContainers" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvOtherTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvOther" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvOtherLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvOther" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+
+		<!-- "Salvage all of it" / "Salvage nothing" - every group at once. -->
+		<buff name="buffDaSalvAllTake" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvVehicles" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvAppliances" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvLights" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvPlumbing" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvFurniture" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvContainers" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvOther" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvAllLeave" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvVehicles" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvAppliances" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvLights" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvPlumbing" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvFurniture" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvContainers" operation="set" value="0"/>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvOther" operation="set" value="0"/>
 			</effect_group>
 		</buff>
 

@@ -51,23 +51,32 @@ namespace DroneAutomation
         public string SalvageToolTags = SalvageToolContext.DefaultToolTags;
 
         /// Block names the drone must never wrench, from &lt;exclude block="..."/&gt; in the config.
-        /// Merged into SalvageRules at load, where the rules added in game with /das also live.
+        /// Handed to SalvageRules at load, where they bind every player whatever their own /das rules say.
         public readonly HashSet<string> ExcludedBlocks = new HashSet<string>();
 
         /// The chat command players use to see and change those rules.
         public string ChatPrefix = "/das";
 
-        /// What to do with a block family this save has never salvaged before: "allow" wrenches it
-        /// and says so once, "ask" leaves it standing until someone permits it. Allow by default,
-        /// because a drone that silently does nothing on a fresh install reads as broken.
+        /// What to do, inside the groups a player picked, with a block family their drone has never
+        /// salvaged before: "allow" wrenches it and says so once, "ask" leaves it standing until they
+        /// permit it with /das allow. Allow by default - picking a group in the menu already said yes.
         public string NewTargetPolicy = "allow";
 
-        /// Say something the first time a new kind of thing is taken (or held back). Once per
-        /// family per save - the point is to teach, not to fill chat.
+        /// Which talk-menu groups a player starts with: "none" (the default since 0.12 - the drone
+        /// takes nothing until its owner picks what it may) or "all", which turns every group on once
+        /// for each player, the pre-0.12 behaviour. See SalvageCategories.SeedIfNew.
+        public string StartTargets = "none";
+
+        /// Say something the first time a new kind of thing is taken (or held back, or passed by
+        /// because nothing is picked). Once per family per player - the point is to teach, not to
+        /// fill chat.
         public bool AnnounceNewTargets = true;
 
         public bool NewTargetPolicyAllows =>
             !string.Equals(NewTargetPolicy, "ask", StringComparison.OrdinalIgnoreCase);
+
+        public bool StartWithAllTargets =>
+            string.Equals(StartTargets, "all", StringComparison.OrdinalIgnoreCase);
 
         public void Clamp()
         {
@@ -135,6 +144,12 @@ namespace DroneAutomation
             // Collect the land claims that reach into this bubble once, before walking the blocks.
             SalvageGuards.BeginTick(_scanCenter, radius);
 
+            // Whose rules and which talk-menu groups apply, read once per pass. StartTargets="all"
+            // turns every group on for a player the first time, before the read.
+            SalvageCategories.SeedIfNew(_owner, settings.StartWithAllTargets);
+            string ownerKey = SalvageRules.Key(_ownerData);
+            int picked = SalvageCategories.Picked(_owner);
+
             int did = 0;
             for (int i = 0; i < buffer.Count; i++)
             {
@@ -173,17 +188,6 @@ namespace DroneAutomation
                 // still hold their materials.
                 if (!settings.SalvageWorkstations && IsWorkstation(_world, pos)) continue;
 
-                // The player's own rules: names and wildcards from droneautomation.xml and from
-                // /das, plus the new-target policy for a family this save has not met. See
-                // SalvageRules.
-                string blockName = b.GetBlockName();
-                if (!SalvageRules.MaySalvage(blockName, settings.NewTargetPolicyAllows, out string _))
-                {
-                    if (!settings.NewTargetPolicyAllows && settings.AnnounceNewTargets)
-                        SalvageVoice.HeldBack(_owner, blockName, settings.ChatPrefix);
-                    continue;
-                }
-
                 if (!settings.SalvageInPOIs && IsInsidePOI(_world, pos)) continue;
 
                 // Never wrench a container that still holds loot the player hasn't taken. Many
@@ -191,6 +195,24 @@ namespace DroneAutomation
                 // can read empty yet still pay out - leave anything untouched, non-empty, or
                 // player-owned for the player, and only salvage a container once it's emptied.
                 if (HoldsUnlootedContents(_world, pos)) continue;
+
+                // What the owner wants taken: the server's excludes, the owner's own /das rules,
+                // the groups they picked in the talk menu, then the new-target policy. See
+                // SalvageRules. Asked LAST, after every guard above, so that when the drone says
+                // why it held back it is standing next to something it really could have taken.
+                string blockName = b.GetBlockName();
+                SalvageRules.Verdict verdict = SalvageRules.Decide(ownerKey, b, picked, settings.NewTargetPolicyAllows, out string _);
+                if (verdict != SalvageRules.Verdict.Take)
+                {
+                    if (settings.AnnounceNewTargets)
+                    {
+                        if (verdict == SalvageRules.Verdict.NotPicked && picked == 0)
+                            SalvageVoice.Idle(_owner, blockName, settings.ChatPrefix);
+                        else if (verdict == SalvageRules.Verdict.NewTarget)
+                            SalvageVoice.HeldBack(_owner, blockName, settings.ChatPrefix);
+                    }
+                    continue;
+                }
 
                 if (!pacer.TrySpend(secondsPerStep)) break;
 
@@ -222,7 +244,7 @@ namespace DroneAutomation
                 // by the time anyone notices, the block itself is gone. First one of its kind gets
                 // said out loud.
                 if (_owner != null) SalvageLedger.Record(_owner.entityId, blockName, pos);
-                bool firstOfKind = SalvageRules.MarkSeen(blockName);
+                bool firstOfKind = SalvageRules.MarkSeen(ownerKey, blockName);
                 if (firstOfKind && settings.AnnounceNewTargets)
                     SalvageVoice.FirstTake(_owner, blockName, settings.ChatPrefix);
                 did++;
