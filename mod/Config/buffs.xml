@@ -291,5 +291,31 @@
 			</effect_group>
 		</buff>
 
+		<!-- One-shot requests from the More page: never take the last thing again, tell me what it
+		     took, undo my last skip. Each only raises its flag to 1; the SERVER does the work and puts
+		     it back to 0 (SalvageMenu), so the same row can be pressed again. 0 = nothing asked, which
+		     is also what an unwritten CVar reads as. -->
+		<buff name="buffDaSalvCmdSkipLast" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvCmdSkipLast" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvCmdListLast" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvCmdListLast" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaSalvCmdUndoSkip" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvCmdUndoSkip" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+
 	</append>
 </config>

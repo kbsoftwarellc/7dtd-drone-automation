@@ -102,6 +102,17 @@ namespace DroneAutomation
             lock (gate) return new List<string>(Find(_key).Allow);
         }
 
+        /// <summary>The player's most recently added skip, or null. Rules keep the order they were added in.</summary>
+        public static string NewestDeny(string _key)
+        {
+            EnsureLoaded();
+            lock (gate)
+            {
+                List<string> deny = Find(_key).Deny;
+                return deny.Count == 0 ? null : deny[deny.Count - 1];
+            }
+        }
+
         public static List<string> ServerDeny
         {
             get { lock (gate) return new List<string>(ConfigDeny); }

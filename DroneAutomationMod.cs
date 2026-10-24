@@ -103,6 +103,9 @@ namespace DroneAutomation
             "buffDaSalvContainersTake", "buffDaSalvContainersLeave",
             "buffDaSalvOtherTake",      "buffDaSalvOtherLeave",
             "buffDaSalvAllTake",        "buffDaSalvAllLeave",
+
+            // Its More page: one-shot requests the server answers in chat. See SalvageMenu.
+            "buffDaSalvCmdSkipLast", "buffDaSalvCmdListLast", "buffDaSalvCmdUndoSkip",
         };
 
         public static string ModPath;

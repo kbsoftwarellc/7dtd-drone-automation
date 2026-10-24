@@ -69,6 +69,7 @@ namespace DroneAutomation
                 case "allow":
                 case "include": Allow(_who, arg, _prefix); break;
                 case "forget": Forget(_who, arg); break;
+                case "undo": Undo(_who, _prefix); break;
                 case "rules": Rules(_who, _prefix); break;
                 case "list": List(_who, arg, _prefix); break;
                 case "what": What(_who); break;
@@ -89,6 +90,7 @@ namespace DroneAutomation
                 $"  {p} rules           the rules in force",
                 $"  {p} list <name*>    every salvageable block on this server matching that",
                 $"  {p} forget <rule>   drop a rule",
+                $"  {p} undo            drop your most recent skip",
                 $"  {p} what            name the block you are looking at",
                 "Names take * as a wildcard: cntVendingMachine* is every vending machine.",
                 "Which kinds of thing it takes at all: talk to your drone > Automation modules > Auto-Salvage targets.",
@@ -118,7 +120,7 @@ namespace DroneAutomation
             Msg.TellAll(_who, lines);
         }
 
-        private static void Last(int _who, string _arg, string _prefix)
+        internal static void Last(int _who, string _arg, string _prefix)
         {
             int n = 10;
             if (!string.IsNullOrEmpty(_arg) && int.TryParse(_arg, out int parsed)) n = Mathf.Clamp(parsed, 1, SalvageLedger.Size);
@@ -140,7 +142,7 @@ namespace DroneAutomation
             Msg.TellAll(_who, lines);
         }
 
-        private static void Skip(int _who, string _arg, string _mode, string _prefix)
+        internal static void Skip(int _who, string _arg, string _mode, string _prefix)
         {
             if (string.IsNullOrEmpty(_arg)) { Msg.Tell(_who, $"{_prefix} skip <number from '{_prefix} last', a block name, or a name*"); return; }
 
@@ -201,6 +203,24 @@ namespace DroneAutomation
 
             bool server = SalvageRules.ServerDeny.Exists(x => string.Equals(x, _arg, StringComparison.OrdinalIgnoreCase));
             Msg.Tell(_who, server ? $"{_arg} is the server's rule (droneautomation.xml), not yours to drop." : $"No rule for {_arg}.");
+        }
+
+        /// <summary>
+        /// Drops this player's newest skip - for the one added by mistake, from chat or from the
+        /// talk menu's "never take the last thing again" row. Rules keep the order they were added
+        /// in, so the newest is the last.
+        /// </summary>
+        internal static void Undo(int _who, string _prefix)
+        {
+            string key = KeyOrSay(_who);
+            if (key == null) return;
+
+            string pattern = SalvageRules.NewestDeny(key);
+            if (pattern == null) { Msg.Tell(_who, "You have no skips to undo."); return; }
+
+            SalvageRules.Forget(key, pattern);
+            SalvageVoice.ForgetHeld(_who, pattern.TrimEnd('*'));
+            Msg.Tell(_who, $"Dropped your skip for {pattern} - Auto-Salvage takes those again if their group is picked. ({_prefix} rules shows the rest.)");
         }
 
         /// <summary>

@@ -210,8 +210,8 @@
 		<!-- Salvage targets: which kinds of thing Auto-Salvage may take (SalvageCategories). One
 		     CVar per group, 1 = take, so an unwritten CVar - every player on update - reads as
 		     "leave it": the module starts empty. Each group is a pair of rows guarded by opposite
-		     values and exactly one shows. ROW BUDGET: 7 groups + all + nothing + back = 10, the
-		     whole grid. An eighth group needs a second page. -->
+		     values and exactly one shows. ROW BUDGET: 7 groups + "More..." + back = 9; one row
+		     spare. Everything else lives on the More page below. -->
 		<statement id="daSalvTargets" text="daDialogSalvPrompt">
 			<response_entry id="daSalvVehiclesLeave"/>
 			<response_entry id="daSalvVehiclesTake"/>
@@ -227,10 +227,37 @@
 			<response_entry id="daSalvContainersTake"/>
 			<response_entry id="daSalvOtherLeave"/>
 			<response_entry id="daSalvOtherTake"/>
-			<response_entry id="daSalvAllTake"/>
-			<response_entry id="daSalvAllLeave"/>
+			<response_entry id="daSalvMore"/>
 			<response_entry id="daSalvBack"/>
 		</statement>
+
+		<!-- The More page: every group at once, and the per-item rows. A talk-menu row's text is
+		     fixed when the client parses this file, so the menu can never NAME a block - it cannot
+		     list what the drone took, and it cannot offer a search. What it can do is act on "the
+		     last thing it took", which the server knows (SalvageLedger), and say the name in chat.
+		     So these three rows each set a one-shot request CVar; SalvageMenu acts on it on the
+		     drone's next tick, answers in chat, and sets it back to 0. Same as /das skip 1, /das last
+		     and /das undo, without typing. 6 rows. -->
+		<statement id="daSalvMore" text="daDialogSalvMorePrompt">
+			<response_entry id="daSalvAllTake"/>
+			<response_entry id="daSalvAllLeave"/>
+			<response_entry id="daSalvSkipLast"/>
+			<response_entry id="daSalvListLast"/>
+			<response_entry id="daSalvUndoSkip"/>
+			<response_entry id="daSalvMoreBack"/>
+		</statement>
+
+		<response id="daSalvMore" text="daDialogSalvMore" nextstatementid="daSalvMore"/>
+		<response id="daSalvSkipLast" text="daDialogSalvSkipLast" nextstatementid="daSalvMore">
+			<action type="AddBuff" id="buffDaSalvCmdSkipLast"/>
+		</response>
+		<response id="daSalvListLast" text="daDialogSalvListLast" nextstatementid="daSalvMore">
+			<action type="AddBuff" id="buffDaSalvCmdListLast"/>
+		</response>
+		<response id="daSalvUndoSkip" text="daDialogSalvUndoSkip" nextstatementid="daSalvMore">
+			<action type="AddBuff" id="buffDaSalvCmdUndoSkip"/>
+		</response>
+		<response id="daSalvMoreBack" text="daDialogBack" nextstatementid="daSalvTargets"/>
 
 		<response id="daSalvTargets" text="daDialogSalvOpen" nextstatementid="daSalvTargets">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>

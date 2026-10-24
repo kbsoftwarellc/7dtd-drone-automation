@@ -5,8 +5,12 @@
 - **You choose what Auto-Salvage takes.** Hold E on the drone, Talk, Automation modules, then the new
   **Auto-Salvage targets** row: switch on the kinds of thing it may wrench - Vehicles, Appliances and
   electrics, Lights, Sinks toilets and pipes, Furniture decor and signs, Emptied containers,
-  Everything else - or Salvage all of it / Salvage nothing in one click. The groups are the game's
-  own creative-menu categories, so blocks from overhauls and POI mods sort themselves.
+  Everything else - and a More page with Salvage all of it / Salvage nothing in one click. The groups
+  are the game's own creative-menu categories, so blocks from overhauls and POI mods sort themselves.
+- **One thing at a time, without typing.** The More page also has **Never take the last thing it
+  took again**, **Tell me what it took** and **Undo my last skip**. The drone answers in chat with
+  the name - a menu row cannot show one - and a skip covers that whole kind (every sedan variant),
+  the same as `/das skip 1`. `/das undo` is new in chat too.
 - **It starts with nothing picked.** A drone with Auto-Salvage takes nothing until its owner chooses,
   and says so in chat, once a session, the first time it passes something it could have taken.
   **After updating, every player's drone stops salvaging until they pick something** - Salvage all

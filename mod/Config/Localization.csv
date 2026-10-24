@@ -78,3 +78,8 @@ daDialogSalvOtherOn,dialogs,Dialog,,,Everything else: ON - leave them alone,Вс
 daDialogSalvOtherOff,dialogs,Dialog,,,Everything else: OFF - salvage them,Всё остальное: ВЫКЛ. — разбирать,其他所有物品：已关闭 - 点击开始拆解
 daDialogSalvAllOn,dialogs,Dialog,,,Salvage all of it,Разбирать всё,全部拆解
 daDialogSalvAllOff,dialogs,Dialog,,,Salvage nothing,Ничего не разбирать,什么都不拆
+daDialogSalvMore,dialogs,Dialog,,,"More: all, nothing, what it took...","Ещё: всё, ничего, что он разобрал…",更多：全部、不拆、刚拆的东西…
+daDialogSalvMorePrompt,dialogs,Dialog,,,"Everything at once, or the last thing it took. I answer in chat.","Всё сразу или то, что он разобрал последним. Ответ придёт в чат.",一次全选，或处理它刚拆掉的东西。我会在聊天中回答。
+daDialogSalvSkipLast,dialogs,Dialog,,,Never take the last thing it took again,"Больше не разбирать то, что он разобрал последним",以后不再拆它刚拆的那种东西
+daDialogSalvListLast,dialogs,Dialog,,,Tell me what it took,"Сказать, что он разобрал",告诉我它拆了什么
+daDialogSalvUndoSkip,dialogs,Dialog,,,Undo my last skip - take those again,Отменить последнее исключение — снова разбирать,撤销上一次排除 - 重新拆解那种东西
