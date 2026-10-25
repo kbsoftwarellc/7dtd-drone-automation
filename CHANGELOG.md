@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.13.0 — 2026-10-24
+
+- **Auto-Defense turns to face what it shoots, and shoots what is behind it.** The vanilla drone
+  always turns to face you, and the "can I see it?" check only counted what was in front of the
+  drone, so it only fired at zombies between you and it. Now it checks for a clear line in any
+  direction, turns toward its target, and fires once it is facing it; a second after its last shot
+  it turns back to you. With no rounds left it doesn't turn.
+- **It no longer goes quiet because the nearest zombie is behind cover.** It used to look at the
+  single nearest zombie only; now it takes the nearest one it can actually hit.
+- **Patrol.** Talk to the drone → **Patrol around me**: while it follows you and nothing hostile is
+  near, it drifts between spots a few metres around you instead of hanging at your shoulder.
+  **Stop patrolling** turns it off; it starts off. Following and the teleports work as before.
+  Tuned by the new `<patrol>` line in `droneautomation.xml`.
+
 ## 0.12.0 — 2026-10-24
 
 - **One page per module.** Hold E on the drone, Talk, Automation modules: each module is one row that

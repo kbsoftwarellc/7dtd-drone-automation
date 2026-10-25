@@ -32,6 +32,8 @@ namespace DroneAutomation
             new ConditionalWeakTable<EntityDrone, PlantCore>();
         private static readonly ConditionalWeakTable<EntityDrone, DefenseCore> defenseCores =
             new ConditionalWeakTable<EntityDrone, DefenseCore>();
+        private static readonly ConditionalWeakTable<EntityDrone, PatrolCore> patrolCores =
+            new ConditionalWeakTable<EntityDrone, PatrolCore>();
 
         /// <summary>How close the owner has to be for a drone to describe itself to the talk menu.</summary>
         private const float MenuPublishRange = 8f;
@@ -116,6 +118,11 @@ namespace DroneAutomation
             // The talk menu's one-shot salvage requests ("never take the last thing again" and so
             // on). Answered here, ahead of every early-out, so a press is never left waiting.
             SalvageMenu.Poll(owner);
+
+            // Patrol is a talk-menu order, not a module, so it runs on a drone with nothing fitted
+            // too. Before Auto-Defense, so a fight's turn toward its target is the one that sticks.
+            if (owner.Buffs != null && owner.Buffs.GetCustomVar(DroneAutomationMod.PatrolCVar) != 0f)
+                patrolCores.GetValue(__instance, _ => new PatrolCore(DroneAutomationMod.PatrolSettings)).Tick(__instance, owner);
 
             if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
             {

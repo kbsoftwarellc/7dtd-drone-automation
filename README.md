@@ -17,7 +17,7 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 - **Auto-Harvest** (`modRoboticDroneAutoHarvestMod`) — reaps grown crops in **your own land claim** and replants the seed, into the drone bag. A crop is only reaped if its replant stage can be resolved, so a plot is never left empty. Self-seeding crops — ones a mod such as Self Seed Farming makes grow back on their own, with no seed dropped — are reaped too, and get the same seedling the game would put back.
 - **Auto-Repair** (`modRoboticDroneAutoRepairMod`) — repairs damaged blocks in **your own land claim**, paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
 - **Auto-Plant** (`modRoboticDroneAutoPlantMod`) — sows young crops from the drone bag onto empty farm plots in **your own land claim**. A "seed" is any bag item that resolves to a growing-plant block (e.g. `plantedCorn1`) — the same block Auto-Harvest deposits when it reaps, so the pair runs a self-sustaining farm. Only plants on the empty cell above a farm plot, never on invalid ground.
-- **Auto-Defense** (`modRoboticDroneAutoDefenseMod`) — turns the drone into a **bodyguard**: it fires its own machine gun at the nearest hostile as it follows you, or stands **sentry** over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a `MachineGunWeapon` and an `Attack` state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply. Higher-quality modules fire faster and reach farther; per-shot damage is a flat bonus set on the module.
+- **Auto-Defense** (`modRoboticDroneAutoDefenseMod`) — turns the drone into a **bodyguard**: it fires its own machine gun at the nearest hostile it can hit as it follows you, or stands **sentry** over the spot you park it on, and **turns to face what it is shooting** (from 0.13.0 — before that it only saw the half of the world facing you, so zombies coming up behind it were ignored). Kills are credited to you, and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a `MachineGunWeapon` and an `Attack` state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply. Higher-quality modules fire faster and reach farther; per-shot damage is a flat bonus set on the module.
 
   **It needs ammo** (from 0.11.0). Every shot spends one round of **Robotic Turret Ammo** (`ammoJunkTurretRegular`, then Shells, then AP - the three the vanilla drone's unused gun was written to take), loaded from the drone's bag into the drone's own magazine (62 rounds on a Q1 drone, up to 92 on Q6). It tops the magazine up between fights and goes quiet for about four seconds to reload when it runs dry mid-fight. It says in chat when it loads its last magazine and when it is out; the talk menu shows **plenty / low / empty**, and `/das ammo` gives the exact count. Its shots make the heat a vanilla auto turret's would, so a sentry drone draws screamers like a turret does. `RequireAmmo="0"` restores the free gun; `AmmoItems`, `MagazineSize`, `ReloadSeconds` and `HeatMultiplier` tune it.
 
@@ -39,6 +39,20 @@ A drone that is **following** you only works blocks while it's actually with you
 **Auto-Defense** ignores all of this on purpose: it works around the drone itself and fights whether the drone is following or parked, and even while you have its storage open (from its magazine; it reloads from the bag once you close it) — a bodyguard that stops shooting when you step away or open a container isn't much of one. A parked drone becomes a stationary turret guarding that spot.
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
+
+## Patrol
+
+Hold **E** on the drone → **Talk** → **Patrol around me** (right under Follow me / Stay here, from
+0.13.0). While it follows you and nothing hostile is near, the drone drifts between spots 2–5 m
+around you, facing where it is going, instead of hanging at your shoulder. **Stop patrolling** on the
+same page turns it off; it starts off. Any drone does it — it is an order, not a module — and like the
+module switches it is per player.
+
+It never changes the drone's orders, so following, the teleport back when it falls behind and the
+teleport along with you all work as normal; the moment you walk off or a zombie comes near, it goes
+back to plain following (and Auto-Defense, if fitted). It doesn't pathfind — it only picks spots it
+has a clear line to — and the radius stays inside vanilla's own 7 m follow leash. `<patrol>` in
+`droneautomation.xml` sets the radius, the pause at each spot and the speed.
 
 ## Switching a module off, and its settings
 

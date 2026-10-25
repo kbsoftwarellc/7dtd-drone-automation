@@ -307,5 +307,22 @@
 			</effect_group>
 		</buff>
 
+		<!-- Patrol around me / Stop patrolling (PatrolCore). 1 = patrol: it starts off, so the
+		     unwritten 0 means off. -->
+		<buff name="buffDaPatrolStart" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPatrol" operation="set" value="1"/>
+			</effect_group>
+		</buff>
+		<buff name="buffDaPatrolStop" hidden="true">
+			<stack_type value="replace"/>
+			<duration value="0"/>
+			<effect_group>
+				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPatrol" operation="set" value="0"/>
+			</effect_group>
+		</buff>
+
 	</append>
 </config>

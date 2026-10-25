@@ -26,7 +26,8 @@ namespace DroneAutomation
 
         /// On by default: only fire when the drone actually has a clear line to the target, so it
         /// doesn't waste shots into cover. (The drone gun does no block damage, so this protects
-        /// nothing but ammo; turn it off to let it fire the instant an enemy is in range.)
+        /// nothing but ammo; turn it off to let it fire the instant an enemy is in range.) A zombie
+        /// behind cover is passed over for the nearest one it CAN hit.
         public bool RequireLineOfSight = true;
 
         /// On by default from 0.11.0: every shot spends one round, loaded from the drone's bag. Off
@@ -75,10 +76,22 @@ namespace DroneAutomation
     /// this module supplies none of them; module Quality scales fire rate here (Pacer + QualityScale)
     /// and per-shot damage via the EntityDamage passive on the item_modifier.
     ///
-    /// Target selection is the drone's own public GetNearestEnemyInRange, which already excludes the
-    /// owner, their allies, party members and traders - so there is no friendly fire and nothing to
-    /// re-implement. Anchored on the drone itself: a following drone guards you, a parked one stands
+    /// Target selection follows the drone's own GetNearestEnemyInRange - its revenge target first,
+    /// then hostile EntityEnemy only, through its own canAttackTarget (alive, not a sleeping
+    /// sleeper, not shocked, not behind blocks) - so players, allies and traders are never in the
+    /// running. Unlike that method it takes the nearest one the drone can actually SEE, not just the
+    /// nearest. Anchored on the drone itself: a following drone guards you, a parked one stands
     /// sentry over the spot you left it.
+    ///
+    /// FACING (0.13.0). Vanilla turns the drone to face its owner every tick, and until 0.13.0 the
+    /// line-of-sight check was EntityAlive.CanSee, which only counts what is inside a 180-degree view
+    /// cone around the way the entity faces (CanEntityBeSeen with checkViewCone). Together: the drone
+    /// only ever saw the half of the world facing you, minus whatever your body blocked, so it shot
+    /// zombies between you and it and ignored the ones coming up behind it. Now the check is a plain
+    /// raycast with no cone, and the drone turns to face what it is shooting (DroneFacing), holding
+    /// fire until it roughly does - the gun aims at the target either way, but the shot leaves from
+    /// its right wrist, and facing away it would be firing through its own body. It goes back to
+    /// facing you a second after its last shot, and only turns at all when it has rounds to fire.
     ///
     /// AMMO. The gun fires from a magazine held in EntityDrone.AmmoCount - vanilla's own field for
     /// it, stored in the drone item's Meta, so the magazine stays with the drone when you pick it up.
@@ -108,6 +121,28 @@ namespace DroneAutomation
         /// <summary>Last tick a target was in its sights; 0 = never.</summary>
         private ulong lastTargetTick;
 
+        /// <summary>What it is turned toward, and until when; null = facing its owner, as vanilla.</summary>
+        private EntityAlive facing;
+        private ulong faceUntilTick;
+
+        /// <summary>How long it keeps facing a target after the last time it lined up a shot.</summary>
+        private const float FaceHoldSeconds = 1f;
+
+        /// <summary>It fires once it is turned to within this many degrees of the target.</summary>
+        private const float FireConeDegrees = 30f;
+
+        // Reused every search, so FindTarget allocates nothing.
+        private readonly List<Entity> nearby = new List<Entity>();
+        private readonly List<KeyValuePair<float, EntityAlive>> candidates = new List<KeyValuePair<float, EntityAlive>>();
+        private static readonly Comparison<KeyValuePair<float, EntityAlive>> nearestFirst = (a, b) => a.Key.CompareTo(b.Key);
+
+        private static ulong TicksFor(float _seconds)
+        {
+            float perSecond = GameTimer.Instance.ticksPerSecond;
+            if (perSecond <= 0f) perSecond = 20f;
+            return (ulong)Mathf.CeilToInt(_seconds * perSecond);
+        }
+
         private bool IdleFor(float _seconds)
         {
             if (lastTargetTick == 0UL) return true;
@@ -128,6 +163,10 @@ namespace DroneAutomation
             pacer.Accrue();
             if (settings.Range <= 0f) return false;
 
+            // Every tick, not only on the ticks it may fire: vanilla turns it back to its owner each
+            // tick, so a turn made only when a shot is due would flick back and forth.
+            float aimError = HoldFacing(_drone, _quality, _boost);
+
             List<ItemValue> ammo = NeedsAmmo(settings) ? Ammo(settings) : null;
             if (ammo != null)
             {
@@ -139,6 +178,8 @@ namespace DroneAutomation
 
                 if (reloadDoneTick != 0UL)
                 {
+                    // Reloading mid-fight from rounds in its bag: keep facing the fight meanwhile.
+                    if (facing != null) faceUntilTick = GameTimer.Instance.ticks + TicksFor(FaceHoldSeconds);
                     if (GameTimer.Instance.ticks < reloadDoneTick || _bagLocked) return false;
                     reloadDoneTick = 0UL;
                     Load(_drone, _owner, ammo);
@@ -192,6 +233,16 @@ namespace DroneAutomation
                 }
             }
 
+            // It has a target and a round for it: face it, and hold the shot until it roughly does.
+            // The credit stays banked meanwhile, so the first shot goes the moment it has turned.
+            if (target != facing)
+            {
+                facing = target;
+                aimError = DroneFacing.Turn(_drone, target.getChestPosition());
+            }
+            faceUntilTick = GameTimer.Instance.ticks + TicksFor(FaceHoldSeconds);
+            if (aimError > FireConeDegrees) return false;
+
             if (!pacer.TrySpend(secondsPerShot)) return false;
 
             // Fire is server-gated internally and self-contained (raycast -> hit -> muzzle FX). We
@@ -217,17 +268,77 @@ namespace DroneAutomation
             return true;
         }
 
+        /// <summary>
+        /// Keep turning toward the target it is fighting, until a second after it last lined up a
+        /// shot, or until that target dies or leaves its reach. Returns the degrees still to turn
+        /// (180 when it is not facing anything).
+        /// </summary>
+        private float HoldFacing(EntityDrone _drone, int _quality, DroneBoost _boost)
+        {
+            if (facing == null) return 180f;
+
+            float range = Reach(_quality, _boost);
+            if (facing.IsDead() || GameTimer.Instance.ticks > faceUntilTick
+                || (facing.position - _drone.position).sqrMagnitude > range * range)
+            {
+                facing = null;
+                return 180f;
+            }
+            return DroneFacing.Turn(_drone, facing.getChestPosition());
+        }
+
+        private float Reach(int _quality, DroneBoost _boost) =>
+            QualityScale.Reach(settings.Range, settings.LowQualityReach, _quality) * _boost.ReachMult;
+
+        /// <summary>
+        /// The nearest hostile in reach that the drone can hit, its revenge target first. The same
+        /// rules as the drone's own GetNearestEnemyInRange, except that a zombie it cannot see no
+        /// longer hides every other one: until 0.13.0 only the single nearest was ever considered, so
+        /// one behind a wall left the drone silent with others in the open.
+        /// </summary>
         private EntityAlive FindTarget(EntityDrone _drone, int _quality, DroneBoost _boost)
         {
-            EntityAlive target = _drone.GetNearestEnemyInRange(_drone.position);
-            if (target == null || target.IsDead()) return null;
+            float range = Reach(_quality, _boost);
+            if (range <= 0f || _drone.sensors == null) return null;
+            float rangeSq = range * range;
 
-            float range = QualityScale.Reach(settings.Range, settings.LowQualityReach, _quality) * _boost.ReachMult;
-            if ((target.position - _drone.position).sqrMagnitude > range * range) return null;
+            EntityAlive revenge = _drone.GetRevengeTarget();
+            if (revenge != null && !revenge.IsDead() && !revenge.Buffs.HasBuff("buffShocked")
+                && (revenge.position - _drone.position).sqrMagnitude <= rangeSq && Visible(_drone, revenge))
+                return revenge;
 
-            if (settings.RequireLineOfSight && !_drone.CanSee(target)) return null;
-            return target;
+            nearby.Clear();
+            candidates.Clear();
+            GameManager.Instance.World.GetEntitiesAround(EntityFlags.AIHearing | EntityFlags.Player, _drone.position, range, nearby);
+            for (int i = 0; i < nearby.Count; i++)
+            {
+                EntityEnemy enemy = nearby[i] as EntityEnemy;
+                if (enemy == null || enemy.EntityClass == null || !enemy.EntityClass.bIsEnemyEntity) continue;
+
+                float distSq = (enemy.position - _drone.position).sqrMagnitude;
+                if (distSq > rangeSq || !_drone.sensors.canAttackTarget(enemy)) continue;
+                candidates.Add(new KeyValuePair<float, EntityAlive>(distSq, enemy));
+            }
+            nearby.Clear();
+
+            candidates.Sort(nearestFirst);
+            EntityAlive found = null;
+            for (int i = 0; i < candidates.Count && found == null; i++)
+            {
+                if (Visible(_drone, candidates[i].Value)) found = candidates[i].Value;
+            }
+            candidates.Clear();
+            return found;
         }
+
+        /// <summary>
+        /// A clear line from the drone's head to the target's, with NO view cone: CanEntityBeSeen with
+        /// checkViewCone false. EntityAlive.CanSee, used until 0.13.0, goes through the same method
+        /// with the cone on, and the cone points wherever vanilla last turned the drone - at you.
+        /// It still fails when anything else is in the way first, you included.
+        /// </summary>
+        private bool Visible(EntityDrone _drone, EntityAlive _target) =>
+            !settings.RequireLineOfSight || _drone.CanEntityBeSeen(_target, false);
 
         /// <summary>
         /// Fill the magazine from the bag, spending the ammo kinds in AmmoItems order. Says so once
