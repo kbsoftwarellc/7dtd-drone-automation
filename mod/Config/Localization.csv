@@ -62,20 +62,20 @@ daDialogAllOn,dialogs,Dialog,,,Switch every module back on,Снова включ
 daDialogBack,dialogs,Dialog,,,Back,Назад,返回
 daDialogSalvOpen,dialogs,Dialog,,,Auto-Salvage targets...,Цели авторазборки…,自动拆解目标…
 daDialogSalvPrompt,dialogs,Dialog,,,What should Auto-Salvage take? Anything switched off is left standing.,Что должна разбирать авторазборка? Всё выключенное останется на месте.,自动拆解应该拆什么？已关闭的类别会原样保留。
-daDialogSalvVehiclesOn,dialogs,Dialog,,,Vehicles: ON - leave them alone,Транспорт: ВКЛ. — не трогать,车辆：已开启 - 点击不再拆解
-daDialogSalvVehiclesOff,dialogs,Dialog,,,Vehicles: OFF - salvage them,Транспорт: ВЫКЛ. — разбирать,车辆：已关闭 - 点击开始拆解
-daDialogSalvAppliancesOn,dialogs,Dialog,,,Appliances and electrics: ON - leave them alone,Бытовая техника и электрика: ВКЛ. — не трогать,家电与电器：已开启 - 点击不再拆解
-daDialogSalvAppliancesOff,dialogs,Dialog,,,Appliances and electrics: OFF - salvage them,Бытовая техника и электрика: ВЫКЛ. — разбирать,家电与电器：已关闭 - 点击开始拆解
-daDialogSalvLightsOn,dialogs,Dialog,,,Lights: ON - leave them alone,Светильники: ВКЛ. — не трогать,灯具：已开启 - 点击不再拆解
-daDialogSalvLightsOff,dialogs,Dialog,,,Lights: OFF - salvage them,Светильники: ВЫКЛ. — разбирать,灯具：已关闭 - 点击开始拆解
-daDialogSalvPlumbingOn,dialogs,Dialog,,,"Sinks, toilets and pipes: ON - leave them alone","Раковины, унитазы и трубы: ВКЛ. — не трогать",水槽、马桶与管道：已开启 - 点击不再拆解
-daDialogSalvPlumbingOff,dialogs,Dialog,,,"Sinks, toilets and pipes: OFF - salvage them","Раковины, унитазы и трубы: ВЫКЛ. — разбирать",水槽、马桶与管道：已关闭 - 点击开始拆解
-daDialogSalvFurnitureOn,dialogs,Dialog,,,"Furniture, decor and signs: ON - leave them alone","Мебель, декор и вывески: ВКЛ. — не трогать",家具、装饰与招牌：已开启 - 点击不再拆解
-daDialogSalvFurnitureOff,dialogs,Dialog,,,"Furniture, decor and signs: OFF - salvage them","Мебель, декор и вывески: ВЫКЛ. — разбирать",家具、装饰与招牌：已关闭 - 点击开始拆解
-daDialogSalvContainersOn,dialogs,Dialog,,,Emptied containers: ON - leave them alone,Опустошённые контейнеры: ВКЛ. — не трогать,已搜空的容器：已开启 - 点击不再拆解
-daDialogSalvContainersOff,dialogs,Dialog,,,Emptied containers: OFF - salvage them,Опустошённые контейнеры: ВЫКЛ. — разбирать,已搜空的容器：已关闭 - 点击开始拆解
-daDialogSalvOtherOn,dialogs,Dialog,,,Everything else: ON - leave them alone,Всё остальное: ВКЛ. — не трогать,其他所有物品：已开启 - 点击不再拆解
-daDialogSalvOtherOff,dialogs,Dialog,,,Everything else: OFF - salvage them,Всё остальное: ВЫКЛ. — разбирать,其他所有物品：已关闭 - 点击开始拆解
+daDialogSalvVehiclesOn,dialogs,Dialog,,,Vehicles: ON - click to stop salvaging them,"Транспорт: ВКЛ. — нажмите, чтобы не разбирать",车辆：已开启 - 点击停止拆解
+daDialogSalvVehiclesOff,dialogs,Dialog,,,Vehicles: OFF - click to salvage them,"Транспорт: ВЫКЛ. — нажмите, чтобы разбирать",车辆：已关闭 - 点击开始拆解
+daDialogSalvAppliancesOn,dialogs,Dialog,,,Appliances and electrics: ON - click to stop salvaging them,"Бытовая техника и электрика: ВКЛ. — нажмите, чтобы не разбирать",家电与电器：已开启 - 点击停止拆解
+daDialogSalvAppliancesOff,dialogs,Dialog,,,Appliances and electrics: OFF - click to salvage them,"Бытовая техника и электрика: ВЫКЛ. — нажмите, чтобы разбирать",家电与电器：已关闭 - 点击开始拆解
+daDialogSalvLightsOn,dialogs,Dialog,,,Lights: ON - click to stop salvaging them,"Светильники: ВКЛ. — нажмите, чтобы не разбирать",灯具：已开启 - 点击停止拆解
+daDialogSalvLightsOff,dialogs,Dialog,,,Lights: OFF - click to salvage them,"Светильники: ВЫКЛ. — нажмите, чтобы разбирать",灯具：已关闭 - 点击开始拆解
+daDialogSalvPlumbingOn,dialogs,Dialog,,,"Sinks, toilets and pipes: ON - click to stop salvaging them","Раковины, унитазы и трубы: ВКЛ. — нажмите, чтобы не разбирать",水槽、马桶与管道：已开启 - 点击停止拆解
+daDialogSalvPlumbingOff,dialogs,Dialog,,,"Sinks, toilets and pipes: OFF - click to salvage them","Раковины, унитазы и трубы: ВЫКЛ. — нажмите, чтобы разбирать",水槽、马桶与管道：已关闭 - 点击开始拆解
+daDialogSalvFurnitureOn,dialogs,Dialog,,,"Furniture, decor and signs: ON - click to stop salvaging them","Мебель, декор и вывески: ВКЛ. — нажмите, чтобы не разбирать",家具、装饰与招牌：已开启 - 点击停止拆解
+daDialogSalvFurnitureOff,dialogs,Dialog,,,"Furniture, decor and signs: OFF - click to salvage them","Мебель, декор и вывески: ВЫКЛ. — нажмите, чтобы разбирать",家具、装饰与招牌：已关闭 - 点击开始拆解
+daDialogSalvContainersOn,dialogs,Dialog,,,Emptied containers: ON - click to stop salvaging them,"Опустошённые контейнеры: ВКЛ. — нажмите, чтобы не разбирать",已搜空的容器：已开启 - 点击停止拆解
+daDialogSalvContainersOff,dialogs,Dialog,,,Emptied containers: OFF - click to salvage them,"Опустошённые контейнеры: ВЫКЛ. — нажмите, чтобы разбирать",已搜空的容器：已关闭 - 点击开始拆解
+daDialogSalvOtherOn,dialogs,Dialog,,,Everything else: ON - click to stop salvaging them,"Всё остальное: ВКЛ. — нажмите, чтобы не разбирать",其他所有物品：已开启 - 点击停止拆解
+daDialogSalvOtherOff,dialogs,Dialog,,,Everything else: OFF - click to salvage them,"Всё остальное: ВЫКЛ. — нажмите, чтобы разбирать",其他所有物品：已关闭 - 点击开始拆解
 daDialogSalvAllOn,dialogs,Dialog,,,Salvage all of it,Разбирать всё,全部拆解
 daDialogSalvAllOff,dialogs,Dialog,,,Salvage nothing,Ничего не разбирать,什么都不拆
 daDialogSalvMore,dialogs,Dialog,,,"More: all, nothing, what it took...","Ещё: всё, ничего, что он разобрал…",更多：全部、不拆、刚拆的东西…
