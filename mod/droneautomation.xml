@@ -59,7 +59,7 @@
 	  unclaimed, so the land-claim rule alone would happily let the drone strip the trader).
 
 	  WHAT it takes is each player's own choice, made in game: talk to the drone > Automation
-	  modules > Auto-Salvage targets, and switch on the kinds of thing it may take (vehicles,
+	  modules > Auto-Salvage, and switch on the kinds of thing it may take (vehicles,
 	  appliances, lights, sinks/toilets/pipes, furniture/decor/signs, emptied containers, everything
 	  else). It starts with NOTHING picked, and says so the first time it passes something by. Players
 	  fine-tune by name with /das (skip one kind inside a picked group, or allow one outside it), and

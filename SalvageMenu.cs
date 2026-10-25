@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace DroneAutomation
 {
     /// <summary>
-    /// The one-shot rows on the drone's "Auto-Salvage targets > More" page: never take the last
+    /// The one-shot rows on the drone's "Auto-Salvage > More" page: never take the last
     /// thing it took again, tell me what it took, undo my last skip.
     ///
     /// They exist because a talk-menu row cannot name a block. Its text is resolved when the client

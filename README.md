@@ -9,7 +9,7 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 - **Auto-Loot** (`modRoboticDroneAutoLootMod`) — opens zombie loot bags and containers and picks up dropped items, into the drone's storage. A mobile version of the Loot Vacuum block: bags and dropped items within 15m, block containers within 8m, 6m vertical. It leaves anything you throw alone — a rock, a molotov, a grenade — while it is in the air, while it is burning or ticking, and for `ThrownGraceSeconds` after it lands.
 - **Auto-Salvage** (`modRoboticDroneAutoSalvageMod`) — wrenches nearby salvageable blocks (cars, sinks, machines) one downgrade step at a time into the drone bag. **Unclaimed ground only** — never inside anyone's land claim, so it can't wreck your base or a neighbour's — and **never inside a trader area** (the game reports one as unclaimed, so that has to be its own rule). It also never touches the **switches, buttons, valve handles, relays, pressure plates and quest triggers** a POI needs in order to work — those are salvage-tagged like any other metal fitting, and wrenching one breaks that POI for the life of the save. It leaves **workstations** alone by default too: a forge or workbench is something you use, and may still hold your materials, and **working vending machines** — the ones you can still buy from or rent — while their broken shells stay salvageable. It counts as **holding a wrench** while it works out what a block pays, so the bonuses vanilla gates on holding one — Hacker's candy, the Scavenger Gloves — reach it the way they reach you (`CountAsHoldingSalvageTool`). Wrenching is loud, so each broken stage adds **the same heat a hand-swing would**: strip a POI with the drone and you draw screamers on the same clock as doing it yourself. Reach is kept small by default because it destroys blocks. Configurable via `SalvageWorkstations`, `SalvageInPOIs`, `SalvageSwitches`, `SalvageVendingMachines`, `HeatMultiplier`, `CountAsHoldingSalvageTool` and an `<exclude block="..."/>` deny-list (names take `*` as a wildcard).
 
-  **It takes nothing until you pick what** (from 0.12.0). Hold **E** on the drone → **Talk** → **Automation modules…** → **Auto-Salvage targets…** and switch on the kinds of thing it may take: **Vehicles**, **Appliances and electrics**, **Lights**, **Sinks, toilets and pipes**, **Furniture, decor and signs**, **Emptied containers**, **Everything else** — and **More…** for **Salvage all of it** / **Salvage nothing** in one click. The groups are the game's own creative-menu categories (`FilterTags`), so blocks from overhauls and POI mods sort themselves.
+  **It takes nothing until you pick what** (from 0.12.0). Hold **E** on the drone → **Talk** → **Automation modules…** → **Auto-Salvage** and switch on the kinds of thing it may take: **Vehicles**, **Appliances and electrics**, **Lights**, **Sinks, toilets and pipes**, **Furniture, decor and signs**, **Emptied containers**, **Everything else** — and **More…** for **Salvage all of it** / **Salvage nothing** in one click. The groups are the game's own creative-menu categories (`FilterTags`), so blocks from overhauls and POI mods sort themselves.
 
   **One thing at a time, from the same menu.** The **More…** page also has **Never take the last thing it took again**, **Tell me what it took** and **Undo my last skip**. A menu row can't show a block's name, so the drone answers in chat — *"Auto-Salvage will leave burntSedan\* alone"* — and the skip works on that whole kind (every sedan variant), exactly like `/das skip 1`. Until something is picked the drone says so, once a session, the first time it passes something it could have taken. Server ops who want the old take-everything start can set `StartTargets="all"`.
 
@@ -40,12 +40,15 @@ A drone that is **following** you only works blocks while it's actually with you
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 
-## Switching a module off
+## Switching a module off, and its settings
 
 You don't have to pull a module out to stop it. Hold **E** on the drone, pick **Talk**, then
-**Automation modules…** — every automation function gets a row showing whether it is ON or OFF, and
-clicking the row flips it. The module stays in its slot and keeps its quality; it just stops acting
-until you switch it back on. There's a **Switch every module back on** row to clear the lot.
+**Automation modules…** — every module gets a row showing whether it is ON or OFF
+(**`Auto-Loot: ON - change settings`**), and clicking it opens that module's own page: its ON/OFF
+switch first, then whatever settings it has — the salvage groups on Auto-Salvage's page, the ammo
+state on Auto-Defense's. The module stays in its slot and keeps its quality while switched off; it
+just stops acting until you switch it back on. If Auto-Defense is low on or out of ammo, the list
+says so too, so you never have to go looking.
 
 A function whose module isn't fitted reads **`Auto-Loot: no module installed`** instead of offering a
 switch, so the menu can't be mistaken for a settings screen — these are still modules you have to find

@@ -93,7 +93,7 @@ namespace DroneAutomation
                 $"  {p} undo            drop your most recent skip",
                 $"  {p} what            name the block you are looking at",
                 "Names take * as a wildcard: cntVendingMachine* is every vending machine.",
-                "Which kinds of thing it takes at all: talk to your drone > Automation modules > Auto-Salvage targets.",
+                "Which kinds of thing it takes at all: talk to your drone > Automation modules > Auto-Salvage.",
                 "These rules are yours alone - they change your drone, nobody else's.",
                 "Auto-Defense:",
                 $"  {p} ammo            rounds left in each of your drones",
@@ -239,7 +239,7 @@ namespace DroneAutomation
                 "Auto-Salvage takes: " + SalvageCategories.Names(picked, "nothing yet"),
             };
             if (picked != all) lines.Add("  and leaves: " + SalvageCategories.Names(all & ~picked, "nothing"));
-            lines.Add("  (change it: talk to your drone > Automation modules > Auto-Salvage targets)");
+            lines.Add("  (change it: talk to your drone > Automation modules > Auto-Salvage)");
 
             List<string> allow = SalvageRules.Allow(key);
             List<string> deny = SalvageRules.Deny(key);

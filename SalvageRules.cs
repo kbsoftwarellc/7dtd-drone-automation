@@ -151,7 +151,7 @@ namespace DroneAutomation
 
                 if ((groups & _picked) == 0)
                 {
-                    reason = SalvageCategories.Names(groups, "Other") + " not picked in the drone's Salvage targets menu";
+                    reason = SalvageCategories.Names(groups, "Other") + " not picked on the drone's Auto-Salvage page";
                     return Verdict.NotPicked;
                 }
 

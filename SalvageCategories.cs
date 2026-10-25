@@ -5,7 +5,7 @@ namespace DroneAutomation
 {
     /// <summary>
     /// The kinds of thing Auto-Salvage can be told to take - the rows of the drone's
-    /// "Salvage targets" talk menu.
+    /// Auto-Salvage page of its talk menu.
     ///
     /// Kinds, not block names, because of scale: vanilla 3.x has 1,367 salvage-capable blocks and
     /// nobody is going to tick those one at a time. The grouping is not invented here. Every vanilla
@@ -13,8 +13,8 @@ namespace DroneAutomation
     /// SC_plumbing, SC_lighting ...) - and overhaul and POI-mod blocks almost always inherit them
     /// through Extends, so a modded sink lands under Plumbing without anyone listing it.
     ///
-    /// Seven groups, because the talk menu is a 10-row grid with no scrollbar: seven categories plus
-    /// "take everything", "take nothing" and "back" fill it exactly. The vanilla split, counted from
+    /// Seven groups, because the talk menu is a 10-row grid with no scrollbar: the module's ON/OFF
+    /// switch, seven categories, "More..." and "back" fill Auto-Salvage's page exactly. The vanilla split, counted from
     /// 3.x blocks.xml: Vehicles 334, Appliances 327, Furniture/decor/signs 266, Containers 201,
     /// Lights 182, Plumbing 176, Everything else 107. A block tagged into two groups (187 of them,
     /// e.g. an appliance that is also a light) is taken when EITHER is picked. A block with no

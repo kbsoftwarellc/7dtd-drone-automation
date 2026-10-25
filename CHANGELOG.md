@@ -1,9 +1,12 @@
 # Changelog
 
-## 0.12.0 — 2026-10-22
+## 0.12.0 — 2026-10-24
 
-- **You choose what Auto-Salvage takes.** Hold E on the drone, Talk, Automation modules, then the new
-  **Auto-Salvage targets** row: switch on the kinds of thing it may wrench - Vehicles, Appliances and
+- **One page per module.** Hold E on the drone, Talk, Automation modules: each module is one row that
+  says whether it is on - "Auto-Loot: ON - change settings" - and opens that module's page, with its
+  ON/OFF switch and whatever settings it has. Auto-Defense's low / empty ammo warning still shows on
+  the list. The "Switch every module back on" row is gone.
+- **You choose what Auto-Salvage takes.** Its page lists the kinds of thing it may wrench - Vehicles, Appliances and
   electrics, Lights, Sinks toilets and pipes, Furniture decor and signs, Emptied containers,
   Everything else - and a More page with Salvage all of it / Salvage nothing in one click. The groups
   are the game's own creative-menu categories, so blocks from overhauls and POI mods sort themselves.

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<!--
-	  Switch any automation module off without pulling the mod out of the drone.
+	  The drone's "Automation modules" talk menu: switch a module off without pulling it out of the
+	  drone, and change what it does.
 
 	  WHY THE TALK MENU AND NOT A HOTKEY OR THE RADIAL WHEEL. Both of those are client-side.
 	  EntityDrone.InitLocalActivationCommands, AllowActivationCommand and OnEntityActivated all take
@@ -14,17 +15,25 @@
 	  pushes its patched copy to every vanilla client, which parses it locally. So a server-side
 	  modlet can put rows in that menu, one click deeper than the wheel itself.
 
+	  SHAPE (0.12.0). The list shows one row per module - "Auto-Loot: ON - change settings" - and
+	  each leads to that module's own page: its ON/OFF switch, then whatever settings it has (the
+	  salvage groups on Auto-Salvage's, the ammo state on Auto-Defense's). Until 0.12.0 the switches
+	  sat on the list itself with a "switch every module back on" row, and the list ran out of room
+	  the moment Auto-Salvage needed settings. Ammo low / empty is ALSO shown on the list, because a
+	  drone that has stopped shooting is not something to find out about on a sub-page.
+
 	  HOW A ROW KNOWS ITS STATE. XUiC_DialogResponseEntry evaluates each response's requirements
 	  against the LOCAL player and, on a failed requirement marked requirementtype="Hide", drops the
 	  row entirely. Requirements on one response are ANDed - the loop stops at the first failure - so
-	  each module gets THREE mutually exclusive rows and exactly one is ever visible:
+	  each module gets THREE mutually exclusive rows on the list and exactly one is ever visible:
 
-	    daXxxDisable   fitted, running   -> "ON - switch it off"
-	    daXxxEnable    fitted, switched off -> "OFF - switch it on"
-	    daXxxMissing   no module fitted  -> "no module installed" (inert)
+	    daXxxOpenOn    fitted, running      -> "ON - change settings"  (opens the page)
+	    daXxxOpenOff   fitted, switched off -> "OFF - change settings" (opens the page)
+	    daXxxMissing   no module fitted     -> "no module installed"   (inert)
 
-	  Clicking a switch row adds the buff that writes the CVar (see buffs.xml), and nextstatementid
-	  brings you straight back to this menu with the row already flipped.
+	  and its page has the switch pair daXxxDisable / daXxxEnable. Clicking a switch adds the buff
+	  that writes the CVar (see buffs.xml), and nextstatementid brings you back to the same page
+	  with the row already flipped.
 
 	  WHY A "no module installed" ROW EXISTS. Without it the menu offers a switch for every function
 	  whether or not the drone carries that module, which reads as "these are settings" rather than
@@ -47,7 +56,8 @@
 	  WorldStaticData.SendXmlsToClient, and DialogFromXml resolves text="..." through
 	  Localization.Get when the client parses this file, so the keys exist by then. A language with
 	  an empty cell falls back to the english column. Add a language by adding a column to the CSV;
-	  nothing here changes.
+	  nothing here changes. The same fact is why a row can never NAME a block: its text is fixed at
+	  parse time. See the More page.
 
 	  THE SWITCHES ARE PER PLAYER, NOT PER DRONE. DialogActionAddBuff applies to the talking player
 	  and CVars live on the player, and nothing in the dialog carries the drone's entity id, so a
@@ -56,12 +66,10 @@
 	  The "no module installed" rows ARE per drone, because the server publishes them for whichever
 	  drone you are standing at - so those rows and the switches answer subtly different questions.
 
-	  ROW BUDGET: windowResponses is a 10-row grid with no scrollbar. junkDrone's start statement
-	  shows 6-7 rows (its command pairs hide one of each), and this adds one. The Automation modules
-	  menu shows 6 module rows (the three rows per module are mutually exclusive), at most one ammo
-	  row, "Auto-Salvage targets..." (only with the module fitted), "switch everything on" and "back"
-	  = 10: FULL. The Salvage targets menu is full too (see its own comment). Anything added later has
-	  to be counted against that, because an eleventh row is silently invisible.
+	  ROW BUDGET: windowResponses is a 10-row grid with no scrollbar, and an eleventh row is silently
+	  invisible. junkDrone's start statement shows 6-7 rows and this adds one. The list: 6 module rows
+	  + at most one ammo warning + back = 8. Auto-Salvage's page: switch + 7 groups + More + back = 10,
+	  FULL. Auto-Defense's: switch + ammo + back = 3. The others: switch + back = 2. More: 6.
 	-->
 
 	<!-- Sits directly above "Never mind", so the vanilla drone commands keep their order. -->
@@ -70,149 +78,239 @@
 	</insertBefore>
 
 	<append xpath="/dialogs/dialog[@id='junkDrone']">
-
 		<statement id="daAutomation" text="daDialogPrompt">
-			<response_entry id="daLootDisable"/>
-			<response_entry id="daLootEnable"/>
+			<response_entry id="daLootOpenOn"/>
+			<response_entry id="daLootOpenOff"/>
 			<response_entry id="daLootMissing"/>
-			<response_entry id="daSalvageDisable"/>
-			<response_entry id="daSalvageEnable"/>
+			<response_entry id="daSalvageOpenOn"/>
+			<response_entry id="daSalvageOpenOff"/>
 			<response_entry id="daSalvageMissing"/>
-			<response_entry id="daSalvTargets"/>
-			<response_entry id="daHarvestDisable"/>
-			<response_entry id="daHarvestEnable"/>
+			<response_entry id="daHarvestOpenOn"/>
+			<response_entry id="daHarvestOpenOff"/>
 			<response_entry id="daHarvestMissing"/>
-			<response_entry id="daRepairDisable"/>
-			<response_entry id="daRepairEnable"/>
+			<response_entry id="daRepairOpenOn"/>
+			<response_entry id="daRepairOpenOff"/>
 			<response_entry id="daRepairMissing"/>
-			<response_entry id="daPlantDisable"/>
-			<response_entry id="daPlantEnable"/>
+			<response_entry id="daPlantOpenOn"/>
+			<response_entry id="daPlantOpenOff"/>
 			<response_entry id="daPlantMissing"/>
-			<response_entry id="daDefenseDisable"/>
-			<response_entry id="daDefenseEnable"/>
+			<response_entry id="daDefenseOpenOn"/>
+			<response_entry id="daDefenseOpenOff"/>
 			<response_entry id="daDefenseMissing"/>
-			<response_entry id="daDefenseAmmoPlenty"/>
-			<response_entry id="daDefenseAmmoLow"/>
-			<response_entry id="daDefenseAmmoEmpty"/>
-			<response_entry id="daAllEnable"/>
+			<response_entry id="daDefenseAmmoLowWarn"/>
+			<response_entry id="daDefenseAmmoEmptyWarn"/>
 			<response_entry id="daBack"/>
 		</statement>
 
 		<response id="daAutomation" text="daDialogOpen" nextstatementid="daAutomation"/>
 
-		<!-- Auto-Loot -->
-		<response id="daLootDisable" text="daDialogLootOn" nextstatementid="daAutomation">
+		<!-- Auto-Loot: list rows -->
+		<response id="daLootOpenOn" text="daDialogLootOpenOn" nextstatementid="daLootPage">
 			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daLootOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaLootDisable"/>
 		</response>
-		<response id="daLootEnable" text="daDialogLootOff" nextstatementid="daAutomation">
+		<response id="daLootOpenOff" text="daDialogLootOpenOff" nextstatementid="daLootPage">
 			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daLootOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaLootEnable"/>
 		</response>
 		<response id="daLootMissing" text="daDialogLootMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daLootMissing" value="1" requirementtype="Hide"/>
 		</response>
-
-		<!-- Auto-Salvage -->
-		<response id="daSalvageDisable" text="daDialogSalvageOn" nextstatementid="daAutomation">
+		<!-- Auto-Salvage: list rows -->
+		<response id="daSalvageOpenOn" text="daDialogSalvageOpenOn" nextstatementid="daSalvTargets">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daSalvageOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaSalvageDisable"/>
 		</response>
-		<response id="daSalvageEnable" text="daDialogSalvageOff" nextstatementid="daAutomation">
+		<response id="daSalvageOpenOff" text="daDialogSalvageOpenOff" nextstatementid="daSalvTargets">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daSalvageOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaSalvageEnable"/>
 		</response>
 		<response id="daSalvageMissing" text="daDialogSalvageMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daSalvageMissing" value="1" requirementtype="Hide"/>
 		</response>
-
-		<!-- Auto-Harvest -->
-		<response id="daHarvestDisable" text="daDialogHarvestOn" nextstatementid="daAutomation">
+		<!-- Auto-Harvest: list rows -->
+		<response id="daHarvestOpenOn" text="daDialogHarvestOpenOn" nextstatementid="daHarvestPage">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daHarvestOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaHarvestDisable"/>
 		</response>
-		<response id="daHarvestEnable" text="daDialogHarvestOff" nextstatementid="daAutomation">
+		<response id="daHarvestOpenOff" text="daDialogHarvestOpenOff" nextstatementid="daHarvestPage">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daHarvestOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaHarvestEnable"/>
 		</response>
 		<response id="daHarvestMissing" text="daDialogHarvestMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daHarvestMissing" value="1" requirementtype="Hide"/>
 		</response>
-
-		<!-- Auto-Repair -->
-		<response id="daRepairDisable" text="daDialogRepairOn" nextstatementid="daAutomation">
+		<!-- Auto-Repair: list rows -->
+		<response id="daRepairOpenOn" text="daDialogRepairOpenOn" nextstatementid="daRepairPage">
 			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daRepairOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaRepairDisable"/>
 		</response>
-		<response id="daRepairEnable" text="daDialogRepairOff" nextstatementid="daAutomation">
+		<response id="daRepairOpenOff" text="daDialogRepairOpenOff" nextstatementid="daRepairPage">
 			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daRepairOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaRepairEnable"/>
 		</response>
 		<response id="daRepairMissing" text="daDialogRepairMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daRepairMissing" value="1" requirementtype="Hide"/>
 		</response>
-
-		<!-- Auto-Plant -->
-		<response id="daPlantDisable" text="daDialogPlantOn" nextstatementid="daAutomation">
+		<!-- Auto-Plant: list rows -->
+		<response id="daPlantOpenOn" text="daDialogPlantOpenOn" nextstatementid="daPlantPage">
 			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daPlantOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaPlantDisable"/>
 		</response>
-		<response id="daPlantEnable" text="daDialogPlantOff" nextstatementid="daAutomation">
+		<response id="daPlantOpenOff" text="daDialogPlantOpenOff" nextstatementid="daPlantPage">
 			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daPlantOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaPlantEnable"/>
 		</response>
 		<response id="daPlantMissing" text="daDialogPlantMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daPlantMissing" value="1" requirementtype="Hide"/>
 		</response>
-
-		<!-- Auto-Defense -->
-		<response id="daDefenseDisable" text="daDialogDefenseOn" nextstatementid="daAutomation">
+		<!-- Auto-Defense: list rows -->
+		<response id="daDefenseOpenOn" text="daDialogDefenseOpenOn" nextstatementid="daDefensePage">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daDefenseOff" value="0" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaDefenseDisable"/>
 		</response>
-		<response id="daDefenseEnable" text="daDialogDefenseOff" nextstatementid="daAutomation">
+		<response id="daDefenseOpenOff" text="daDialogDefenseOpenOff" nextstatementid="daDefensePage">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
 			<requirement type="CheckCVar" id="daDefenseOff" value="1" requirementtype="Hide"/>
-			<action type="AddBuff" id="buffDaDefenseEnable"/>
 		</response>
 		<response id="daDefenseMissing" text="daDialogDefenseMissing" nextstatementid="daAutomation">
 			<requirement type="CheckCVar" id="daDefenseMissing" value="1" requirementtype="Hide"/>
 		</response>
-		<!-- Ammo, published by the drone as daDefenseAmmo: 1 plenty, 2 low, 3 empty. 0 (ammo off,
-		     or no module) shows none of them. Picking one just redraws the menu. -->
-		<response id="daDefenseAmmoPlenty" text="daDialogDefenseAmmoPlenty" nextstatementid="daAutomation">
-			<requirement type="CheckCVar" id="daDefenseAmmo" value="1" requirementtype="Hide"/>
-		</response>
-		<response id="daDefenseAmmoLow" text="daDialogDefenseAmmoLow" nextstatementid="daAutomation">
+		<!-- Ammo low / empty, published by the drone as daDefenseAmmo (2 low, 3 empty), shown on the
+		     list too so a drone that has stopped shooting is never news on a sub-page. Opens the page. -->
+		<response id="daDefenseAmmoLowWarn" text="daDialogDefenseAmmoLow" nextstatementid="daDefensePage">
 			<requirement type="CheckCVar" id="daDefenseAmmo" value="2" requirementtype="Hide"/>
 		</response>
-		<response id="daDefenseAmmoEmpty" text="daDialogDefenseAmmoEmpty" nextstatementid="daAutomation">
+		<response id="daDefenseAmmoEmptyWarn" text="daDialogDefenseAmmoEmpty" nextstatementid="daDefensePage">
 			<requirement type="CheckCVar" id="daDefenseAmmo" value="3" requirementtype="Hide"/>
 		</response>
 
-		<response id="daAllEnable" text="daDialogAllOn" nextstatementid="daAutomation">
-			<action type="AddBuff" id="buffDaAllEnable"/>
+		<response id="daBack" text="daDialogBack" nextstatementid="start"/>
+		<response id="daModuleBack" text="daDialogBack" nextstatementid="daAutomation"/>
+
+		<!-- Auto-Loot: its page -->
+		<statement id="daLootPage" text="daDialogLootAbout">
+			<response_entry id="daLootDisable"/>
+			<response_entry id="daLootEnable"/>
+			<response_entry id="daModuleBack"/>
+		</statement>
+
+		<!-- Auto-Harvest: its page -->
+		<statement id="daHarvestPage" text="daDialogHarvestAbout">
+			<response_entry id="daHarvestDisable"/>
+			<response_entry id="daHarvestEnable"/>
+			<response_entry id="daModuleBack"/>
+		</statement>
+
+		<!-- Auto-Repair: its page -->
+		<statement id="daRepairPage" text="daDialogRepairAbout">
+			<response_entry id="daRepairDisable"/>
+			<response_entry id="daRepairEnable"/>
+			<response_entry id="daModuleBack"/>
+		</statement>
+
+		<!-- Auto-Plant: its page -->
+		<statement id="daPlantPage" text="daDialogPlantAbout">
+			<response_entry id="daPlantDisable"/>
+			<response_entry id="daPlantEnable"/>
+			<response_entry id="daModuleBack"/>
+		</statement>
+
+		<!-- Auto-Defense: its page -->
+		<statement id="daDefensePage" text="daDialogDefenseAbout">
+			<response_entry id="daDefenseDisable"/>
+			<response_entry id="daDefenseEnable"/>
+			<response_entry id="daDefenseAmmoPlenty"/>
+			<response_entry id="daDefenseAmmoLow"/>
+			<response_entry id="daDefenseAmmoEmpty"/>
+			<response_entry id="daModuleBack"/>
+		</statement>
+
+		<!-- Auto-Loot: switch -->
+		<response id="daLootDisable" text="daDialogLootOn" nextstatementid="daLootPage">
+			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daLootOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaLootDisable"/>
+		</response>
+		<response id="daLootEnable" text="daDialogLootOff" nextstatementid="daLootPage">
+			<requirement type="CheckCVar" id="daLootMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daLootOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaLootEnable"/>
+		</response>
+		<!-- Auto-Salvage: switch -->
+		<response id="daSalvageDisable" text="daDialogSalvageOn" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daSalvageOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvageDisable"/>
+		</response>
+		<response id="daSalvageEnable" text="daDialogSalvageOff" nextstatementid="daSalvTargets">
+			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daSalvageOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaSalvageEnable"/>
+		</response>
+		<!-- Auto-Harvest: switch -->
+		<response id="daHarvestDisable" text="daDialogHarvestOn" nextstatementid="daHarvestPage">
+			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daHarvestOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaHarvestDisable"/>
+		</response>
+		<response id="daHarvestEnable" text="daDialogHarvestOff" nextstatementid="daHarvestPage">
+			<requirement type="CheckCVar" id="daHarvestMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daHarvestOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaHarvestEnable"/>
+		</response>
+		<!-- Auto-Repair: switch -->
+		<response id="daRepairDisable" text="daDialogRepairOn" nextstatementid="daRepairPage">
+			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daRepairOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaRepairDisable"/>
+		</response>
+		<response id="daRepairEnable" text="daDialogRepairOff" nextstatementid="daRepairPage">
+			<requirement type="CheckCVar" id="daRepairMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daRepairOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaRepairEnable"/>
+		</response>
+		<!-- Auto-Plant: switch -->
+		<response id="daPlantDisable" text="daDialogPlantOn" nextstatementid="daPlantPage">
+			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daPlantOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPlantDisable"/>
+		</response>
+		<response id="daPlantEnable" text="daDialogPlantOff" nextstatementid="daPlantPage">
+			<requirement type="CheckCVar" id="daPlantMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daPlantOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPlantEnable"/>
+		</response>
+		<!-- Auto-Defense: switch -->
+		<response id="daDefenseDisable" text="daDialogDefenseOn" nextstatementid="daDefensePage">
+			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daDefenseOff" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaDefenseDisable"/>
+		</response>
+		<response id="daDefenseEnable" text="daDialogDefenseOff" nextstatementid="daDefensePage">
+			<requirement type="CheckCVar" id="daDefenseMissing" value="0" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daDefenseOff" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaDefenseEnable"/>
+		</response>
+		<!-- Ammo, published by the drone as daDefenseAmmo: 1 plenty, 2 low, 3 empty. 0 (ammo off,
+		     or no module) shows none of them. Picking one just redraws the page. -->
+		<response id="daDefenseAmmoPlenty" text="daDialogDefenseAmmoPlenty" nextstatementid="daDefensePage">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="1" requirementtype="Hide"/>
+		</response>
+		<response id="daDefenseAmmoLow" text="daDialogDefenseAmmoLow" nextstatementid="daDefensePage">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="2" requirementtype="Hide"/>
+		</response>
+		<response id="daDefenseAmmoEmpty" text="daDialogDefenseAmmoEmpty" nextstatementid="daDefensePage">
+			<requirement type="CheckCVar" id="daDefenseAmmo" value="3" requirementtype="Hide"/>
 		</response>
 
-		<response id="daBack" text="daDialogBack" nextstatementid="start"/>
-
-		<!-- Salvage targets: which kinds of thing Auto-Salvage may take (SalvageCategories). One
-		     CVar per group, 1 = take, so an unwritten CVar - every player on update - reads as
-		     "leave it": the module starts empty. Each group is a pair of rows guarded by opposite
-		     values and exactly one shows. ROW BUDGET: 7 groups + "More..." + back = 9; one row
-		     spare. Everything else lives on the More page below. -->
+		<!-- Auto-Salvage: its page. The switch, then which kinds of thing it may take
+		     (SalvageCategories): one CVar per group, 1 = take, so an unwritten CVar - every player on
+		     update - reads as "leave it" and the module starts empty. Each group is a pair of rows
+		     guarded by opposite values; exactly one shows. 10 rows: FULL. -->
 		<statement id="daSalvTargets" text="daDialogSalvPrompt">
+			<response_entry id="daSalvageDisable"/>
+			<response_entry id="daSalvageEnable"/>
 			<response_entry id="daSalvVehiclesLeave"/>
 			<response_entry id="daSalvVehiclesTake"/>
 			<response_entry id="daSalvAppliancesLeave"/>
@@ -228,7 +326,7 @@
 			<response_entry id="daSalvOtherLeave"/>
 			<response_entry id="daSalvOtherTake"/>
 			<response_entry id="daSalvMore"/>
-			<response_entry id="daSalvBack"/>
+			<response_entry id="daModuleBack"/>
 		</statement>
 
 		<!-- The More page: every group at once, and the per-item rows. A talk-menu row's text is
@@ -258,10 +356,6 @@
 			<action type="AddBuff" id="buffDaSalvCmdUndoSkip"/>
 		</response>
 		<response id="daSalvMoreBack" text="daDialogBack" nextstatementid="daSalvTargets"/>
-
-		<response id="daSalvTargets" text="daDialogSalvOpen" nextstatementid="daSalvTargets">
-			<requirement type="CheckCVar" id="daSalvageMissing" value="0" requirementtype="Hide"/>
-		</response>
 
 		<response id="daSalvVehiclesLeave" text="daDialogSalvVehiclesOn" nextstatementid="daSalvTargets">
 			<requirement type="CheckCVar" id="daSalvVehicles" value="1" requirementtype="Hide"/>
@@ -325,7 +419,6 @@
 		<response id="daSalvAllLeave" text="daDialogSalvAllOff" nextstatementid="daSalvTargets">
 			<action type="AddBuff" id="buffDaSalvAllLeave"/>
 		</response>
-		<response id="daSalvBack" text="daDialogBack" nextstatementid="daAutomation"/>
 
 	</append>
 </config>

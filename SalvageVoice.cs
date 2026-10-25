@@ -63,7 +63,7 @@ namespace DroneAutomation
 
             Msg.Tell(_owner.entityId,
                 $"Auto-Salvage left {_blockName} alone: you have not picked anything for it to take yet. " +
-                "Talk to your drone > Automation modules > Auto-Salvage targets to choose. " +
+                "Talk to your drone > Automation modules > Auto-Salvage to choose. " +
                 $"({_prefix} rules shows what is picked.)");
         }
 

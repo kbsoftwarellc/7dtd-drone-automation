@@ -147,21 +147,11 @@
 			</effect_group>
 		</buff>
 
-		<!-- "Switch every module back on" - one row that clears all six flags at once. -->
-		<buff name="buffDaAllEnable" hidden="true">
-			<stack_type value="replace"/>
-			<duration value="0"/>
-			<effect_group>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daLootOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daSalvageOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daHarvestOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daRepairOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daPlantOff" operation="set" value="0"/>
-				<triggered_effect trigger="onSelfBuffStack" action="ModifyCVar" cvar="daDefenseOff" operation="set" value="0"/>
-			</effect_group>
-		</buff>
+		<!-- (0.12.0 dropped "switch every module back on" and its buffDaAllEnable. A player who still
+		     carries that buff from an older save sheds it on load: EntityBuffs.Read skips a buff whose
+		     BuffClass no longer exists.) -->
 
-		<!-- Salvage targets (the submenu under Automation modules). The CVar means TAKE, the
+		<!-- Salvage groups (Auto-Salvage's page under Automation modules). The CVar means TAKE, the
 		     opposite polarity to the module switches above, because here the safe default IS
 		     zero: unwritten = leave it standing, so Auto-Salvage starts empty. -->
 		<buff name="buffDaSalvVehiclesTake" hidden="true">

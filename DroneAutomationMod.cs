@@ -91,9 +91,8 @@ namespace DroneAutomation
             "buffDaRepairDisable",  "buffDaRepairEnable",
             "buffDaPlantDisable",   "buffDaPlantEnable",
             "buffDaDefenseDisable", "buffDaDefenseEnable",
-            "buffDaAllEnable",
 
-            // The "Salvage targets" submenu: a take/leave pair per SalvageCategories group, plus
+            // Auto-Salvage's page: a take/leave pair per SalvageCategories group, plus
             // take-everything and take-nothing.
             "buffDaSalvVehiclesTake",   "buffDaSalvVehiclesLeave",
             "buffDaSalvAppliancesTake", "buffDaSalvAppliancesLeave",
