@@ -57,6 +57,13 @@
 	  included, and that rule has no setting because there is no safe way to switch it off.
 	  Trader areas are ALWAYS off limits and cannot be enabled (the game reports a trader area as
 	  unclaimed, so the land-claim rule alone would happily let the drone strip the trader).
+
+	  WHAT it takes is each player's own choice, made in game: talk to the drone > Automation
+	  modules > Auto-Salvage, and switch on the kinds of thing it may take (vehicles,
+	  appliances, lights, sinks/toilets/pipes, furniture/decor/signs, emptied containers, everything
+	  else). It starts with NOTHING picked, and says so the first time it passes something by. Players
+	  fine-tune by name with /das (skip one kind inside a picked group, or allow one outside it), and
+	  those rules are per player too - one player's /das never changes anyone else's drone.
 	    Radius / VerticalRadius   reach. Kept small by default because it destroys blocks.
 	    SecondsPerStep            charged per downgrade step (one wrench swing); a car takes several.
 	    SalvageWorkstations       1 = also scrap forges, workbenches, campfires, chem stations and
@@ -87,18 +94,23 @@
 	                              doors, lights and traps. Off by default, and leave it off: these
 	                              are what open a POI's doors, they cannot be crafted or looted
 	                              back, and wrenching one breaks that POI for the life of the save.
-	    ChatPrefix                the chat command players use to see and change the rules below.
-	    NewTargetPolicy           what to do with a kind of block this world has never salvaged:
-	                              "allow" wrenches it and says so once, "ask" leaves it standing
-	                              until someone runs /das allow. Allow by default - a drone that
-	                              silently does nothing on a fresh install reads as broken.
-	    AnnounceNewTargets        0 = never speak up. Left on, this is what teaches players the
-	                              command exists, once per kind of block per world.
-	    <exclude block="..."/>    any block the drone must never wrench. Add as many as you like.
-	                              Names take * as a wildcard: cntVendingMachine* is every vending
-	                              machine. Rules players add in game with /das are kept in the SAVE
-	                              (droneautomation-salvage.xml) so a mod update cannot lose them,
-	                              and these are merged in on top.
+	    ChatPrefix                the chat command players use to see and change their own rules.
+	    StartTargets              what a player has picked before they open the menu: "none" (the
+	                              default - the drone takes nothing until its owner chooses) or
+	                              "all", which switches every group on once per player, the way
+	                              versions before 0.12 behaved. A player who then switches groups
+	                              off keeps them off.
+	    NewTargetPolicy           inside the groups a player picked, what to do with a kind of block
+	                              their drone has never salvaged: "allow" wrenches it and says so
+	                              once, "ask" leaves it standing until they run /das allow.
+	    AnnounceNewTargets        0 = never speak up. Left on, the drone says once per kind of block
+	                              what it took, and once a session that it is idle because nothing
+	                              is picked - which is how players find the menu and the command.
+	    <exclude block="..."/>    any block the drone must never wrench, for EVERY player - no /das
+	                              allow can lift it. Add as many as you like. Names take * as a
+	                              wildcard: cntVendingMachine* is every vending machine. Rules players
+	                              add in game with /das are kept per player in the SAVE
+	                              (droneautomation-salvage.xml) so a mod update cannot lose them.
 	-->
 	<autoSalvage Radius="4"
 	             VerticalRadius="4"
@@ -112,6 +124,7 @@
 	             SalvageVendingMachines="0"
 	             HeatMultiplier="1"
 	             ChatPrefix="/das"
+	             StartTargets="none"
 	             NewTargetPolicy="allow"
 	             AnnounceNewTargets="1"
 	             CountAsHoldingSalvageTool="1"

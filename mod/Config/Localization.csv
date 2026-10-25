@@ -4,7 +4,7 @@ modRoboticDroneAutoLootModDesc,item_modifiers,Item,,,"Your drone rifles through 
 modRoboticDroneAutoLootModSchematic,items,Item,,,Drone Auto-Loot Module Schematic,Схема: модуль дрона «Автосбор»,无人机自动拾取模块设计图
 modRoboticDroneAutoLootModSchematicDesc,items,Item,,,Read to learn to craft the Drone Auto-Loot Module at a workbench.,"Прочитайте, чтобы научиться изготавливать модуль дрона «Автосбор» на верстаке.",阅读后可在工作台学习制作无人机自动拾取模块。
 modRoboticDroneAutoSalvageMod,item_modifiers,Item,,,Drone Auto-Salvage Module,Модуль дрона «Авторазборка»,无人机自动拆解模块
-modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. Higher-quality modules reach farther and act faster.","Следуя за вами, дрон разбирает гаечным ключом ближайшие объекты, пригодные для разборки (машины, раковины, рабочие механизмы), и складывает материалы в своё хранилище. Работает только на ничейной земле и никогда не трогает чужую или вашу зону присвоения земли, так что базу он не разрушит. Модули более высокого качества дотягиваются дальше и работают быстрее.",你的无人机跟随你时，会用扳手拆解附近可回收的对象（汽车、水槽、还能运转的机器等），并把材料存入自带的储物空间。它只处理无主土地，绝不会碰任何人的领地声明，因此不会破坏你的基地。品质越高的模块作用距离越远，动作也越快。
+modRoboticDroneAutoSalvageModDesc,item_modifiers,Item,,,"Your drone wrenches nearby salvageable objects (cars, sinks, working machines) apart as it follows you, into its own storage. Only touches unclaimed ground, never anyone's land claim, so it will not wreck your base. It takes nothing until you choose what: talk to the drone, then Automation modules, Auto-Salvage. Higher-quality modules reach farther and act faster.","Следуя за вами, дрон разбирает гаечным ключом ближайшие объекты, пригодные для разборки (машины, раковины, рабочие механизмы), и складывает материалы в своё хранилище. Работает только на ничейной земле и никогда не трогает чужую или вашу зону присвоения земли, так что базу он не разрушит. Пока вы не выберете, что разбирать, он ничего не трогает: поговорите с дроном и откройте «Модули автоматизации» → «Авторазборка». Модули более высокого качества дотягиваются дальше и работают быстрее.",你的无人机跟随你时，会用扳手拆解附近可回收的对象（汽车、水槽、还能运转的机器等），并把材料存入自带的储物空间。它只处理无主土地，绝不会碰任何人的领地声明，因此不会破坏你的基地。在你选择目标之前它不会拆解任何东西：与无人机对话，打开“自动化模块”→“自动拆解”。品质越高的模块作用距离越远，动作也越快。
 modRoboticDroneAutoSalvageModSchematic,items,Item,,,Drone Auto-Salvage Module Schematic,Схема: модуль дрона «Авторазборка»,无人机自动拆解模块设计图
 modRoboticDroneAutoSalvageModSchematicDesc,items,Item,,,Read to learn to craft the Drone Auto-Salvage Module at a workbench.,"Прочитайте, чтобы научиться изготавливать модуль дрона «Авторазборка» на верстаке.",阅读后可在工作台学习制作无人机自动拆解模块。
 modRoboticDroneAutoHarvestMod,item_modifiers,Item,,,Drone Auto-Harvest Module,Модуль дрона «Автоурожай»,无人机自动收割模块
@@ -36,7 +36,7 @@ statDroneModuleSpeed,ui_display,Item,,,Action Speed,Скорость работ�
 statDroneBoostTime,ui_display,Item,,,Module Action Time,Время действия модулей,模块动作时间
 statDroneBoostRange,ui_display,Item,,,Module Reach,Радиус действия модулей,模块作用范围
 daDialogOpen,dialogs,Dialog,,,Automation modules...,Модули автоматизации…,自动化模块…
-daDialogPrompt,dialogs,Dialog,,,Which of my automation modules should be running?,Какие из моих модулей автоматизации должны работать?,我的哪些自动化模块需要保持运行？
+daDialogPrompt,dialogs,Dialog,,,"My automation modules. Pick one to switch it on or off, or change its settings.","Мои модули автоматизации. Выберите модуль, чтобы включить, выключить или настроить его.",我的自动化模块。选择一个来开启、关闭或更改设置。
 daDialogLootOn,dialogs,Dialog,,,Auto-Loot: ON - switch it off,Автосбор: ВКЛ. — выключить,自动拾取：已开启 - 点击关闭
 daDialogLootOff,dialogs,Dialog,,,Auto-Loot: OFF - switch it on,Автосбор: ВЫКЛ. — включить,自动拾取：已关闭 - 点击开启
 daDialogLootMissing,dialogs,Dialog,,,Auto-Loot: no module installed,Автосбор: модуль не установлен,自动拾取：未安装模块
@@ -58,5 +58,43 @@ daDialogDefenseMissing,dialogs,Dialog,,,Auto-Defense: no module installed,Авт
 daDialogDefenseAmmoPlenty,dialogs,Dialog,,,Auto-Defense ammo: plenty,Боеприпасы автозащиты: достаточно,自动防御弹药：充足
 daDialogDefenseAmmoLow,dialogs,Dialog,,,Auto-Defense ammo: low - put Robotic Turret Ammo in my bag,Боеприпасы автозащиты: мало — нужны боеприпасы для роботизированной пушки,自动防御弹药：不足 - 请往我的储物空间放入机器人炮塔弹药
 daDialogDefenseAmmoEmpty,dialogs,Dialog,,,Auto-Defense ammo: EMPTY - put Robotic Turret Ammo in my bag,Боеприпасы автозащиты: НЕТ — нужны боеприпасы для роботизированной пушки,自动防御弹药：已耗尽 - 请往我的储物空间放入机器人炮塔弹药
-daDialogAllOn,dialogs,Dialog,,,Switch every module back on,Снова включить все модули,重新开启所有模块
 daDialogBack,dialogs,Dialog,,,Back,Назад,返回
+daDialogSalvPrompt,dialogs,Dialog,,,Auto-Salvage: what should I take? Anything switched off is left standing.,Авторазборка: что мне разбирать? Всё выключенное останется на месте.,自动拆解：我该拆什么？已关闭的类别会原样保留。
+daDialogSalvVehiclesOn,dialogs,Dialog,,,Vehicles: ON - click to stop salvaging them,"Транспорт: ВКЛ. — нажмите, чтобы не разбирать",车辆：已开启 - 点击停止拆解
+daDialogSalvVehiclesOff,dialogs,Dialog,,,Vehicles: OFF - click to salvage them,"Транспорт: ВЫКЛ. — нажмите, чтобы разбирать",车辆：已关闭 - 点击开始拆解
+daDialogSalvAppliancesOn,dialogs,Dialog,,,Appliances and electrics: ON - click to stop salvaging them,"Бытовая техника и электрика: ВКЛ. — нажмите, чтобы не разбирать",家电与电器：已开启 - 点击停止拆解
+daDialogSalvAppliancesOff,dialogs,Dialog,,,Appliances and electrics: OFF - click to salvage them,"Бытовая техника и электрика: ВЫКЛ. — нажмите, чтобы разбирать",家电与电器：已关闭 - 点击开始拆解
+daDialogSalvLightsOn,dialogs,Dialog,,,Lights: ON - click to stop salvaging them,"Светильники: ВКЛ. — нажмите, чтобы не разбирать",灯具：已开启 - 点击停止拆解
+daDialogSalvLightsOff,dialogs,Dialog,,,Lights: OFF - click to salvage them,"Светильники: ВЫКЛ. — нажмите, чтобы разбирать",灯具：已关闭 - 点击开始拆解
+daDialogSalvPlumbingOn,dialogs,Dialog,,,"Sinks, toilets and pipes: ON - click to stop salvaging them","Раковины, унитазы и трубы: ВКЛ. — нажмите, чтобы не разбирать",水槽、马桶与管道：已开启 - 点击停止拆解
+daDialogSalvPlumbingOff,dialogs,Dialog,,,"Sinks, toilets and pipes: OFF - click to salvage them","Раковины, унитазы и трубы: ВЫКЛ. — нажмите, чтобы разбирать",水槽、马桶与管道：已关闭 - 点击开始拆解
+daDialogSalvFurnitureOn,dialogs,Dialog,,,"Furniture, decor and signs: ON - click to stop salvaging them","Мебель, декор и вывески: ВКЛ. — нажмите, чтобы не разбирать",家具、装饰与招牌：已开启 - 点击停止拆解
+daDialogSalvFurnitureOff,dialogs,Dialog,,,"Furniture, decor and signs: OFF - click to salvage them","Мебель, декор и вывески: ВЫКЛ. — нажмите, чтобы разбирать",家具、装饰与招牌：已关闭 - 点击开始拆解
+daDialogSalvContainersOn,dialogs,Dialog,,,Emptied containers: ON - click to stop salvaging them,"Опустошённые контейнеры: ВКЛ. — нажмите, чтобы не разбирать",已搜空的容器：已开启 - 点击停止拆解
+daDialogSalvContainersOff,dialogs,Dialog,,,Emptied containers: OFF - click to salvage them,"Опустошённые контейнеры: ВЫКЛ. — нажмите, чтобы разбирать",已搜空的容器：已关闭 - 点击开始拆解
+daDialogSalvOtherOn,dialogs,Dialog,,,Everything else: ON - click to stop salvaging them,"Всё остальное: ВКЛ. — нажмите, чтобы не разбирать",其他所有物品：已开启 - 点击停止拆解
+daDialogSalvOtherOff,dialogs,Dialog,,,Everything else: OFF - click to salvage them,"Всё остальное: ВЫКЛ. — нажмите, чтобы разбирать",其他所有物品：已关闭 - 点击开始拆解
+daDialogSalvAllOn,dialogs,Dialog,,,Salvage all of it,Разбирать всё,全部拆解
+daDialogSalvAllOff,dialogs,Dialog,,,Salvage nothing,Ничего не разбирать,什么都不拆
+daDialogSalvMore,dialogs,Dialog,,,"More: all, nothing, what it took...","Ещё: всё, ничего, что он разобрал…",更多：全部、不拆、刚拆的东西…
+daDialogSalvMorePrompt,dialogs,Dialog,,,"Everything at once, or the last thing it took. I answer in chat.","Всё сразу или то, что он разобрал последним. Ответ придёт в чат.",一次全选，或处理它刚拆掉的东西。我会在聊天中回答。
+daDialogSalvSkipLast,dialogs,Dialog,,,Never take the last thing it took again,"Больше не разбирать то, что он разобрал последним",以后不再拆它刚拆的那种东西
+daDialogSalvListLast,dialogs,Dialog,,,Tell me what it took,"Сказать, что он разобрал",告诉我它拆了什么
+daDialogSalvUndoSkip,dialogs,Dialog,,,Undo my last skip - take those again,Отменить последнее исключение — снова разбирать,撤销上一次排除 - 重新拆解那种东西
+daDialogLootOpenOn,dialogs,Dialog,,,Auto-Loot: ON - change settings,Автосбор: ВКЛ. — настройки,自动拾取：已开启 - 更改设置
+daDialogLootOpenOff,dialogs,Dialog,,,Auto-Loot: OFF - change settings,Автосбор: ВЫКЛ. — настройки,自动拾取：已关闭 - 更改设置
+daDialogSalvageOpenOn,dialogs,Dialog,,,Auto-Salvage: ON - change settings,Авторазборка: ВКЛ. — настройки,自动拆解：已开启 - 更改设置
+daDialogSalvageOpenOff,dialogs,Dialog,,,Auto-Salvage: OFF - change settings,Авторазборка: ВЫКЛ. — настройки,自动拆解：已关闭 - 更改设置
+daDialogHarvestOpenOn,dialogs,Dialog,,,Auto-Harvest: ON - change settings,Автоурожай: ВКЛ. — настройки,自动收割：已开启 - 更改设置
+daDialogHarvestOpenOff,dialogs,Dialog,,,Auto-Harvest: OFF - change settings,Автоурожай: ВЫКЛ. — настройки,自动收割：已关闭 - 更改设置
+daDialogRepairOpenOn,dialogs,Dialog,,,Auto-Repair: ON - change settings,Авторемонт: ВКЛ. — настройки,自动维修：已开启 - 更改设置
+daDialogRepairOpenOff,dialogs,Dialog,,,Auto-Repair: OFF - change settings,Авторемонт: ВЫКЛ. — настройки,自动维修：已关闭 - 更改设置
+daDialogPlantOpenOn,dialogs,Dialog,,,Auto-Plant: ON - change settings,Автопосадка: ВКЛ. — настройки,自动种植：已开启 - 更改设置
+daDialogPlantOpenOff,dialogs,Dialog,,,Auto-Plant: OFF - change settings,Автопосадка: ВЫКЛ. — настройки,自动种植：已关闭 - 更改设置
+daDialogDefenseOpenOn,dialogs,Dialog,,,Auto-Defense: ON - change settings,Автозащита: ВКЛ. — настройки,自动防御：已开启 - 更改设置
+daDialogDefenseOpenOff,dialogs,Dialog,,,Auto-Defense: OFF - change settings,Автозащита: ВЫКЛ. — настройки,自动防御：已关闭 - 更改设置
+daDialogLootAbout,dialogs,Dialog,,,"Auto-Loot: I open loot bags and containers near you and pick up dropped items, into my storage.",Автосбор: я открываю мешки с добычей и контейнеры рядом с вами и подбираю выпавшие предметы в своё хранилище.,自动拾取：我会打开你附近的战利品袋和容器，并把掉落的物品捡进我的储物空间。
+daDialogHarvestAbout,dialogs,Dialog,,,Auto-Harvest: I reap grown crops in your land claim and replant them.,Автоурожай: я собираю созревший урожай в вашей зоне присвоения земли и сажаю его заново.,自动收割：我会收割你领地内成熟的作物并重新种下。
+daDialogRepairAbout,dialogs,Dialog,,,"Auto-Repair: I repair damaged blocks in your land claim, paying from my storage.",Авторемонт: я чиню повреждённые блоки в вашей зоне присвоения земли за материалы из своего хранилища.,自动维修：我会用储物空间里的材料修复你领地内受损的方块。
+daDialogPlantAbout,dialogs,Dialog,,,Auto-Plant: I sow crops from my storage on empty farm plots in your land claim.,Автопосадка: я сажаю растения из своего хранилища на пустые грядки в вашей зоне присвоения земли.,自动种植：我会把储物空间里的作物种到你领地内空着的农田上。
+daDialogDefenseAbout,dialogs,Dialog,,,"Auto-Defense: I shoot hostiles near you, loading Robotic Turret Ammo from my storage.","Автозащита: я стреляю по врагам рядом с вами, заряжая боеприпасы для роботизированной пушки из своего хранилища.",自动防御：我会射击你附近的敌人，弹药来自储物空间里的机器人炮塔弹药。

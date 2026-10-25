@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.12.0 — 2026-10-24
+
+- **One page per module.** Hold E on the drone, Talk, Automation modules: each module is one row that
+  says whether it is on - "Auto-Loot: ON - change settings" - and opens that module's page, with its
+  ON/OFF switch and whatever settings it has. Auto-Defense's low / empty ammo warning still shows on
+  the list. The "Switch every module back on" row is gone.
+- **You choose what Auto-Salvage takes.** Its page lists the kinds of thing it may wrench - Vehicles, Appliances and
+  electrics, Lights, Sinks toilets and pipes, Furniture decor and signs, Emptied containers,
+  Everything else - and a More page with Salvage all of it / Salvage nothing in one click. The groups
+  are the game's own creative-menu categories, so blocks from overhauls and POI mods sort themselves.
+- **One thing at a time, without typing.** The More page also has **Never take the last thing it
+  took again**, **Tell me what it took** and **Undo my last skip**. The drone answers in chat with
+  the name - a menu row cannot show one - and a skip covers that whole kind (every sedan variant),
+  the same as `/das skip 1`. `/das undo` is new in chat too.
+- **It starts with nothing picked.** A drone with Auto-Salvage takes nothing until its owner chooses,
+  and says so in chat, once a session, the first time it passes something it could have taken.
+  **After updating, every player's drone stops salvaging until they pick something** - Salvage all
+  of it gets the old behaviour back in one click. Server ops who would rather start everyone on
+  everything can set `StartTargets="all"` on the `autoSalvage` line.
+- **`/das` rules are now per player.** Until now there was one list per world, and any player's
+  `/das skip` changed every drone on the server. Now each player's rules change only their own
+  drone. Rules from before the update are kept: each player starts from a copy of the old list.
+- **`/das` makes exceptions to the menu.** `/das skip` leaves one kind alone inside a group you
+  picked; `/das allow` takes one kind whose group is off. `/das what` names the group of the block
+  you are looking at and says why the drone would or would not take it; `/das rules` shows the
+  groups you picked, your own rules and the server's.
+- **The server's `<exclude>` list binds everyone.** A player's `/das allow` can no longer lift a
+  block the server's `droneautomation.xml` excludes.
+- **`/das what` no longer says Auto-Salvage "may take" a block it cannot salvage at all** (dirt,
+  a wall) - it says it is not something Auto-Salvage can take.
+- The menu rows are in English, Russian and Simplified Chinese.
+
 ## 0.11.0 — 2026-10-20
 
 - **Auto-Defense now needs ammo.** Every shot spends one round of Robotic Turret Ammo, loaded from the

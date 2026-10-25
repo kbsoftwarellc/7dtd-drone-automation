@@ -113,6 +113,10 @@ namespace DroneAutomation
             PrimeToggleBuffs(owner);
             PublishFittedModules(owner, __instance, autoLoot, autoSalvage, autoHarvest, autoRepair, autoPlant, autoDefense);
 
+            // The talk menu's one-shot salvage requests ("never take the last thing again" and so
+            // on). Answered here, ahead of every early-out, so a press is never left waiting.
+            SalvageMenu.Poll(owner);
+
             if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
