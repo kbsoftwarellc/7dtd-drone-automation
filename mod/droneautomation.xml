@@ -235,17 +235,24 @@
 	<antenna Q1ReachMult="1.15" Q6ReachMult="1.6" />
 
 	<!--
-	  Patrol: talk to the drone, "Patrol around me". While it follows you and nothing hostile is near,
-	  it drifts between spots around you and faces where it is going, instead of hanging at your
-	  shoulder. Not a module: any drone does it. "Stop patrolling" on the same page turns it off; it
-	  starts off. It never changes the drone's orders, so following, the teleport back to you and the
-	  teleport along with you all work as normal, and it stops the moment you walk off or a zombie
-	  comes near. It does not pathfind: it only picks spots it has a clear line to.
-	    Radius        farthest a spot may be from you, in metres. At most 6: past 7 m vanilla calls the
-	                  drone back to follow you.
-	    MinRadius     nearest a spot may be to you.
-	    PauseSeconds  how long it hovers at each spot before flying to the next.
-	    SpeedMult     flying speed while patrolling, as a fraction of the drone's own.
+	  Patrol: talk to the drone, "Patrol around me". It roams around you, and with Auto-Defense fitted
+	  (switched on, with rounds) it goes after any hostile it can see, closes in and shoots it, then
+	  goes back to roaming. Without Auto-Defense it only roams, and comes back to you when a hostile
+	  shows up. Not a module: any drone does it. "Stop patrolling" on the same page turns it off; it
+	  starts off. The drone stays on Follow, so the teleport back to you and the teleport along with
+	  you work as normal. It holds still while you have its menu or bag open, stops while you ride a
+	  vehicle or swim, and does not go looking for fights while you crouch. It does not pathfind: it
+	  only flies to spots it has a clear line to, and only chases what it can see.
+	    Radius          farthest a roam spot may be from you, in metres (at most 28).
+	    MinRadius       nearest a roam spot may be to you.
+	    PauseSeconds    how long it hovers at each spot before flying to the next.
+	    SpeedMult       flying speed while roaming, as a fraction of the drone's own.
+	    HoverHeight     how high over the ground it roams, in metres.
+	    Hunt            1 = go after hostiles it spots (needs Auto-Defense); 0 = only roam.
+	    ChaseRadius     farthest from you it will chase something, in metres. At most 30: vanilla
+	                    teleports a following drone back to you at 32 m.
+	    StandOff        how far from its target it stops to shoot (kept inside Auto-Defense's reach).
+	    ChaseSpeedMult  flying speed while chasing, as a fraction of the drone's own.
 	-->
-	<patrol Radius="5" MinRadius="2" PauseSeconds="4" SpeedMult="0.5" />
+	<patrol Radius="20" MinRadius="5" PauseSeconds="2" SpeedMult="0.5" HoverHeight="2.5" Hunt="1" ChaseRadius="28" StandOff="6" ChaseSpeedMult="1" />
 </droneautomation>

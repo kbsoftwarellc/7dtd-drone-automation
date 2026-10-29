@@ -505,6 +505,11 @@ namespace DroneAutomation
             ReadFloat(_node, "MinRadius", ref _settings.MinRadius);
             ReadFloat(_node, "PauseSeconds", ref _settings.PauseSeconds);
             ReadFloat(_node, "SpeedMult", ref _settings.SpeedMult);
+            ReadFloat(_node, "HoverHeight", ref _settings.HoverHeight);
+            ReadBool(_node, "Hunt", ref _settings.Hunt);
+            ReadFloat(_node, "ChaseRadius", ref _settings.ChaseRadius);
+            ReadFloat(_node, "StandOff", ref _settings.StandOff);
+            ReadFloat(_node, "ChaseSpeedMult", ref _settings.ChaseSpeedMult);
         }
 
         internal static void ReadFloat(XmlNode _node, string _attr, ref float _value)

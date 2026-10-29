@@ -43,16 +43,19 @@ Install a module in a junk drone like any other drone mod. Modules stack with ea
 ## Patrol
 
 Hold **E** on the drone → **Talk** → **Patrol around me** (right under Follow me / Stay here, from
-0.13.0). While it follows you and nothing hostile is near, the drone drifts between spots 2–5 m
-around you, facing where it is going, instead of hanging at your shoulder. **Stop patrolling** on the
-same page turns it off; it starts off. Any drone does it — it is an order, not a module — and like the
-module switches it is per player.
+0.13.0). The drone roams up to 20 m around you, flying from spot to spot and facing where it is going.
+With **Auto-Defense** fitted (switched on, with rounds) it is also hunting: when it sees a zombie or
+other hostile within 28 m of you, it flies at it, stops about 6 m off and shoots it, then goes back to
+roaming. Without Auto-Defense it only roams, and comes back to you when a hostile shows up.
+**Stop patrolling** on the same page turns it off; it starts off. Any drone does it — it is an order,
+not a module — and like the module switches it is per player.
 
-It never changes the drone's orders, so following, the teleport back when it falls behind and the
-teleport along with you all work as normal; the moment you walk off or a zombie comes near, it goes
-back to plain following (and Auto-Defense, if fitted). It doesn't pathfind — it only picks spots it
-has a clear line to — and the radius stays inside vanilla's own 7 m follow leash. `<patrol>` in
-`droneautomation.xml` sets the radius, the pause at each spot and the speed.
+The drone stays on Follow the whole time, so it still teleports back to you if it ends up 32 m away
+and still teleports along with you. It holds still while you have its menu or bag open, stops while
+you ride a vehicle or swim, and doesn't go looking for fights while you crouch (it still shoots what
+comes into its reach). It doesn't pathfind: it only flies to spots it has a clear line to and only
+chases what it can see. `<patrol>` in `droneautomation.xml` sets the roam radius, the chase radius,
+how close it gets, the heights and the speeds, and `Hunt="0"` turns the hunting off.
 
 ## Switching a module off, and its settings
 

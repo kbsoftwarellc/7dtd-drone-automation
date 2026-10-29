@@ -9,10 +9,12 @@
   it turns back to you. With no rounds left it doesn't turn.
 - **It no longer goes quiet because the nearest zombie is behind cover.** It used to look at the
   single nearest zombie only; now it takes the nearest one it can actually hit.
-- **Patrol.** Talk to the drone → **Patrol around me**: while it follows you and nothing hostile is
-  near, it drifts between spots a few metres around you instead of hanging at your shoulder.
-  **Stop patrolling** turns it off; it starts off. Following and the teleports work as before.
-  Tuned by the new `<patrol>` line in `droneautomation.xml`.
+- **Patrol.** Talk to the drone → **Patrol around me**: it roams up to 20 m around you, and with
+  Auto-Defense fitted it hunts — anything hostile it sees within 28 m of you, it flies at, stops about
+  6 m off and shoots. Without Auto-Defense it only roams and comes back to you when a hostile shows
+  up. It holds still while its menu or bag is open and doesn't start fights while you crouch.
+  **Stop patrolling** turns it off; it starts off. The drone stays on Follow, so its teleports work as
+  before. Tuned by the new `<patrol>` line in `droneautomation.xml`.
 
 ## 0.12.0 — 2026-10-24
 
