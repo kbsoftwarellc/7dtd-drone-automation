@@ -240,7 +240,8 @@
 	  goes back to roaming. Without Auto-Defense it only roams, and comes back to you when a hostile
 	  shows up. Not a module: any drone does it. "Stop patrolling" on the same page turns it off; it
 	  starts off. The drone stays on Follow, so the teleport back to you and the teleport along with
-	  you work as normal. It holds still while you have its menu or bag open, stops while you ride a
+	  you work as normal. It waits while you look at it from within 8 m, so you can walk up and talk
+	  to it, holds still while you have its menu or bag open, stops while you ride a
 	  vehicle or swim, and does not go looking for fights while you crouch. It does not pathfind: it
 	  only flies to spots it has a clear line to, and only chases what it can see.
 	    Radius          farthest a roam spot may be from you, in metres (at most 28).

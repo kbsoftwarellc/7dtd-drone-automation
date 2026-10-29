@@ -50,7 +50,8 @@ roaming. Without Auto-Defense it only roams, and comes back to you when a hostil
 **Stop patrolling** on the same page turns it off; it starts off. Any drone does it — it is an order,
 not a module — and like the module switches it is per player.
 
-The drone stays on Follow the whole time, so it still teleports back to you if it ends up 32 m away
+To talk to it while it roams, look at it: it waits while you look straight at it from within 8 m,
+so you can walk up to it. The drone stays on Follow the whole time, so it still teleports back to you if it ends up 32 m away
 and still teleports along with you. It holds still while you have its menu or bag open, stops while
 you ride a vehicle or swim, and doesn't go looking for fights while you crouch (it still shoots what
 comes into its reach). It doesn't pathfind: it only flies to spots it has a clear line to and only

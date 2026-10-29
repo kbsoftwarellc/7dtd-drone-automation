@@ -67,6 +67,10 @@ namespace DroneAutomation
     /// No pathfinding: a roam spot is only picked with a clear line to it from your chest and from
     /// the drone, it only chases what it can see, and move() itself refuses a step into a block. A
     /// spot or a target it makes no headway on is dropped.
+    ///
+    /// While you look straight at it from within 8 m (and it is not fighting) it waits where it is, so
+    /// you can walk up and talk to it: vanilla's talk reach is 2 m, and every roam spot is at least
+    /// MinRadius from you.
     /// </summary>
     public sealed class PatrolCore
     {
@@ -105,6 +109,9 @@ namespace DroneAutomation
 
         /// <summary>A target it gave up on is left alone this long.</summary>
         private const float IgnoreSeconds = 10f;
+
+        /// <summary>It waits while you look at it from this close, so you can walk up and talk to it.</summary>
+        private const float LookRange = 8f;
 
         private static readonly ConditionalWeakTable<EntityDrone, PatrolCore> cores =
             new ConditionalWeakTable<EntityDrone, PatrolCore>();
@@ -180,7 +187,28 @@ namespace DroneAutomation
                 return;
             }
             Hold(now);
+
+            // You are looking at it: wait, so you can walk up and talk to it (vanilla's talk reach is
+            // 2 m, and every roam spot is at least MinRadius from you).
+            if (LookedAt(_drone, _owner))
+            {
+                if (hasSpot) pauseUntilTick = now + TicksFor(settings.PauseSeconds);
+                hasSpot = false;
+                Doing = "waiting: you are looking at it";
+                return;
+            }
             Roam(_drone, chest, now);
+        }
+
+        /// <summary>Within LookRange of your eyes and within a metre of where you are looking.</summary>
+        private static bool LookedAt(EntityDrone _drone, EntityPlayer _owner)
+        {
+            Vector3 to = _drone.position - _owner.getHeadPosition();
+            if (to.sqrMagnitude > LookRange * LookRange) return false;
+            Vector3 look = _owner.GetLookVector();
+            float along = Vector3.Dot(to, look);
+            if (along <= 0f) return false;
+            return (to - look * along).sqrMagnitude <= 1f;
         }
 
         /// <summary>

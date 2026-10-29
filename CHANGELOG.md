@@ -12,7 +12,7 @@
 - **Patrol.** Talk to the drone → **Patrol around me**: it roams up to 20 m around you, and with
   Auto-Defense fitted it hunts — anything hostile it sees within 28 m of you, it flies at, stops about
   6 m off and shoots. Without Auto-Defense it only roams and comes back to you when a hostile shows
-  up. It holds still while its menu or bag is open and doesn't start fights while you crouch.
+  up. It waits while you look at it (so you can walk up and talk to it), holds still while its menu or bag is open, and doesn't start fights while you crouch.
   **Stop patrolling** turns it off; it starts off. The drone stays on Follow, so its teleports work as
   before. Tuned by the new `<patrol>` line in `droneautomation.xml`.
 
