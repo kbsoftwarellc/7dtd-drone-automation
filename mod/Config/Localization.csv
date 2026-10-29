@@ -36,6 +36,8 @@ statDroneModuleSpeed,ui_display,Item,,,Action Speed,Скорость работ�
 statDroneBoostTime,ui_display,Item,,,Module Action Time,Время действия модулей,模块动作时间
 statDroneBoostRange,ui_display,Item,,,Module Reach,Радиус действия модулей,模块作用范围
 daDialogOpen,dialogs,Dialog,,,Automation modules...,Модули автоматизации…,自动化模块…
+daDialogPatrolStart,dialogs,Dialog,,,Patrol around me,Патрулировать вокруг меня,在我周围巡逻
+daDialogPatrolStop,dialogs,Dialog,,,Stop patrolling,Прекратить патрулирование,停止巡逻
 daDialogPrompt,dialogs,Dialog,,,"My automation modules. Pick one to switch it on or off, or change its settings.","Мои модули автоматизации. Выберите модуль, чтобы включить, выключить или настроить его.",我的自动化模块。选择一个来开启、关闭或更改设置。
 daDialogLootOn,dialogs,Dialog,,,Auto-Loot: ON - switch it off,Автосбор: ВКЛ. — выключить,自动拾取：已开启 - 点击关闭
 daDialogLootOff,dialogs,Dialog,,,Auto-Loot: OFF - switch it on,Автосбор: ВЫКЛ. — включить,自动拾取：已关闭 - 点击开启
