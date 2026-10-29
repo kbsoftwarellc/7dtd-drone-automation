@@ -104,8 +104,8 @@ namespace DroneAutomation
         /// <summary>Seconds it may fly toward something without closing in before it gives up.</summary>
         private const float NoHeadwaySeconds = 3f;
 
-        /// <summary>A target out of sight this long is let go.</summary>
-        private const float LostSightSeconds = 3f;
+        /// <summary>A target with something solid in the way this long is let go.</summary>
+        private const float LostSightSeconds = 5f;
 
         /// <summary>A target it gave up on is left alone this long.</summary>
         private const float IgnoreSeconds = 10f;
@@ -310,7 +310,7 @@ namespace DroneAutomation
             {
                 bool gone = prey.IsDead() || !Within(prey.position, _chest, settings.ChaseRadius)
                             || prey.Buffs.HasBuff("buffShocked") || (prey.IsSleeper && prey.IsSleeping);
-                if (!gone && Visible(_drone, prey)) lastSeenTick = _now;
+                if (!gone && _drone.sensors.canAttackTarget(prey)) lastSeenTick = _now;
                 if (gone || _now - lastSeenTick > TicksFor(LostSightSeconds))
                 {
                     if (!prey.IsDead()) ignored[prey.entityId] = _now + TicksFor(IgnoreSeconds);
@@ -333,9 +333,15 @@ namespace DroneAutomation
         }
 
         /// <summary>
-        /// The nearest hostile the drone can see, within its own detection radius (22 m on vanilla)
-        /// and within ChaseRadius of you: its revenge target first, then the same rules as Auto-Defense
-        /// (hostile EntityEnemy only, not a sleeping sleeper, not shocked, clear line, no view cone).
+        /// The nearest hostile the drone has a clear line to, within its own detection radius (22 m on
+        /// vanilla) and within ChaseRadius of you: its revenge target first, then hostile EntityEnemy
+        /// only, through the drone's own sensors.canAttackTarget (alive, not a sleeping sleeper, not
+        /// shocked, no terrain or block between it and the target's chest).
+        ///
+        /// Deliberately NOT CanEntityBeSeen, which Auto-Defense uses to decide a shot: that is one ray
+        /// at the target's head point and passes only if it hits the target, and at 10-20 m it skims
+        /// over a hunched zombie's head and reports an empty field as blind (rig, 3.4 b9: false from
+        /// 18 m in to 7 m, in the open). Good enough to hold fire on; too strict to go looking with.
         /// </summary>
         private EntityAlive Find(EntityDrone _drone, Vector3 _chest, ulong _now)
         {
@@ -343,7 +349,7 @@ namespace DroneAutomation
 
             EntityAlive revenge = _drone.GetRevengeTarget();
             if (revenge != null && !revenge.IsDead() && Within(revenge.position, _chest, settings.ChaseRadius)
-                && _drone.sensors.canAttackTarget(revenge) && Visible(_drone, revenge))
+                && _drone.sensors.canAttackTarget(revenge))
                 return revenge;
 
             EntityAlive best = null;
@@ -359,7 +365,7 @@ namespace DroneAutomation
 
                 float distSq = (enemy.position - _drone.position).sqrMagnitude;
                 if (distSq >= bestSq || distSq > radius * radius || !Within(enemy.position, _chest, settings.ChaseRadius)) continue;
-                if (!_drone.sensors.canAttackTarget(enemy) || !Visible(_drone, enemy)) continue;
+                if (!_drone.sensors.canAttackTarget(enemy)) continue;
                 best = enemy;
                 bestSq = distSq;
             }
@@ -369,11 +375,10 @@ namespace DroneAutomation
             return best;
         }
 
-        private static bool Visible(EntityDrone _drone, EntityAlive _target) => _drone.CanEntityBeSeen(_target, false);
-
         /// <summary>
-        /// Close to StandOff from the target on the side the drone is already on, a little over its
-        /// head, never past ChaseRadius from you. Too close, and the same rule backs it off.
+        /// Close to StandOff from the target on the side the drone is already on, a metre over its
+        /// head (higher if the ground between would hide it), never past ChaseRadius from you. Too
+        /// close, and the same rule backs it off.
         /// </summary>
         private void Chase(EntityDrone _drone, Vector3 _chest, ulong _now, float _reach)
         {
@@ -383,12 +388,18 @@ namespace DroneAutomation
             if (away.sqrMagnitude < 0.01f) away = _chest - target;
             away.y = 0f;
             float standOff = Mathf.Min(settings.StandOff, _reach * 0.8f);
-            Vector3 goal = target + away.normalized * standOff + Vector3.up * 1f;
+            Vector3 head = prey.getHeadPosition();
+            Vector3 goal = target + away.normalized * standOff;
+            goal.y = head.y + 1f;
 
             // Keep the goal on the leash: slide it back toward you until it is inside ChaseRadius.
             Vector3 fromYou = goal - _chest;
             if (fromYou.sqrMagnitude > settings.ChaseRadius * settings.ChaseRadius)
                 goal = _chest + fromYou.normalized * settings.ChaseRadius;
+
+            // A rise in the ground between them hides the target from a drone flying low; go up until
+            // it has a clear line down to its head.
+            for (int i = 0; i < 3 && EntityDrone.IsPositionBlocked(goal, head, BlockMask); i++) goal.y += 1f;
 
             DroneFacing.Turn(_drone, target);
             Vector3 to = goal - _drone.position;
