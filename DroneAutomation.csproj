@@ -44,6 +44,7 @@
     <Reference Include="LogLibrary">               <HintPath>$(GameManaged)/LogLibrary.dll</HintPath>               <Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule">   <HintPath>$(GameManaged)/UnityEngine.CoreModule.dll</HintPath>   <Private>false</Private></Reference>
     <Reference Include="UnityEngine">              <HintPath>$(GameManaged)/UnityEngine.dll</HintPath>              <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(GameManaged)/UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
   <!-- mod/ = the deployable payload (source of truth for packaging). -->

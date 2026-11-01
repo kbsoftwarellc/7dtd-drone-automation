@@ -9,11 +9,15 @@ Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuu
 - **Auto-Loot** (`modRoboticDroneAutoLootMod`) — opens zombie loot bags and containers and picks up dropped items, into the drone's storage. A mobile version of the Loot Vacuum block: bags and dropped items within 15m, block containers within 8m, 6m vertical. It leaves anything you throw alone — a rock, a molotov, a grenade — while it is in the air, while it is burning or ticking, and for `ThrownGraceSeconds` after it lands.
 - **Auto-Salvage** (`modRoboticDroneAutoSalvageMod`) — wrenches nearby salvageable blocks (cars, sinks, machines) one downgrade step at a time into the drone bag. **Unclaimed ground only** — never inside anyone's land claim, so it can't wreck your base or a neighbour's — and **never inside a trader area** (the game reports one as unclaimed, so that has to be its own rule). It also never touches the **switches, buttons, valve handles, relays, pressure plates and quest triggers** a POI needs in order to work — those are salvage-tagged like any other metal fitting, and wrenching one breaks that POI for the life of the save. It leaves **workstations** alone by default too: a forge or workbench is something you use, and may still hold your materials, and **working vending machines** — the ones you can still buy from or rent — while their broken shells stay salvageable. It counts as **holding a wrench** while it works out what a block pays, so the bonuses vanilla gates on holding one — Hacker's candy, the Scavenger Gloves — reach it the way they reach you (`CountAsHoldingSalvageTool`). Wrenching is loud, so each broken stage adds **the same heat a hand-swing would**: strip a POI with the drone and you draw screamers on the same clock as doing it yourself. Reach is kept small by default because it destroys blocks. Configurable via `SalvageWorkstations`, `SalvageInPOIs`, `SalvageSwitches`, `SalvageVendingMachines`, `HeatMultiplier`, `CountAsHoldingSalvageTool` and an `<exclude block="..."/>` deny-list (names take `*` as a wildcard).
 
-  **What it may wrench is set in game, with `/das`.** Pointing at the thing you want spared does not work — by the time you notice, it is a pile of scrap — so the interface starts from what it just did: `/das last` lists the last 20 things it salvaged, `/das skip 3` leaves that kind alone from then on, `/das allow <name>` undoes it, `/das list *vending*` names every salvageable block on **your** server (read from the running game, so overhauls and POI mods are covered), and `/das what` names the block you are looking at. The drone also speaks up the first time it takes a new kind of thing, so players find the command without reading anything. Rules are saved with the world, not the mod folder, so a mod update cannot lose them.
+  **It takes nothing until you pick what** (from 0.12.0). Hold **E** on the drone → **Talk** → **Automation modules…** → **Auto-Salvage** and switch on the kinds of thing it may take: **Vehicles**, **Appliances and electrics**, **Lights**, **Sinks, toilets and pipes**, **Furniture, decor and signs**, **Emptied containers**, **Everything else** — and **More…** for **Salvage all of it** / **Salvage nothing** in one click. The groups are the game's own creative-menu categories (`FilterTags`), so blocks from overhauls and POI mods sort themselves.
+
+  **One thing at a time, from the same menu.** The **More…** page also has **Never take the last thing it took again**, **Tell me what it took** and **Undo my last skip**. A menu row can't show a block's name, so the drone answers in chat — *"Auto-Salvage will leave burntSedan\* alone"* — and the skip works on that whole kind (every sedan variant), exactly like `/das skip 1`. Until something is picked the drone says so, once a session, the first time it passes something it could have taken. Server ops who want the old take-everything start can set `StartTargets="all"`.
+
+  **Exceptions by name, with `/das`.** Pointing at the thing you want spared does not work — by the time you notice, it is a pile of scrap — so the interface starts from what it just did: `/das last` lists the last 20 things it salvaged, `/das skip 3` leaves that kind alone from then on even inside a picked group, `/das allow <name>` takes one kind whose group is off (or undoes a skip), `/das list *vending*` names every salvageable block on **your** server (read from the running game, so overhauls and POI mods are covered), `/das what` names the block you are looking at and says why the drone would or would not take it, `/das undo` drops your most recent skip, and `/das rules` shows everything that decides it. The drone also speaks up the first time it takes a new kind of thing, so players find the command without reading anything. **Menu choices and `/das` rules are per player** — on a server, nobody's choice changes anybody else's drone — and the `<exclude>` list in `droneautomation.xml` binds everyone. Rules are saved with the world, not the mod folder, so a mod update cannot lose them.
 - **Auto-Harvest** (`modRoboticDroneAutoHarvestMod`) — reaps grown crops in **your own land claim** and replants the seed, into the drone bag. A crop is only reaped if its replant stage can be resolved, so a plot is never left empty. Self-seeding crops — ones a mod such as Self Seed Farming makes grow back on their own, with no seed dropped — are reaped too, and get the same seedling the game would put back.
 - **Auto-Repair** (`modRoboticDroneAutoRepairMod`) — repairs damaged blocks in **your own land claim**, paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
 - **Auto-Plant** (`modRoboticDroneAutoPlantMod`) — sows young crops from the drone bag onto empty farm plots in **your own land claim**. A "seed" is any bag item that resolves to a growing-plant block (e.g. `plantedCorn1`) — the same block Auto-Harvest deposits when it reaps, so the pair runs a self-sustaining farm. Only plants on the empty cell above a farm plot, never on invalid ground.
-- **Auto-Defense** (`modRoboticDroneAutoDefenseMod`) — turns the drone into a **bodyguard**: it fires its own machine gun at the nearest hostile as it follows you, or stands **sentry** over the spot you park it on. Kills are credited to you, and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a `MachineGunWeapon` and an `Attack` state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply. Higher-quality modules fire faster and reach farther; per-shot damage is a flat bonus set on the module.
+- **Auto-Defense** (`modRoboticDroneAutoDefenseMod`) — turns the drone into a **bodyguard**: it fires its own machine gun at the nearest hostile it can hit as it follows you, or stands **sentry** over the spot you park it on, and **turns to face what it is shooting** (from 0.13.0 — before that it only saw the half of the world facing you, so zombies coming up behind it were ignored). Kills are credited to you, and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a `MachineGunWeapon` and an `Attack` state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply. Higher-quality modules fire faster and reach farther; per-shot damage is a flat bonus set on the module.
 
   **It needs ammo** (from 0.11.0). Every shot spends one round of **Robotic Turret Ammo** (`ammoJunkTurretRegular`, then Shells, then AP - the three the vanilla drone's unused gun was written to take), loaded from the drone's bag into the drone's own magazine (62 rounds on a Q1 drone, up to 92 on Q6). It tops the magazine up between fights and goes quiet for about four seconds to reload when it runs dry mid-fight. It says in chat when it loads its last magazine and when it is out; the talk menu shows **plenty / low / empty**, and `/das ammo` gives the exact count. Its shots make the heat a vanilla auto turret's would, so a sentry drone draws screamers like a turret does. `RequireAmmo="0"` restores the free gun; `AmmoItems`, `MagazineSize`, `ReloadSeconds` and `HeatMultiplier` tune it.
 
@@ -36,12 +40,33 @@ A drone that is **following** you only works blocks while it's actually with you
 
 Install a module in a junk drone like any other drone mod. Modules stack with each other and with the vanilla cargo mod.
 
-## Switching a module off
+## Patrol
+
+Hold **E** on the drone → **Talk** → **Patrol around me** (right under Follow me / Stay here, from
+0.13.0). The drone roams up to 20 m around you, flying from spot to spot and facing where it is going.
+With **Auto-Defense** fitted (switched on, with rounds) it is also hunting: when it sees a zombie or
+other hostile within 28 m of you, it flies at it, stops about 6 m off and shoots it, then goes back to
+roaming. Without Auto-Defense it only roams, and comes back to you when a hostile shows up.
+**Stop patrolling** on the same page turns it off; it starts off. Any drone does it — it is an order,
+not a module — and like the module switches it is per player.
+
+To talk to it while it roams, look at it: it waits while you look straight at it from within 8 m,
+so you can walk up to it. The drone stays on Follow the whole time, so it still teleports back to you if it ends up 32 m away
+and still teleports along with you. It holds still while you have its menu or bag open, stops while
+you ride a vehicle or swim, and doesn't go looking for fights while you crouch (it still shoots what
+comes into its reach). It doesn't pathfind: it only flies to spots it has a clear line to and only
+chases what it can see. `<patrol>` in `droneautomation.xml` sets the roam radius, the chase radius,
+how close it gets, the heights and the speeds, and `Hunt="0"` turns the hunting off.
+
+## Switching a module off, and its settings
 
 You don't have to pull a module out to stop it. Hold **E** on the drone, pick **Talk**, then
-**Automation modules…** — every automation function gets a row showing whether it is ON or OFF, and
-clicking the row flips it. The module stays in its slot and keeps its quality; it just stops acting
-until you switch it back on. There's a **Switch every module back on** row to clear the lot.
+**Automation modules…** — every module gets a row showing whether it is ON or OFF
+(**`Auto-Loot: ON - change settings`**), and clicking it opens that module's own page: its ON/OFF
+switch first, then whatever settings it has — the salvage groups on Auto-Salvage's page, the ammo
+state on Auto-Defense's. The module stays in its slot and keeps its quality while switched off; it
+just stops acting until you switch it back on. If Auto-Defense is low on or out of ammo, the list
+says so too, so you never have to go looking.
 
 A function whose module isn't fitted reads **`Auto-Loot: no module installed`** instead of offering a
 switch, so the menu can't be mistaken for a settings screen — these are still modules you have to find

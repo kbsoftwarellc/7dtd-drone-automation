@@ -68,6 +68,12 @@ namespace DroneAutomation
         public const string DefenseAmmoCVar = "daDefenseAmmo";
 
         /// <summary>
+        /// 1 = the player's drones patrol around them (PatrolCore). The opposite polarity to the Off
+        /// flags on purpose: patrol starts OFF, so the unwritten 0 is the state that has to mean off.
+        /// </summary>
+        public const string PatrolCVar = "daPatrol";
+
+        /// <summary>
         /// Every buff the talk menu can add, kept permanently on the owner by
         /// <see cref="DronePatch.PrimeToggleBuffs"/>.
         ///
@@ -91,7 +97,23 @@ namespace DroneAutomation
             "buffDaRepairDisable",  "buffDaRepairEnable",
             "buffDaPlantDisable",   "buffDaPlantEnable",
             "buffDaDefenseDisable", "buffDaDefenseEnable",
-            "buffDaAllEnable",
+
+            // Auto-Salvage's page: a take/leave pair per SalvageCategories group, plus
+            // take-everything and take-nothing.
+            "buffDaSalvVehiclesTake",   "buffDaSalvVehiclesLeave",
+            "buffDaSalvAppliancesTake", "buffDaSalvAppliancesLeave",
+            "buffDaSalvLightsTake",     "buffDaSalvLightsLeave",
+            "buffDaSalvPlumbingTake",   "buffDaSalvPlumbingLeave",
+            "buffDaSalvFurnitureTake",  "buffDaSalvFurnitureLeave",
+            "buffDaSalvContainersTake", "buffDaSalvContainersLeave",
+            "buffDaSalvOtherTake",      "buffDaSalvOtherLeave",
+            "buffDaSalvAllTake",        "buffDaSalvAllLeave",
+
+            // Its More page: one-shot requests the server answers in chat. See SalvageMenu.
+            "buffDaSalvCmdSkipLast", "buffDaSalvCmdListLast", "buffDaSalvCmdUndoSkip",
+
+            // "Patrol around me" / "Stop patrolling" on the drone's first page.
+            "buffDaPatrolStart", "buffDaPatrolStop",
         };
 
         public static string ModPath;
@@ -144,6 +166,9 @@ namespace DroneAutomation
 
         /// <summary>Wide-Band Antenna meta-module tunables (reach boost for every core).</summary>
         public static AntennaSettings AntennaSettings = new AntennaSettings();
+
+        /// <summary>Patrol (talk-menu order, not a module) tunables.</summary>
+        public static PatrolSettings PatrolSettings = new PatrolSettings();
 
         public void InitMod(Mod _modInstance)
         {
@@ -320,6 +345,7 @@ namespace DroneAutomation
                 ReadDefense(doc.SelectSingleNode("/droneautomation/autoDefense"), DefenseSettings);
                 ReadOverclock(doc.SelectSingleNode("/droneautomation/overclock"), OverclockSettings);
                 ReadAntenna(doc.SelectSingleNode("/droneautomation/antenna"), AntennaSettings);
+                ReadPatrol(doc.SelectSingleNode("/droneautomation/patrol"), PatrolSettings);
 
                 XmlNode root = doc.SelectSingleNode("/droneautomation");
                 if (root?.Attributes != null)
@@ -343,6 +369,7 @@ namespace DroneAutomation
             DefenseSettings.Clamp();
             OverclockSettings.Clamp();
             AntennaSettings.Clamp();
+            PatrolSettings.Clamp();
         }
 
         private static void ReadRepair(XmlNode _node, RepairSettings _settings)
@@ -376,11 +403,12 @@ namespace DroneAutomation
             ReadString(_node, "SalvageToolTags", ref _settings.SalvageToolTags);
             ReadString(_node, "ChatPrefix", ref _settings.ChatPrefix);
             ReadString(_node, "NewTargetPolicy", ref _settings.NewTargetPolicy);
+            ReadString(_node, "StartTargets", ref _settings.StartTargets);
             ReadBool(_node, "AnnounceNewTargets", ref _settings.AnnounceNewTargets);
 
             // <exclude block="..."/> children: blocks the drone must never wrench. Names take * as
-            // a wildcard, and they are handed to SalvageRules, which merges them with whatever
-            // players have added in game with /das.
+            // a wildcard, and they are handed to SalvageRules, where they bind every player ahead
+            // of whatever each has added in game with /das.
             _settings.ExcludedBlocks.Clear();
             SalvageRules.ConfigDeny.Clear();
             foreach (XmlNode child in _node.ChildNodes)
@@ -467,6 +495,21 @@ namespace DroneAutomation
 
             ReadFloat(_node, "Q1ReachMult", ref _settings.Q1ReachMult);
             ReadFloat(_node, "Q6ReachMult", ref _settings.Q6ReachMult);
+        }
+
+        private static void ReadPatrol(XmlNode _node, PatrolSettings _settings)
+        {
+            if (_node?.Attributes == null) return;
+
+            ReadFloat(_node, "Radius", ref _settings.Radius);
+            ReadFloat(_node, "MinRadius", ref _settings.MinRadius);
+            ReadFloat(_node, "PauseSeconds", ref _settings.PauseSeconds);
+            ReadFloat(_node, "SpeedMult", ref _settings.SpeedMult);
+            ReadFloat(_node, "HoverHeight", ref _settings.HoverHeight);
+            ReadBool(_node, "Hunt", ref _settings.Hunt);
+            ReadFloat(_node, "ChaseRadius", ref _settings.ChaseRadius);
+            ReadFloat(_node, "StandOff", ref _settings.StandOff);
+            ReadFloat(_node, "ChaseSpeedMult", ref _settings.ChaseSpeedMult);
         }
 
         internal static void ReadFloat(XmlNode _node, string _attr, ref float _value)

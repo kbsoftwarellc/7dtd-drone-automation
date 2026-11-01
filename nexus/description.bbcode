@@ -22,26 +22,31 @@ Best of all, it is [b]100% server-side[/b]. Install it on the server (or your si
 [b]Automation modules[/b] — the drone does the chore:
 [list]
 [*][b]Auto-Loot[/b] — opens zombie loot bags and containers and picks up dropped items into the drone's storage. A mobile Loot Vacuum: bags and dropped items within 15m, block containers within 8m.
-[*][b]Auto-Salvage[/b] — wrenches nearby salvageable blocks (cars, sinks, machines) apart one step at a time into the drone's bag. [b]Unclaimed ground only[/b] — never inside any land claim, so it can't wreck your base or a neighbour's.
+[*][b]Auto-Salvage[/b] — wrenches nearby salvageable blocks (cars, sinks, machines) apart one step at a time into the drone's bag. [b]You choose what it takes:[/b] it starts with nothing picked, and its page in the talk menu lists the kinds of thing it may wrench — vehicles, appliances and electrics, lights, sinks toilets and pipes, furniture decor and signs, emptied containers, everything else. [b]Unclaimed ground only[/b] — never inside any land claim, so it can't wreck your base or a neighbour's.
 [*][b]Auto-Harvest[/b] — reaps grown crops in [b]your own land claim[/b] and replants the seed. A plot is only reaped if it can be replanted, so it is never left empty.
 [*][b]Auto-Repair[/b] — repairs damaged blocks in [b]your own land claim[/b], paying the repair materials out of the drone's bag. Only repairs a block it can pay for in full.
 [*][b]Auto-Plant[/b] — sows young crops from the drone's bag onto empty farm plots in [b]your own land claim[/b]. Pairs with Auto-Harvest — the crops it reaps become the seed Auto-Plant sows, for a self-running farm. Only ever plants on a real farm plot, never on bad ground.
-[*][b]Auto-Defense[/b] — the drone becomes a [b]bodyguard[/b]: it fires its own machine gun at the nearest hostile as it follows you, or stands [b]sentry[/b] over the spot you park it on. Kills are credited to you (XP and quests), and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a machine gun and an attack state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply, rather than faked damage. Vanilla clients see the muzzle flash with nothing installed. [b]It needs ammo:[/b] put [b]Robotic Turret Ammo[/b] in the drone's bag and it loads its own magazine (62–92 rounds), tops up between fights, and tells you in chat when it is on its last magazine or dry. Its shots draw screamers like a turret's. Server owners can hand out the free gun instead ([i]RequireAmmo="0"[/i]).
+[*][b]Auto-Defense[/b] — the drone becomes a [b]bodyguard[/b]: it turns to face the nearest hostile it has a clear line to, in any direction, and fires its own machine gun as it follows you, or stands [b]sentry[/b] over the spot you park it on. Kills are credited to you (XP and quests), and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a machine gun and an attack state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply, rather than faked damage. Vanilla clients see the muzzle flash with nothing installed. [b]It needs ammo:[/b] put [b]Robotic Turret Ammo[/b] in the drone's bag and it loads its own magazine (62–92 rounds), tops up between fights, and tells you in chat when it is on its last magazine or dry. Its shots draw screamers like a turret's. Server owners can hand out the free gun instead ([i]RequireAmmo="0"[/i]).
 [/list]
 [b]Enhancement modules[/b] — no chore of their own; they [b]make the other modules better[/b] (each takes one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design):
 [list]
 [*][b]Overclock[/b] — speeds up [b]every[/b] installed automation module (cuts each action's time). Boost scales with its own Quality 1–6.
 [*][b]Wide-Band Antenna[/b] — widens the working range (horizontal + vertical) of every installed automation module. Boost scales with its own Quality 1–6.
 [/list]
-[b]Switch a module off without pulling it out[/b] — hold [b]E[/b] on the drone, pick [b]Talk[/b], then [b]Automation modules…[/b]. Every function gets a row saying whether it is running:
+[b]Patrol[/b] — hold [b]E[/b] on the drone, pick [b]Talk[/b], then [b]Patrol around me[/b]. The drone roams up to 20 m around you, facing where it is going. With Auto-Defense fitted and loaded it also [b]hunts[/b]: anything hostile it can see within 28 m of you, it flies at, stops about 6 m off and shoots, then goes back to roaming. Without Auto-Defense it only roams, and comes back to you when a hostile shows up. It waits while you look straight at it, so you can walk up and talk to it, holds still while its menu or bag is open, and doesn't start fights while you crouch. [b]Stop patrolling[/b] on the same page turns it off. Any drone can do it: it is an order, not a module.
+
+[b]One page per module[/b] — hold [b]E[/b] on the drone, pick [b]Talk[/b], then [b]Automation modules…[/b]. Every function gets a row saying whether it is running:
 
 [list]
-[*][i]Auto-Loot: ON - switch it off[/i] — click it and the module stops acting. It stays in its slot and keeps its quality, so putting it back costs nothing.
-[*][i]Auto-Loot: OFF - switch it on[/i] — click to start it again. There's a [b]Switch every module back on[/b] row to clear the lot.
+[*][i]Auto-Loot: ON - change settings[/i] — opens that module's own page: its ON/OFF switch first, then whatever settings it has. A module switched off stays in its slot and keeps its quality, so putting it back costs nothing.
 [*][i]Auto-Loot: no module installed[/i] — that function has no module fitted in the drone you're standing at.
 [/list]
 
-The setting survives relogs and server restarts. It works on a [b]vanilla client with nothing installed[/b]: the server pushes the menu itself. (A hotkey or a radial-wheel entry would have needed a client-side download, which this mod doesn't do.) The switches are per player rather than per drone, so running two drones switches a function off on both.
+Auto-Salvage's page has its groups and a [b]More[/b] page: salvage all of it or nothing, never take the last thing it took again, tell me what it took, undo my last skip. If Auto-Defense is low on or out of ammo the list says so.
+
+The settings survive relogs and server restarts. They work on a [b]vanilla client with nothing installed[/b]: the server pushes the menu itself. (A hotkey or a radial-wheel entry would have needed a client-side download, which this mod doesn't do.) The switches are per player rather than per drone, so running two drones switches a function off on both.
+
+[b]Updating from 0.11.0 or older?[/b] Auto-Salvage stops until you pick what it takes. [b]Salvage all of it[/b] on its More page brings the old behaviour back in one click, and server owners can start everyone on everything with [i]StartTargets="all"[/i] on the [i]autoSalvage[/i] line.
 
 [b]Built to be fair and safe:[/b]
 [list]
