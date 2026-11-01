@@ -57,7 +57,7 @@ REPO = HERE.parent
 
 # Every game version this project knows how to order, oldest first. A range in GAME_VERSIONS is
 # expanded across this list, so a new game build has to be added here before it can be claimed.
-KNOWN = ["2.6", "3.0.0", "3.0.1", "3.1", "3.2.0", "3.3.0"]
+KNOWN = ["2.6", "3.0.0", "3.0.1", "3.1", "3.2.0", "3.3.0", "3.4.0"]
 
 
 def parse_versions(text):

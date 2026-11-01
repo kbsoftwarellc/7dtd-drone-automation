@@ -33,7 +33,7 @@ namespace TehAon.Compat
     ///
     /// An accessor is never null. One the running game cannot supply throws MissingMemberException
     /// naming the member when it is called, and is listed in <see cref="Missing"/>, which is empty
-    /// on every build from V3.0.0 to V3.3.0.
+    /// on every build from V3.0.0 to V3.4.0.
     /// </summary>
     internal static class StorageCompat
     {

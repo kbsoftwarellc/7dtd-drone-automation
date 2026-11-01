@@ -52,6 +52,9 @@ namespace DroneAutomation
         private static readonly Dictionary<int, MenuClaim> menuClaims = new Dictionary<int, MenuClaim>();
 
         private static ulong lastDebugTick;
+
+        /// <summary>What the drone being ticked is doing on patrol, for the Debug log; null = patrol off.</summary>
+        private static string patrolNote;
         private static ulong lastErrorTick;
 
         /// <summary>
@@ -79,6 +82,8 @@ namespace DroneAutomation
 
         private static void Run(EntityDrone __instance)
         {
+            patrolNote = null;
+
             // World.OnUpdateEntity runs this loop on clients too, for remote entities.
             ConnectionManager cm = SingletonMonoBehaviour<ConnectionManager>.Instance;
             if (cm == null || !cm.IsServer) return;
@@ -117,6 +122,19 @@ namespace DroneAutomation
             // on). Answered here, ahead of every early-out, so a press is never left waiting.
             SalvageMenu.Poll(owner);
 
+            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag. The
+            // same lock is held while its talk menu is open, which is what pauses patrol.
+            bool bagLocked = LockManager.Instance.IsLockedServer(__instance);
+            DroneBoost boost = BuildBoost(overclock, antenna);
+
+            // Patrol is a talk-menu order, not a module, so it runs on a drone with nothing fitted
+            // too - it only roams then. Before Auto-Defense, so a fight's turn toward its target is
+            // the one that sticks. Ticked even when off, so it lets go of vanilla's leash.
+            bool patrolOn = owner.Buffs != null && owner.Buffs.GetCustomVar(DroneAutomationMod.PatrolCVar) != 0f;
+            PatrolCore patrol = PatrolCore.For(__instance);
+            patrol.Tick(__instance, owner, patrolOn, bagLocked, FightReach(__instance, owner, autoDefense, boost));
+            patrolNote = patrolOn ? patrol.Doing : null;
+
             if (autoLoot == null && autoSalvage == null && autoHarvest == null && autoRepair == null && autoPlant == null && autoDefense == null)
             {
                 Debug(__instance, "no automation module; mods=[" + DescribeMods(droneItem) + "]");
@@ -141,13 +159,8 @@ namespace DroneAutomation
                 return;
             }
 
-            DroneBoost boost = BuildBoost(overclock, antenna);
-
             bool didSomething = false;
             string harvestDetail = null;
-
-            // The drone's bag is client-authoritative over NetPackageBag, exactly like a loot bag.
-            bool bagLocked = LockManager.Instance.IsLockedServer(__instance);
 
             // Auto-Defense fires the drone's own machine gun at nearby hostiles. It works around the
             // drone itself and fires from a magazine, so it runs BEFORE the bag-lock check below - the
@@ -247,6 +260,19 @@ namespace DroneAutomation
             float speed = _overclock != null ? DroneAutomationMod.OverclockSettings.SpeedMult(ItemCompat.Quality(_overclock)) : 1f;
             float reach = _antenna != null ? DroneAutomationMod.AntennaSettings.ReachMult(ItemCompat.Quality(_antenna)) : 1f;
             return new DroneBoost(speed, reach);
+        }
+
+        /// <summary>
+        /// How far Auto-Defense can shoot right now, for patrol to know whether to go hunting and how
+        /// close to get: 0 when it is not fitted, switched off, or has no rounds in its magazine or bag.
+        /// </summary>
+        private static float FightReach(EntityDrone _drone, EntityPlayer _owner, ItemValue _autoDefense, DroneBoost _boost)
+        {
+            if (_autoDefense == null || IsSwitchedOff(_owner, DroneAutomationMod.DefenseOffCVar)) return 0f;
+
+            DefenseSettings settings = DroneAutomationMod.DefenseSettings;
+            if (DefenseCore.AmmoState(_drone, settings) == DefenseCore.AmmoEmpty) return 0f;
+            return QualityScale.Reach(settings.Range, settings.LowQualityReach, ItemCompat.Quality(_autoDefense)) * _boost.ReachMult;
         }
 
         /// <summary>
@@ -423,7 +449,7 @@ namespace DroneAutomation
             if (now >= lastDebugTick && now - lastDebugTick < 40UL) return;
             lastDebugTick = now;
 
-            Log.Out($"[DroneAutomation][drone {_drone.entityId}] {_msg}");
+            Log.Out($"[DroneAutomation][drone {_drone.entityId}] {_msg}" + (patrolNote != null ? "  ||  patrol: " + patrolNote : ""));
         }
     }
 }

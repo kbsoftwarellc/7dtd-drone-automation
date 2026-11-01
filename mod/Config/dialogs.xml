@@ -67,14 +67,23 @@
 	  drone you are standing at - so those rows and the switches answer subtly different questions.
 
 	  ROW BUDGET: windowResponses is a 10-row grid with no scrollbar, and an eleventh row is silently
-	  invisible. junkDrone's start statement shows 6-7 rows and this adds one. The list: 6 module rows
-	  + at most one ammo warning + back = 8. Auto-Salvage's page: switch + 7 groups + More + back = 10,
-	  FULL. Auto-Defense's: switch + ammo + back = 3. The others: switch + back = 2. More: 6.
+	  invisible. junkDrone's start statement shows 6-7 rows and this adds two (Patrol, Automation
+	  modules) = 9 at most. The list: 6 module rows + at most one ammo warning + back = 8. Auto-Salvage's
+	  page: switch + 7 groups + More + back = 10, FULL. Auto-Defense's: switch + ammo + back = 3. The
+	  others: switch + back = 2. More: 6.
 	-->
 
 	<!-- Sits directly above "Never mind", so the vanilla drone commands keep their order. -->
 	<insertBefore xpath="/dialogs/dialog[@id='junkDrone']/statement[@id='start']/response_entry[@id='done']">
 		<response_entry id="daAutomation"/>
+	</insertBefore>
+
+	<!-- Patrol (PatrolCore), right under vanilla's Follow me / Stay here, because it is an order of
+	     the same kind. Shown only while the drone is following: patrol only ever acts then, and a
+	     parked drone has a Follow me row to press first. daPatrol is per player, like the switches. -->
+	<insertBefore xpath="/dialogs/dialog[@id='junkDrone']/statement[@id='start']/response_entry[@id='dont_heal_allies']">
+		<response_entry id="daPatrolStart"/>
+		<response_entry id="daPatrolStop"/>
 	</insertBefore>
 
 	<append xpath="/dialogs/dialog[@id='junkDrone']">
@@ -103,6 +112,18 @@
 		</statement>
 
 		<response id="daAutomation" text="daDialogOpen" nextstatementid="daAutomation"/>
+
+		<!-- Patrol: the pair on the first page. Back to the same page, the row already flipped. -->
+		<response id="daPatrolStart" text="daDialogPatrolStart" nextstatementid="start">
+			<requirement type="DroneState" value="Follow" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daPatrol" value="0" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPatrolStart"/>
+		</response>
+		<response id="daPatrolStop" text="daDialogPatrolStop" nextstatementid="start">
+			<requirement type="DroneState" value="Follow" requirementtype="Hide"/>
+			<requirement type="CheckCVar" id="daPatrol" value="1" requirementtype="Hide"/>
+			<action type="AddBuff" id="buffDaPatrolStop"/>
+		</response>
 
 		<!-- Auto-Loot: list rows -->
 		<response id="daLootOpenOn" text="daDialogLootOpenOn" nextstatementid="daLootPage">
