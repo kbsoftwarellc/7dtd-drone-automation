@@ -1,7 +1,12 @@
 # Changelog
 
-## 0.13.0 — 2026-10-24
+## 0.13.0 — 2026-11-01
 
+Includes everything built as 0.12.0, which was never released.
+
+- **Updating from 0.11.0: Auto-Salvage stops until you pick what it takes.** See "It starts with
+  nothing picked" below. Salvage all of it on its More page brings the old behaviour back in one click.
+- **Claims game 3.4.** Checked on a 3.4.0 (b9) client and dedicated server.
 - **Auto-Defense turns to face what it shoots, and shoots what is behind it.** The vanilla drone
   always turns to face you, and the "can I see it?" check only counted what was in front of the
   drone, so it only fired at zombies between you and it. Now it checks for a clear line in any
@@ -12,12 +17,10 @@
 - **Patrol.** Talk to the drone → **Patrol around me**: it roams up to 20 m around you, and with
   Auto-Defense fitted it hunts — anything hostile it sees within 28 m of you, it flies at, stops about
   6 m off and shoots. Without Auto-Defense it only roams and comes back to you when a hostile shows
-  up. It waits while you look at it (so you can walk up and talk to it), holds still while its menu or bag is open, and doesn't start fights while you crouch.
+  up. It waits while you look at it (so you can walk up and talk to it), holds still while its menu
+  or bag is open, and doesn't start fights while you crouch.
   **Stop patrolling** turns it off; it starts off. The drone stays on Follow, so its teleports work as
   before. Tuned by the new `<patrol>` line in `droneautomation.xml`.
-
-## 0.12.0 — 2026-10-24
-
 - **One page per module.** Hold E on the drone, Talk, Automation modules: each module is one row that
   says whether it is on - "Auto-Loot: ON - change settings" - and opens that module's page, with its
   ON/OFF switch and whatever settings it has. Auto-Defense's low / empty ammo warning still shows on
