@@ -1,26 +1,37 @@
 0.13.0
 
-- Updating from 0.11.0: Auto-Salvage stops until you pick what it takes. Hold E on the drone, Talk, Automation modules, Auto-Salvage, More, then Salvage all of it brings the old behaviour back in one click. Server owners can start everyone on everything with StartTargets="all" on the autoSalvage line of droneautomation.xml.
+- Updating from 0.11.0: Auto-Salvage stops until you pick what it takes. Hold E on the drone, Talk, Automation modules, Auto-Salvage, More, then Salvage all of it brings the old behaviour back in one click. Server owners can start everyone on everything with StartTargets="all" on the autoSalvage line of `droneautomation.xml`.
+
 
 - Patrol. Talk to the drone, Patrol around me. It roams up to 20 m around you, and with Auto-Defense fitted and loaded it hunts: anything hostile it can see within 28 m of you, it flies at, stops about 6 m off and shoots, then goes back to roaming. Without Auto-Defense it only roams, and comes back to you when a hostile shows up. It waits while you look straight at it so you can walk up and talk to it, holds still while its menu or bag is open, and does not start fights while you crouch. Stop patrolling turns it off; it starts off. Any drone can do it: it is an order, not a module.
 
+
 - Auto-Defense turns to face what it shoots, and shoots what is behind it. The vanilla drone always turns to face you, and the check for whether it could see a target only counted what was in front of it, so it only fired at zombies between you and it. Now it checks for a clear line in any direction, turns toward its target and fires once it is facing it. A second after its last shot it turns back to you. With no rounds left it does not turn.
+
 
 - Auto-Defense no longer goes quiet because the nearest zombie is behind cover. It takes the nearest one it can actually hit.
 
+
 - One page per module. Hold E on the drone, Talk, Automation modules: each module is one row that says whether it is on, "Auto-Loot: ON - change settings", and opens that module's page, with its ON/OFF switch and whatever settings it has. The low or empty ammo warning still shows on the list. The "Switch every module back on" row is gone.
+
 
 - You choose what Auto-Salvage takes. Its page lists the kinds of thing it may wrench: vehicles, appliances and electrics, lights, sinks toilets and pipes, furniture decor and signs, emptied containers, everything else. A More page has Salvage all of it and Salvage nothing. The groups are the game's own creative-menu categories, so blocks from overhauls and POI mods sort themselves.
 
+
 - One thing at a time, without typing. The More page also has Never take the last thing it took again, Tell me what it took and Undo my last skip. The drone answers in chat with the name. A skip covers that whole kind, the same as /das skip 1. /das undo is new in chat too.
+
 
 - /das rules are now per player. Until now there was one list per world, and any player's /das skip changed every drone on the server. Rules from before the update are kept: each player starts from a copy of the old list.
 
+
 - /das makes exceptions to the menu. /das skip leaves one kind alone inside a group you picked, /das allow takes one kind whose group is off, /das what names the group of the block you are looking at and says why the drone would or would not take it, and /das rules shows the groups you picked, your own rules and the server's.
 
-- The server's exclude list binds everyone. A player's /das allow can no longer lift a block the server's droneautomation.xml excludes.
+
+- The server's exclude list binds everyone. A player's /das allow can no longer lift a block the server's `droneautomation.xml` excludes.
+
 
 - /das what no longer says Auto-Salvage "may take" a block it cannot salvage at all, like dirt or a wall.
+
 
 - Claims game 3.4. Checked on a 3.4.0 (b9) client and dedicated server. New menu rows are in English, Russian and Simplified Chinese.
 

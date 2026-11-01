@@ -14,6 +14,7 @@ Best of all, it is **100% server-side**. Install it on the server (or your singl
 **Main Features**
 
 **Automation modules** — the drone does the chore:
+
 - **Auto-Loot** — opens zombie loot bags and containers and picks up dropped items into the drone's storage. A mobile Loot Vacuum: bags and dropped items within 15m, block containers within 8m.
 - **Auto-Salvage** — wrenches nearby salvageable blocks (cars, sinks, machines) apart one step at a time into the drone's bag. **You choose what it takes:** it starts with nothing picked, and its page in the talk menu lists the kinds of thing it may wrench — vehicles, appliances and electrics, lights, sinks toilets and pipes, furniture decor and signs, emptied containers, everything else. **Unclaimed ground only** — never inside any land claim, so it can't wreck your base or a neighbour's.
 - **Auto-Harvest** — reaps grown crops in **your own land claim** and replants the seed. A plot is only reaped if it can be replanted, so it is never left empty.
@@ -22,6 +23,7 @@ Best of all, it is **100% server-side**. Install it on the server (or your singl
 - **Auto-Defense** — the drone becomes a **bodyguard**: it turns to face the nearest hostile it has a clear line to, in any direction, and fires its own machine gun as it follows you, or stands **sentry** over the spot you park it on. Kills are credited to you (XP and quests), and it never targets you, your allies, party members or traders. This drives the combat rig the junk drone has always carried but never used — the vanilla drone ships a machine gun and an attack state that The Fun Pimps left disconnected — so the drone's own hitscan and muzzle flash apply, rather than faked damage. Vanilla clients see the muzzle flash with nothing installed. **It needs ammo:** put **Robotic Turret Ammo** in the drone's bag and it loads its own magazine (62–92 rounds), tops up between fights, and tells you in chat when it is on its last magazine or dry. Its shots draw screamers like a turret's. Server owners can hand out the free gun instead (*RequireAmmo="0"*).
 
 **Enhancement modules** — no chore of their own; they **make the other modules better** (each takes one of the drone's limited mod slots, so slotting one trades against fitting another automation core — breadth vs power, by design):
+
 - **Overclock** — speeds up **every** installed automation module (cuts each action's time). Boost scales with its own Quality 1–6.
 - **Wide-Band Antenna** — widens the working range (horizontal + vertical) of every installed automation module. Boost scales with its own Quality 1–6.
 
@@ -39,6 +41,7 @@ The settings survive relogs and server restarts. They work on a **vanilla client
 **Updating from 0.11.0 or older?** Auto-Salvage stops until you pick what it takes. **Salvage all of it** on its More page brings the old behaviour back in one click, and server owners can start everyone on everything with *StartTargets="all"* on the *autoSalvage* line.
 
 **Built to be fair and safe:**
+
 - Scope rules are deliberate — the destructive module (Auto-Salvage) stays off claimed ground; Auto-Harvest, Auto-Repair and Auto-Plant only ever act inside *your own* claim.
 - Paced off your real action time and capped, so a reload can't burst a backlog of work.
 - Modules stack with each other and with the vanilla cargo mod.
