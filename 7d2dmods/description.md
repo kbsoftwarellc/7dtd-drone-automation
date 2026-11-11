@@ -1,5 +1,5 @@
 **Drone Automation Mods**\
-*A pack of junk-drone modules for 7 Days to Die V3.0.0 through V3.4.0 that automate your chores while the drone follows you.*
+*A pack of junk-drone modules for 7 Days to Die V3.2.0 through V3.4.0 that automate your chores while the drone follows you.*
 
 **Description**
 
@@ -49,7 +49,7 @@ The settings survive relogs and server restarts. They work on a **vanilla client
 
 **Requirements**
 
-- **7 Days to Die V3.0.0 through V3.4.0**
+- **7 Days to Die V3.2.0 through V3.4.0**
 - **Server-side install** — only the server (or single-player host) needs the mod; clients install nothing.
 - **A dedicated server keeps EasyAntiCheat ON** — a dedicated server does not gate mod DLLs on anti-cheat. Clients keep EAC on too. **Single-player and hosted games need EAC off**, because there the server runs inside your own EAC-protected game process.
 - No other mods required. Uses the game's built-in Harmony (The Fun Pimps ship it in *Mods/0_TFP_Harmony*, loaded automatically before every other mod).
