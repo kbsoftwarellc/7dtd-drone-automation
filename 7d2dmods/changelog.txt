@@ -1,3 +1,7 @@
+0.13.1
+
+- Supports game 3.2 to 3.4. 3.0 and 3.1 are no longer listed (Steam stopped serving them). No behaviour change: one build covers 3.2, 3.3 and 3.4, compiled against 3.2, the oldest it claims.
+
 0.13.0
 
 - Updating from 0.11.0: Auto-Salvage stops until you pick what it takes. Hold E on the drone, Talk, Automation modules, Auto-Salvage, More, then Salvage all of it brings the old behaviour back in one click. Server owners can start everyone on everything with StartTargets="all" on the autoSalvage line of `droneautomation.xml`.
