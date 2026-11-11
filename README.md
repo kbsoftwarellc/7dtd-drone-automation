@@ -1,6 +1,6 @@
 # Drone Automation Mods
 
-A pack of installable junk-drone modules for 7 Days to Die **V3.0 and V3.1** that automate chores while the drone follows you. Each module is a separate craftable drone attachment, unlocked by a looted schematic (like the vanilla drone mods), and each does the work **as if you did it yourself** — your loot stage, perks and tool bonuses apply, and each target takes about the time it would take you by hand.
+A pack of installable junk-drone modules for 7 Days to Die **V3.2 to V3.4** that automate chores while the drone follows you. Each module is a separate craftable drone attachment, unlocked by a looted schematic (like the vanilla drone mods), and each does the work **as if you did it yourself** — your loot stage, perks and tool bonuses apply, and each target takes about the time it would take you by hand.
 
 Split out of the [Loot Vacuum](../LootVacuum) mod, whose placeable storage-vacuum block stays there.
 

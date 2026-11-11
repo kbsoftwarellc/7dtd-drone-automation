@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.1 — 2026-11-10
+
+- **Supports game 3.2 to 3.4.** 3.0 and 3.1 are no longer listed (Steam stopped serving them). No behaviour
+  change: one build covers 3.2, 3.3 and 3.4, compiled against 3.2, the oldest it claims.
+
 ## 0.13.0 — 2026-11-01
 
 Includes everything built as 0.12.0, which was never released.
