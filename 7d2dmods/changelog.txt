@@ -1,6 +1,6 @@
 0.13.2
 
-- Auto-Loot debug log, off by default. In `droneautomation.xml` (or your `droneautomation.local.xml`), set `<autoLoot LogContainers="1" />` and the server log gets one line, starting `[DroneAutomation][Auto-Loot] took from`, for every container the drone takes from: the block, where it is, who placed it, whether the game marks it as player storage, whose land claim it is in, and what was taken. It is there for reports of the drone emptying a box it should not. Nothing else changes.
+- Auto-Loot debug log, off by default. Add LogContainers="1" to the autoLoot line of `droneautomation.xml` (or your `droneautomation.local.xml`) and the server log gets one line, starting "DroneAutomation Auto-Loot took from", for every container the drone takes from: the block, where it is, who placed it, whether the game marks it as player storage, whose land claim it is in, and what was taken. It is there for reports of the drone emptying a box it should not. Nothing else changes.
 
 0.13.1
 
