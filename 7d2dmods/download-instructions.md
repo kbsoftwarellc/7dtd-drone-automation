@@ -1,6 +1,6 @@
 Download
 
-File: `DroneAutomation_v0.13.1_gameV3.2.0-V3.4.0.zip`\
+File: `DroneAutomation_v0.13.2_gameV3.2.0-V3.4.0.zip`\
 Built and verified for **7 Days to Die V3.2.0, V3.3.0 and V3.4.0**.
 
 The zip contains one folder, `DroneAutomation`, holding `DroneAutomation.dll`, `ModInfo.xml`, `droneautomation.xml`, a `Config` folder, plus README, CHANGELOG and LICENSE.

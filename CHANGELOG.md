@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.2 — 2026-11-16
 
 - **Auto-Loot debug log, off by default.** In `droneautomation.xml` (or your
   `droneautomation.local.xml`), set `<autoLoot LogContainers="1" />` and the server log gets one line,
