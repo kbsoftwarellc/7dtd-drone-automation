@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **Auto-Loot debug log, off by default.** In `droneautomation.xml` (or your
+  `droneautomation.local.xml`), set `<autoLoot LogContainers="1" />` and the server log gets one line,
+  starting `[DroneAutomation][Auto-Loot] took from`, for every container the drone takes from. The line
+  gives the block, where it is, who placed it, whether the game marks it as player storage, whose land
+  claim it is in, and what was taken. It is there for reports of the drone emptying a box it should
+  not. Nothing else changes.
+
 ## 0.13.1 — 2026-11-10
 
 - **Supports game 3.2 to 3.4.** 3.0 and 3.1 are no longer listed (Steam stopped serving them). No behaviour

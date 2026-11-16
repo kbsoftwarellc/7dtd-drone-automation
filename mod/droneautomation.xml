@@ -38,6 +38,11 @@
 	                        without this the drone can pick one up in mid-air. Live explosives and
 	                        items still in flight are always skipped, whatever this is set to; the
 	                        grace period is what leaves a thrown rock long enough to pull a zombie.
+	    LogContainers       1 = write a line to the server log for every container the drone takes
+	                        from: the block, where it is, who placed it, whether the game marks it as
+	                        player storage, whose land claim it is in, and what was taken. Off (0) by
+	                        default. Turn it on if the drone empties a box it should not, and send the
+	                        lines that start with [DroneAutomation][Auto-Loot] with your report.
 	-->
 	<autoLoot Radius="8"
 	          EntityRadius="15"
@@ -49,7 +54,8 @@
 	          SkipIfPlayerWithin="0"
 	          ThrownGraceSeconds="5"
 	          LowQualityReach="0.55"
-	          LowQualityTimeMult="2" />
+	          LowQualityTimeMult="2"
+	          LogContainers="0" />
 
 	<!--
 	  Auto-Salvage: wrench salvageable blocks (cars, sinks, machines) into the drone's bag.

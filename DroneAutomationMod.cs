@@ -200,6 +200,8 @@ namespace DroneAutomation
                 if (patched == 0) Log.Warning("[DroneAutomation] No methods patched — every module will do nothing.");
 
                 Log.Out($"[DroneAutomation] InitMod complete — {patched} method(s) patched, server-side only. Path: {ModPath}");
+                if (AutoLootSettings.LogContainers)
+                    Log.Out("[DroneAutomation][Auto-Loot] LogContainers is ON: every container the drone takes from is logged.");
             }
             catch (Exception e)
             {
@@ -446,6 +448,7 @@ namespace DroneAutomation
             ReadFloat(_node, "MaxCatchupSeconds", ref _settings.MaxCatchupSeconds);
             ReadFloat(_node, "SkipIfPlayerWithin", ref _settings.SkipIfPlayerWithin);
             ReadFloat(_node, "ThrownGraceSeconds", ref _settings.ThrownGraceSeconds);
+            ReadBool(_node, "LogContainers", ref _settings.LogContainers);
             ReadFloat(_node, "LowQualityReach", ref _settings.LowQualityReach);
             ReadFloat(_node, "LowQualityTimeMult", ref _settings.LowQualityTimeMult);
         }
