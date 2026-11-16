@@ -30,6 +30,11 @@ namespace DroneAutomation
         /// Q1 action time as a multiple of the configured (Q6) time; Q6 = full speed.
         public float LowQualityTimeMult = 2f;
 
+        /// Off by default. On, every block container Auto-Loot takes from is written to the server log
+        /// with the facts that decide whether it should have been left alone: who placed it, whether the
+        /// game marks it as player storage, whose land claim it stands in. For bug reports.
+        public bool LogContainers;
+
         public void Clamp()
         {
             if (ContainerRadius < 0f) ContainerRadius = 0f;
@@ -307,7 +312,13 @@ namespace DroneAutomation
                     StorageCompat.Touch(loot);
                 }
 
+                // Read before the move: on 3.3+ the slots are changed in place, so afterwards they hold
+                // what is left, not what was taken.
+                string taking = settings.LogContainers ? DescribeContents(loot) : null;
+
                 if (!MoveFromLootable(_sink, loot)) continue;
+
+                if (taking != null) LogContainer(_world, _owner, _ownerData, _ownerId, te, loot, block, pos, touched, taking);
 
                 loot.SetModified();
                 if (loot.IsEmpty()) GameManager.Instance.CheckDestroyTileEntity(loot, pos);
@@ -482,7 +493,63 @@ namespace DroneAutomation
             return moved;
         }
 
-        private static bool MoveFromLootable(IVacuumSink _sink, TEFeatureStorage _source)
+        /// <summary>"drinkJarBoiledWater x20, foodCanChili x3, +4 more" - what is in the box right now.</summary>
+        private static string DescribeContents(TEFeatureStorage _loot)
+        {
+            // A debug line must never stop the drone working: any failure here only costs the item list.
+            try { return ListContents(_loot); }
+            catch (System.Exception e) { return "(could not list: " + e.Message + ")"; }
+        }
+
+        private static string ListContents(TEFeatureStorage _loot)
+        {
+            ItemStack[] items = StorageCompat.Items(_loot);
+            var sb = new System.Text.StringBuilder();
+            int shown = 0, more = 0;
+            for (int i = 0; i < items.Length; i++)
+            {
+                ItemStack stack = items[i];
+                if (stack == null || stack.IsEmpty()) continue;
+                if (shown == 6) { more++; continue; }
+                if (shown > 0) sb.Append(", ");
+                // ItemCompat, not stack.itemValue: a field up to 3.2, a property from 3.3.
+                sb.Append(ItemCompat.Value(stack)?.ItemClass?.Name ?? "?").Append(" x").Append(ItemCompat.Count(stack));
+                shown++;
+            }
+            if (more > 0) sb.Append(", +").Append(more).Append(" more");
+            return shown == 0 ? "nothing" : sb.ToString();
+        }
+
+        /// <summary>
+        /// One line per container the drone took from, when autoLoot LogContainers="1". Names no player
+        /// ids, only how the box relates to the drone's owner, so a player can paste it in a report.
+        /// </summary>
+        private static void LogContainer(World _world, EntityPlayer _owner, PersistentPlayerData _ownerData,
+                                         PlatformUserIdentifierAbs _ownerId, TileEntity _te, TEFeatureStorage _loot,
+                                         BlockValue _block, Vector3i _pos, bool _wasTouched, string _taking)
+        {
+            try
+            {
+                string placedBy = "nobody (world container)";
+                if (_te is TileEntityComposite composite && composite.Owner != null)
+                    placedBy = _ownerId != null && composite.Owner.Equals(_ownerId) ? "drone owner" : "another player";
+
+                Log.Out($"[DroneAutomation][Auto-Loot] took from {_block.Block.GetBlockName()} at {_pos}"
+                        + $" | placed by: {placedBy}"
+                        + $" | player storage flag: {StorageCompat.PlayerStorage(_loot)}"
+                        + $" | opened before: {_wasTouched}"
+                        + $" | loot list: {(string.IsNullOrEmpty(_loot.lootListName) ? "none" : _loot.lootListName)}"
+                        + $" | land claim: {_world.GetLandClaimOwner(_pos, _ownerData)}"
+                        + $" | drone owner: entity {_owner.entityId}"
+                        + $" | took: {_taking}");
+            }
+            catch (System.Exception e)
+            {
+                Log.Warning("[DroneAutomation][Auto-Loot] container log failed: " + e.Message);
+            }
+        }
+
+                private static bool MoveFromLootable(IVacuumSink _sink, TEFeatureStorage _source)
         {
             bool moved = false;
             ItemStack[] items = StorageCompat.Items(_source);
